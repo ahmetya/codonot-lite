@@ -1,0 +1,13 @@
+{
+  "name": "codonot-lite",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "start:server": "npm run start --prefix server",
+    "start:client": "npm run dev --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "eslint": "^10.3.0"
+  }
+}

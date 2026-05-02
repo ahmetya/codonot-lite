@@ -1,0 +1,9 @@
+button {
+  width: 150px;
+}
+
+.generic {
+  display: flex;
+  justify-content: center;
+  margin: 16px;
+}
