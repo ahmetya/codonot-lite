@@ -1,70 +1,88 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import { Utils } from "./services/utils";
+import { useState, useEffect } from 'react';
+import './App.css';
+import { Utils } from './services/utils';
 
 interface HelloResponse {
   message: string;
 }
 
-const utils = new Utils("Ahmet");
+const utils = new Utils('Ahmet');
 
 function App() {
-  const [message, setMessage] = useState<string>("");
-  const [pokeData, setPokeData] = useState<string>("");
+  const [message, setMessage] = useState<string>('');
+  const [pokeData, setPokeData] = useState<string>('');
 
   useEffect(() => {
-    fetch("/api/hello")
+    fetch('/api/hello')
       .then((res) => res.json())
       .then((data: HelloResponse) => setMessage(data.message));
   }, []);
 
   const handlePoke = () => {
-    fetch("/api/poke")
+    fetch('/api/poke')
       .then((res) => {
         return res.json();
       })
       .then((data) => {
-        setPokeData(JSON.stringify(data.name)); // Store the height of the Pokemon as a string
-        console.log("Poke API data:", data); // Log the height of the Pokemon
+        setPokeData(data.name); // Store the height of the Pokemon as a string
+        console.log('Poke API data:', data); // Log the height of the Pokemon
       });
-    console.log("Fetching Pokemon data...");
+    console.log('Fetching Pokemon data...');
   };
 
   const testCallbackWithPromise = () => {
     utils
       .callbackWithPromise(10, (result) => {
-        console.log("Callback with Promise result:", result);
+        console.log('Callback with Promise result:', result);
       })
       .then((finalResult) => {
-        console.log("Final result from Promise:", finalResult);
+        console.log('Final result from Promise:', finalResult);
       });
   };
 
   const testFetchWithPromise = async () => {
     await utils
-      .fetchWithPromise("/api/hello", (result) => {
-        console.log("Callback from fetchWithPromise:", result);
+      .fetchWithPromise('/api/hello', (result) => {
+        console.log('Callback from fetchWithPromise:', result);
       })
       .then((finalResult) => {
-        console.log("Final result from fetchWithPromise:", finalResult);
+        console.log('Final result from fetchWithPromise:', finalResult);
       })
       .catch((error) => {
-        console.error("Error in fetchWithPromise:", error);
+        console.error('Error in fetchWithPromise:', error);
       });
   };
 
   const testFetchWithPromiseError = async () => {
-    const res = await utils.fetchWithPromise("/api/hello", (result) => {
-      console.log("Callback from fetchWithPromise (error case):", result);
+    const res = await utils.fetchWithPromise('/api/hello', (result) => {
+      console.log('Callback from fetchWithPromise (error case):', result);
     });
 
-    console.log("Result from fetchWithPromise (error case):", res);
+    console.log('Result from fetchWithPromise (error case):', res);
+  };
+
+  const testPokemonService = async () => {
+    await fetch('/api/pokemon', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ pokeId: 1, name: 'Bulbasaur' }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Created Pokemon:', data);
+      })
+      .catch((err) => {
+        console.error('Error creating Pokemon:', err);
+      });
   };
 
   return (
     <>
       <div className="generic">
         <button onClick={handlePoke}>Poke Button</button>
+        <button onClick={testPokemonService}>Test Pokemon Service</button>
         <button onClick={() => utils.sayHello()}>Say Hello</button>
         <button onClick={() => utils.sayGoodbye()}>Say Goodbye</button>
         <button onClick={testCallbackWithPromise}>
@@ -78,7 +96,7 @@ function App() {
         <button
           onClick={() =>
             utils.callbackTest(5, (result) => {
-              console.log("Callback result:", result);
+              console.log('Callback result:', result);
             })
           }
         >
@@ -86,7 +104,7 @@ function App() {
         </button>
       </div>
 
-      <h1>{pokeData ? pokeData : "No data"}</h1>
+      <h1>{pokeData ? pokeData : 'No data'}</h1>
       <h1>{message}</h1>
     </>
   );

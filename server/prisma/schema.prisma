@@ -11,9 +11,15 @@ datasource db {
   provider = "sqlite"
 }
 
-model Post {
+model Generic {
   id        Int      @id @default(autoincrement())
   title     String
   body      String
   createdAt DateTime @default(now())
+}
+
+model Pokemon {
+  id     Int    @id @default(autoincrement())
+  pokeId Int
+  name   String
 }

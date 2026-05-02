@@ -8,6 +8,8 @@
   },
   "devDependencies": {
     "concurrently": "^8.0.0",
-    "eslint": "^10.3.0"
+    "eslint": "^10.3.0",
+    "prettier-plugin-env": "^0.4.3",
+    "prettier-plugin-prisma": "^5.0.0"
   }
 }
