@@ -31,6 +31,23 @@ export class PokemonController {
       .status(200)
       .json({ message: 'Random Pokemon endpoint - to be implemented' });
   }
+
+  async getById(req: Request<{ id: string }>, res: Response) {
+    const { id } = req.params;
+
+    console.log(`Fetching Pokemon with ID: ${id}`); // add this for debugging
+    console.log(`Request params:`, req.params); // add this for debugging
+    console.log(`Request query:`, req.query); // add this for debugging
+
+    const response = await pokemonService.getPokemonByIdExternal(id);
+    if (response) {
+      return res.status(200).json(response);
+    }
+
+    res.status(404).json({
+      message: `Pokemon with ID ${id} not found`,
+    });
+  }
 }
 
 export const pokemonController = new PokemonController();

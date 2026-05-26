@@ -1,11 +1,14 @@
 export class Utils {
-  private _name: string = "Utils";
+  private _name: string = 'Utils';
+
   get name(): string {
     return this._name;
   }
+
   set name(value: string) {
     this._name = value;
   }
+
   constructor(name?: string) {
     if (name) {
       this.name = name;
@@ -13,11 +16,11 @@ export class Utils {
   }
 
   sayHello() {
-    console.log("Hello!");
+    console.log('Hello! in React');
   }
 
   sayGoodbye() {
-    console.log("Goodbye!: ", this.name);
+    console.log('Goodbye!: ', this.name);
   }
 
   callbackTest(testNumber: number, callback: (result: number) => void) {
@@ -27,7 +30,7 @@ export class Utils {
 
   callbackWithPromise(
     testNumber: number,
-    callback: (result: number) => void,
+    callback: (result: number) => void
   ): Promise<number> {
     const result = testNumber + 1 + 5;
     callback(result);
@@ -36,7 +39,8 @@ export class Utils {
 
   fetchWithPromise(
     url: string,
-    callback: (result: string) => void,
+    callbackAlias: (result: string) => string,
+    otherCallback?: (result: string) => string
   ): Promise<string> {
     const apiResult = fetch(url)
       .then((response) => {
@@ -44,16 +48,37 @@ export class Utils {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        callback("SUCCESS: " + response.status.toString());
-        return response.statusText;
+        let responseStatus = response.status.toString();
+
+        if (otherCallback) {
+          const otherCallbackResult = otherCallback(
+            responseStatus + ' from otherCallback'
+          );
+          return otherCallbackResult;
+        }
+
+        const callbackResult = callbackAlias(
+          'SUCCESS: ' + response.status.toString()
+        );
+        return callbackResult;
       })
       .catch((error) => {
-        console.error("Fetch error:", error);
-        callback("CATCH ERROR: " + error.toString());
-        throw error;
+        console.error('Fetch error:', error);
+        const callbackResult = callbackAlias(
+          'CATCH ERROR: ' + error.toString()
+        );
+        return callbackResult;
       });
 
     return apiResult;
   }
+
+  doubleCallback(
+    initialValue: number,
+    callback: (result: number, result2: number) => void
+  ) {
+    const result = initialValue + 1;
+    const result2 = initialValue + 2;
+    callback(result, result2);
+  }
 }
-  

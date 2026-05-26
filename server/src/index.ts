@@ -12,6 +12,7 @@ app.use(express.json());
 
 app.use('/api/generic', genericRoutes);
 app.use('/api/pokemon', pokemonRoutes); // add this line for pokemon posts
+app.use('/api/pokemon/:id', pokemonRoutes);
 
 app.get('/api/hello', (req: Request, res: Response) => {
   res.json({ message: 'Hello from Express!' });
