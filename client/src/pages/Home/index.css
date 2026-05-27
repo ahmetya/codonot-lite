@@ -1,0 +1,12 @@
+button {
+  width: 150px;
+  height: 48px;
+}
+
+.generic {
+  display: flex;
+  justify-content: center;
+  margin: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
