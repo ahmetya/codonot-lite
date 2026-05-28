@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import genericRoutes from '@routes/generic';
 import pokemonRoutes from '@routes/pokemon'; // add this line for pokemon posts
+import helperBotRoutes from "@routes/helperBot" 
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use('/api/generic', genericRoutes);
 app.use('/api/pokemon', pokemonRoutes); // add this line for pokemon posts
 app.use('/api/pokemon/:id', pokemonRoutes);
+app.use("/api/helperbot", helperBotRoutes)
 
 app.get('/api/hello', (req: Request, res: Response) => {
   res.json({ message: 'Hello from Express!' });

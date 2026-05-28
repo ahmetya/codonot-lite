@@ -15,6 +15,7 @@ const slotMachine = new SlotMachine(100);
 export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [pokeData, setPokeData] = useState<string>("");
+  const [botAmswer, setBotAnswer] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/hello")
@@ -187,6 +188,29 @@ export default function Home() {
     console.log("Fetch result in someSample:", res);
   };
 
+  const helperBot = async () => {
+    const res = await fetch("/api/helperbot",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: "make me a joke about robots"}),
+      }
+    );
+
+    let data = await res.json();
+    data = { data, ...{ extra: "Extra data from someSample" } }
+
+    setBotAnswer(data.data);
+
+    console.log(data);
+
+    console.log(utils.name); // Accessing the name property of the Utils instance
+    // this allways being called immediately after the fetch call, not waiting for the fetch to complete
+    console.log("Fetch result in someSample:", res);
+  };
+
   const testLibrary = () => {
     const lib = new Library("Kutupanne");
     const hayat = new Book("Hayat Bilgisi", "Ahmet", "978-0135957059");
@@ -242,10 +266,12 @@ export default function Home() {
         >
           Callback Test
         </button>
+        <button onClick={helperBot}>Helper Bot</button>
       </div>
 
       <p>{pokeData ? pokeData : "No data"}</p>
       <p>{message}</p>
+      <p>{botAmswer}</p>
     </>
   );
 }
