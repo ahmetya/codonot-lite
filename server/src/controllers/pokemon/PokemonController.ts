@@ -40,6 +40,9 @@ export class PokemonController {
     console.log(`Request query:`, req.query); // add this for debugging
 
     const response = await pokemonService.getPokemonByIdExternal(id);
+
+    console.log("PRISMA RESPONSE 2: ", response);
+
     if (response) {
       return res.status(200).json(response);
     }

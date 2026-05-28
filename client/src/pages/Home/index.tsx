@@ -3,12 +3,14 @@ import "./index.css";
 import { Utils } from "../../services/utils";
 import { Library } from "../../services/library";
 import { Book } from "../../services/book";
+import { SlotMachine } from "../../services/slotMachine";
 
 interface HelloResponse {
   message: string;
 }
 
 const utils = new Utils("Ahmet");
+const slotMachine = new SlotMachine(100);
 
 export default function Home() {
   const [message, setMessage] = useState<string>("");
@@ -109,6 +111,7 @@ export default function Home() {
     console.log("Result from fetchWithPromise (error case):", res);
   };
 
+  // Gets pokemon data and writes to db
   const testPokemonService = async () => {
     await fetch("/api/pokemon", {
       method: "POST",
@@ -202,9 +205,14 @@ export default function Home() {
     console.log(lib.totalLibCount);
   };
 
+  const getSlotMachine = () => {
+    slotMachine.spin();
+  };
+
   return (
     <>
       <div className="generic">
+        <button onClick={getSlotMachine}>HAPPY SLOT </button>
         <button onClick={testLibrary}>Library Test</button>
         <button onClick={arrayManipulation}>Array Manipulation</button>
         <button onClick={someSample}>Some Sample</button>
@@ -230,7 +238,7 @@ export default function Home() {
             utils.callbackTest(5, (result) => {
               console.log("Callback result:", result);
             })
-          } 
+          }
         >
           Callback Test
         </button>
