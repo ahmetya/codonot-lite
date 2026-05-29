@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./index.css";
 import { Utils } from "../../services/utils";
 import { Library } from "../../services/library";
@@ -15,7 +15,10 @@ const slotMachine = new SlotMachine(100);
 export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [pokeData, setPokeData] = useState<string>("");
+  const [botAmswerGroup, setBotAnswerGroup] = useState<string[]>([]);
   const [botAmswer, setBotAnswer] = useState<string>("");
+  const [streamPrompt, setStreamPrompt] = useState<string>("");
+  const bufferRef = useRef("");
 
   useEffect(() => {
     fetch("/api/hello")
@@ -189,18 +192,16 @@ export default function Home() {
   };
 
   const helperBot = async () => {
-    const res = await fetch("/api/helperbot",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt: "make me a joke about robots"}),
-      }
-    );
+    const res = await fetch("/api/helperbot", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt: "make me a joke about robots" }),
+    });
 
     let data = await res.json();
-    data = { data, ...{ extra: "Extra data from someSample" } }
+    data = { data, ...{ extra: "Extra data from someSample" } };
 
     setBotAnswer(data.data);
 
@@ -233,9 +234,142 @@ export default function Home() {
     slotMachine.spin();
   };
 
+  const botStream = async () => {
+    // Frontend consumption sample:
+    const response = await fetch("http://localhost:3000/api/helperbot/stream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: "Make a joke about robots",
+      }),
+    });
+
+    if (response.body) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const rawLine = decoder.decode(value);
+        // Parse lines starting with "data: " to read incoming JSON patches safely!
+
+        const parsed = parseSSELine(rawLine);
+        if (parsed) {
+          const text = parsed.candidates[0]?.content?.parts[0].text.trimStart();
+
+          // parsed.candidates[0]?.content?.parts
+          //   ?.map((p: Record<string, string>) => p.text)
+          //   .join("") ?? "";
+
+          handleChunk(text);
+        }
+      }
+    }
+  };
+
+  function handleChunk(text: string) {
+    bufferRef.current += text;
+
+    // Only update state when we have a complete line
+    if (bufferRef.current.includes("\n")) {
+      const lines = bufferRef.current.split("\n");
+
+      // Last element may be incomplete — keep it in buffer
+      bufferRef.current = lines.pop()?.trimStart().trim() ?? "";
+
+      setBotAnswerGroup((prev) => [...prev, ...lines]);
+    }
+  }
+
+  function parseSSELine(line: string) {
+    if (!line.startsWith("data: ")) return null;
+
+    const jsonStr = line.slice("data: ".length).trim();
+
+    // SSE streams often end with a [DONE] marker
+    if (jsonStr === "[DONE]") return null;
+
+    try {
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      // console.error("Failed to parse SSE line:", e);
+      return null;
+    }
+  }
+
+  async function consumeGemmaStream(
+    prompt: string,
+    onTokenReceived?: (token: string) => void
+  ): Promise<void> {
+    setBotAnswerGroup([]);
+
+    try {
+      // 1. Fire a standard POST request to your Express server endpoint
+      const response = await fetch(
+        "http://localhost:3000/api/helperbot/stream-sdk",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }),
+        }
+      );
+
+      // 2. Error handling if the server breaks down immediately
+      if (!response.ok || !response.body) {
+        throw new Error(`Failed to initialize stream: ${response.statusText}`);
+      }
+
+      // 3. Attach a reader to lock and read the raw incoming body stream
+      const reader = response.body.getReader();
+      // TextDecoder transforms binary Uint8Array chunks back into readable UTF-8 text strings
+      const decoder = new TextDecoder();
+
+      // 4. Enter a continuous loop to stream the chunks as they pull through the network
+      while (true) {
+        const { value, done } = await reader.read();
+
+        // If done is true, the server has closed the response via res.end()
+        if (done) {
+          break;
+        }
+
+        // 5. Decode the current buffer chunk
+        const textToken = decoder.decode(value, { stream: true });
+
+        // 6. Push the token out to your UI state (e.g., React setState, Vue ref, or innerHTML)
+        if (textToken) {
+          handleChunk(textToken);
+
+          if (onTokenReceived) {
+            onTokenReceived(textToken);
+          }
+        }
+      }
+
+      console.log("Stream successfully finished.");
+    } catch (error) {
+      console.error("Error reading frontend stream:", error);
+    }
+  }
+
   return (
     <>
       <div className="generic">
+        <input
+          type="text"
+          id="ai-prompt"
+          value={streamPrompt}
+          onChange={(e) => setStreamPrompt(e.target.value)}
+          placeholder="Enter prompt..."
+        />
+        <button onClick={() => consumeGemmaStream(streamPrompt)}>
+          Stream Bot
+        </button>
+
+        <button onClick={() => botStream()}>Stream Bot</button>
         <button onClick={getSlotMachine}>HAPPY SLOT </button>
         <button onClick={testLibrary}>Library Test</button>
         <button onClick={arrayManipulation}>Array Manipulation</button>
@@ -269,9 +403,16 @@ export default function Home() {
         <button onClick={helperBot}>Helper Bot</button>
       </div>
 
-      <p>{pokeData ? pokeData : "No data"}</p>
-      <p>{message}</p>
-      <p>{botAmswer}</p>
+      <div className="answer-wrapper">
+        <p>{pokeData ? pokeData : "No data"}</p>
+        <p>{botAmswer}</p>
+        <p>{message}</p>
+        {botAmswerGroup.map((token, i) => (
+          <pre key={i}>
+            {token.replace("*", "").replace("*", "".replace(":*", ":")).trim()}
+          </pre>
+        ))}
+      </div>
     </>
   );
 }
