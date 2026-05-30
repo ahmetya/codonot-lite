@@ -304,11 +304,17 @@ export default function Home() {
     }
   }
 
+  function cleanAnswers() {
+    setBotAnswerGroup([]);
+    setBotAnswer("");
+    setPokeData("");
+  }
+
   async function consumeGemmaStream(
     prompt: string,
     onTokenReceived?: (token: string) => void
   ): Promise<void> {
-    setBotAnswerGroup([]);
+    cleanAnswers();
     bufferRef.current = "";
 
     try {
@@ -364,129 +370,149 @@ export default function Home() {
 
   return (
     <>
-      <div className="header">
-        <p>{message}</p>
-        <p>{pokeData ? pokeData : "No Data"}</p>
-      </div>
+      <div className="page-container">
+        <header className="site-header">
+          <div className="site-header__logo">
+            <span className="site-header__logo-icon">&#9644;</span>
+            <span className="site-header__brand">
+              codonot<span className="site-header__accent">lite</span>
+            </span>
+          </div>
+          <nav className="site-header__nav">
+            <span className="site-header__nav-item">{message}</span>
+          </nav>
+        </header>
 
-      <div className="generic">
-        <button onClick={getSlotMachine}>HAPPY SLOT </button>
-        <button onClick={testLibrary}>Library Test</button>
-        <button onClick={arrayManipulation}>Array Manipulation</button>
-        <button onClick={someSample}>Some Sample</button>
-        <button onClick={() => someCallback("Hello")}>Some Callback</button>
-        <button onClick={handlePoke}>Poke Button</button>
-        <button onClick={testPokemonService}>Test Pokemon Service</button>
-        <button onClick={() => utils.sayHello()}>Say Hello</button>
-        <button onClick={() => utils.sayGoodbye()}>Say Goodbye</button>
-        <button onClick={() => saySimple()}>Say Simple</button>
-        <button onClick={testCallbackWithPromise}>
-          Callback with Promise Test
-        </button>
-        <button onClick={testFetchWithPromise}>Fetch with Promise Test</button>
-        <button onClick={testFetchWithPromiseError}>
-          Fetch with Promise Error Test
-        </button>
-        <button onClick={testPokemonServiceExternal}>
-          Test Pokemon Service External
-        </button>
+        <div className="generic">
+          <button onClick={getSlotMachine}>HAPPY SLOT </button>
+          <button onClick={testLibrary}>Library Test</button>
+          <button onClick={arrayManipulation}>Array Manipulation</button>
+          <button onClick={someSample}>Some Sample</button>
+          <button onClick={() => someCallback("Hello")}>Some Callback</button>
+          <button onClick={handlePoke}>Poke Button</button>
+          <button onClick={testPokemonService}>Test Pokemon Service</button>
+          <button onClick={() => utils.sayHello()}>Say Hello</button>
+          <button onClick={() => utils.sayGoodbye()}>Say Goodbye</button>
+          <button onClick={() => saySimple()}>Say Simple</button>
+          <button onClick={testCallbackWithPromise}>
+            Callback with Promise Test
+          </button>
+          <button onClick={testFetchWithPromise}>
+            Fetch with Promise Test
+          </button>
+          <button onClick={testFetchWithPromiseError}>
+            Fetch with Promise Error Test
+          </button>
+          <button onClick={testPokemonServiceExternal}>
+            Test Pokemon Service External
+          </button>
 
-        <button
-          onClick={() =>
-            utils.callbackTest(5, (result) => {
-              console.log("Callback result:", result);
-            })
-          }
-        >
-          Callback Test
-        </button>
-        <button onClick={helperBot}>Helper Bot</button>
-        <button onClick={() => botStream()}>Stream Answer</button>
-      </div>
-
-      <div className="search-bar">
-        <input
-          type="text"
-          id="ai-prompt"
-          value={streamPrompt}
-          onChange={(e) => setStreamPrompt(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && streamPrompt.trim() !== "") {
-              consumeGemmaStream(streamPrompt);
-            } else if (e.key === "Escape") {
-              setStreamPrompt("");
+          <button
+            onClick={() =>
+              utils.callbackTest(5, (result) => {
+                console.log("Callback result:", result);
+              })
             }
-          }}
-          placeholder="Enter prompt..."
-        />
+          >
+            Callback Test
+          </button>
+          <button onClick={helperBot}>Helper Bot</button>
+          <button onClick={() => botStream()}>Stream Answer</button>
+        </div>
 
-        <button onClick={() => consumeGemmaStream(streamPrompt)}>
-          Stream Bot
-        </button>
-      </div>
-
-      <div className="bot-wrapper">
-        {" "}
-        <div className="answer-wrapper" ref={answerRef}>
-          <p>{botAmswer}</p>
-
-          {(() => {
-            // First pass: group tokens into segments (code blocks merged, rest individual)
-            type Segment =
-              | { type: "code"; lines: string[]; key: number }
-              | { type: "text"; line: string; key: number };
-            const segments: Segment[] = [];
-            let inCode = false;
-            let keyCounter = 0;
-
-            for (const token of botAmswerGroup) {
-              const cleaned = token.replace(/\*/g, "").trim();
-              if (cleaned.startsWith("```")) {
-                inCode = !inCode;
-                continue;
+        <div className="search-bar">
+          <input
+            type="text"
+            id="ai-prompt"
+            value={streamPrompt}
+            onChange={(e) => setStreamPrompt(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && streamPrompt.trim() !== "") {
+                consumeGemmaStream(streamPrompt);
+              } else if (e.key === "Escape") {
+                setStreamPrompt("");
               }
-              if (inCode) {
-                const last = segments[segments.length - 1];
-                if (last?.type === "code") {
-                  last.lines.push(cleaned);
+            }}
+            placeholder="Enter prompt..."
+          />
+
+          <button onClick={() => consumeGemmaStream(streamPrompt)}>
+            Stream Bot
+          </button>
+        </div>
+
+        <div className="bot-wrapper">
+          {" "}
+          <div className="answer-wrapper" ref={answerRef}>
+            <p>{botAmswer}</p>
+            <p>{pokeData}</p>
+
+            {(() => {
+              // First pass: group tokens into segments (code blocks merged, rest individual)
+              type Segment =
+                | { type: "code"; lines: string[]; key: number }
+                | { type: "text"; line: string; key: number };
+              const segments: Segment[] = [];
+              let inCode = false;
+              let keyCounter = 0;
+
+              for (const token of botAmswerGroup) {
+                const cleaned = token.replace(/\*/g, "").trim();
+                if (cleaned.startsWith("```")) {
+                  inCode = !inCode;
+                  continue;
+                }
+                if (inCode) {
+                  const last = segments[segments.length - 1];
+                  if (last?.type === "code") {
+                    last.lines.push(cleaned);
+                  } else {
+                    segments.push({
+                      type: "code",
+                      lines: [cleaned],
+                      key: keyCounter++,
+                    });
+                  }
                 } else {
                   segments.push({
-                    type: "code",
-                    lines: [cleaned],
+                    type: "text",
+                    line: cleaned,
                     key: keyCounter++,
                   });
                 }
-              } else {
-                segments.push({
-                  type: "text",
-                  line: cleaned,
-                  key: keyCounter++,
-                });
               }
-            }
 
-            // Second pass: render segments
-            return segments.map((seg) => {
-              if (seg.type === "code") {
-                return (
-                  <pre key={seg.key} className="code-block">
-                    {seg.lines.join("\n")}
-                  </pre>
-                );
-              }
-              const match = seg.line.match(/^([A-Za-z][A-Za-z0-9 /]*):(.*)$/);
-              if (match) {
-                return (
-                  <pre key={seg.key}>
-                    <strong className="answer-label">{match[1]}:</strong>
-                    {match[2]}
-                  </pre>
-                );
-              }
-              return <pre key={seg.key}>{seg.line}</pre>;
-            });
-          })()}
-        </div>{" "}
+              // Second pass: render segments
+              return segments.map((seg) => {
+                if (seg.type === "code") {
+                  return (
+                    <pre key={seg.key} className="code-block">
+                      {seg.lines.join("\n")}
+                    </pre>
+                  );
+                }
+                const match = seg.line.match(/^([A-Za-z][A-Za-z0-9 /]*):(.*)$/);
+                if (match) {
+                  return (
+                    <pre key={seg.key}>
+                      <strong className="answer-label">{match[1]}:</strong>
+                      {match[2]}
+                    </pre>
+                  );
+                }
+                return <pre key={seg.key}>{seg.line}</pre>;
+              });
+            })()}
+          </div>
+        </div>
+
+        <footer className="site-footer">
+          <span className="site-footer__brand">
+            codonot<span className="site-footer__accent">lite</span>
+          </span>
+          <span className="site-footer__sep">·</span>
+          <span className="site-footer__note">AI stream playground</span>
+        </footer>
       </div>
     </>
   );
