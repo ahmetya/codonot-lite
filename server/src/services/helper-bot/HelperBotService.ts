@@ -108,8 +108,8 @@ class HelperBotService {
         contents: prompt,
         // 2. Pass standard runtime configurations efficiently inline
         config: {
-          temperature: 1.5,
-          maxOutputTokens: 300,
+          temperature: 1,
+          maxOutputTokens: 6000,
           systemInstruction: {
             parts: [
                 {text: "Use a lot of emojis"},

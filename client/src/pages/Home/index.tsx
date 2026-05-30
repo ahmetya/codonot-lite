@@ -19,12 +19,18 @@ export default function Home() {
   const [botAmswer, setBotAnswer] = useState<string>("");
   const [streamPrompt, setStreamPrompt] = useState<string>("");
   const bufferRef = useRef("");
+  const answerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/hello")
       .then((res) => res.json())
       .then((data: HelloResponse) => setMessage(data.message));
   }, []);
+
+  useEffect(() => {
+    const el = answerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [botAmswerGroup]);
 
   const handlePoke = () => {
     fetch("/api/poke")
@@ -303,6 +309,7 @@ export default function Home() {
     onTokenReceived?: (token: string) => void
   ): Promise<void> {
     setBotAnswerGroup([]);
+    bufferRef.current = "";
 
     try {
       // 1. Fire a standard POST request to your Express server endpoint
@@ -357,19 +364,12 @@ export default function Home() {
 
   return (
     <>
-      <div className="generic">
-        <input
-          type="text"
-          id="ai-prompt"
-          value={streamPrompt}
-          onChange={(e) => setStreamPrompt(e.target.value)}
-          placeholder="Enter prompt..."
-        />
-        <button onClick={() => consumeGemmaStream(streamPrompt)}>
-          Stream Bot
-        </button>
+      <div className="header">
+        <p>{message}</p>
+        <p>{pokeData ? pokeData : "No Data"}</p>
+      </div>
 
-        <button onClick={() => botStream()}>Stream Bot</button>
+      <div className="generic">
         <button onClick={getSlotMachine}>HAPPY SLOT </button>
         <button onClick={testLibrary}>Library Test</button>
         <button onClick={arrayManipulation}>Array Manipulation</button>
@@ -401,17 +401,92 @@ export default function Home() {
           Callback Test
         </button>
         <button onClick={helperBot}>Helper Bot</button>
+        <button onClick={() => botStream()}>Stream Answer</button>
       </div>
 
-      <div className="answer-wrapper">
-        <p>{pokeData ? pokeData : "No data"}</p>
-        <p>{botAmswer}</p>
-        <p>{message}</p>
-        {botAmswerGroup.map((token, i) => (
-          <pre key={i}>
-            {token.replace("*", "").replace("*", "".replace(":*", ":")).trim()}
-          </pre>
-        ))}
+      <div className="search-bar">
+        <input
+          type="text"
+          id="ai-prompt"
+          value={streamPrompt}
+          onChange={(e) => setStreamPrompt(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && streamPrompt.trim() !== "") {
+              consumeGemmaStream(streamPrompt);
+            } else if (e.key === "Escape") {
+              setStreamPrompt("");
+            }
+          }}
+          placeholder="Enter prompt..."
+        />
+
+        <button onClick={() => consumeGemmaStream(streamPrompt)}>
+          Stream Bot
+        </button>
+      </div>
+
+      <div className="bot-wrapper">
+        {" "}
+        <div className="answer-wrapper" ref={answerRef}>
+          <p>{botAmswer}</p>
+
+          {(() => {
+            // First pass: group tokens into segments (code blocks merged, rest individual)
+            type Segment =
+              | { type: "code"; lines: string[]; key: number }
+              | { type: "text"; line: string; key: number };
+            const segments: Segment[] = [];
+            let inCode = false;
+            let keyCounter = 0;
+
+            for (const token of botAmswerGroup) {
+              const cleaned = token.replace(/\*/g, "").trim();
+              if (cleaned.startsWith("```")) {
+                inCode = !inCode;
+                continue;
+              }
+              if (inCode) {
+                const last = segments[segments.length - 1];
+                if (last?.type === "code") {
+                  last.lines.push(cleaned);
+                } else {
+                  segments.push({
+                    type: "code",
+                    lines: [cleaned],
+                    key: keyCounter++,
+                  });
+                }
+              } else {
+                segments.push({
+                  type: "text",
+                  line: cleaned,
+                  key: keyCounter++,
+                });
+              }
+            }
+
+            // Second pass: render segments
+            return segments.map((seg) => {
+              if (seg.type === "code") {
+                return (
+                  <pre key={seg.key} className="code-block">
+                    {seg.lines.join("\n")}
+                  </pre>
+                );
+              }
+              const match = seg.line.match(/^([A-Za-z][A-Za-z0-9 /]*):(.*)$/);
+              if (match) {
+                return (
+                  <pre key={seg.key}>
+                    <strong className="answer-label">{match[1]}:</strong>
+                    {match[2]}
+                  </pre>
+                );
+              }
+              return <pre key={seg.key}>{seg.line}</pre>;
+            });
+          })()}
+        </div>{" "}
       </div>
     </>
   );
