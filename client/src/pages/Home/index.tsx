@@ -420,29 +420,27 @@ export default function Home() {
           <button onClick={() => botStream()}>Stream Answer</button>
         </div>
 
-        <div className="search-bar">
-          <input
-            type="text"
-            id="ai-prompt"
-            value={streamPrompt}
-            onChange={(e) => setStreamPrompt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && streamPrompt.trim() !== "") {
-                consumeGemmaStream(streamPrompt);
-              } else if (e.key === "Escape") {
-                setStreamPrompt("");
-              }
-            }}
-            placeholder="Enter prompt..."
-          />
-
-          <button onClick={() => consumeGemmaStream(streamPrompt)}>
-            Stream Bot
-          </button>
-        </div>
-
         <div className="bot-wrapper">
-          {" "}
+          <div className="search-bar">
+            <input
+              type="text"
+              id="ai-prompt"
+              value={streamPrompt}
+              onChange={(e) => setStreamPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && streamPrompt.trim() !== "") {
+                  consumeGemmaStream(streamPrompt);
+                } else if (e.key === "Escape") {
+                  setStreamPrompt("");
+                }
+              }}
+              placeholder="Enter prompt..."
+            />
+
+            <button onClick={() => consumeGemmaStream(streamPrompt)}>
+              Stream Bot
+            </button>
+          </div>{" "}
           <div className="answer-wrapper" ref={answerRef}>
             <p>{botAmswer}</p>
             <p>{pokeData}</p>
