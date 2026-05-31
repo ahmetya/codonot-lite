@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ~/codonot-lite
-git pull origin main
+git pull origin master
 
 # Server
 cd server
@@ -8,7 +8,7 @@ npm install
 npx prisma generate
 npx prisma migrate deploy
 npm run build
-pm2 restart codonot-lite
+pm2 restart codonot-lite-api
 
 # Client
 cd ../client
