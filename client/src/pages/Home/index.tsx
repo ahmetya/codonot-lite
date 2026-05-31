@@ -373,6 +373,91 @@ export default function Home() {
     }
   }
 
+  const codingBlock = () => {
+    // First pass: group tokens into segments (code blocks merged, rest individual)
+    type Segment =
+      | { type: "code"; lines: string[]; lang: string; key: number }
+      | { type: "text"; line: string; key: number };
+    const segments: Segment[] = [];
+    let inCode = false;
+    let codeLang = "";
+    let keyCounter = 0;
+
+    for (const token of botAmswerGroup) {
+      const cleaned = token.replace(/\*/g, "").trim();
+      if (cleaned.startsWith("```")) {
+        if (!inCode) {
+          // Opening fence: capture language (e.g. ```typescript)
+          codeLang = cleaned.slice(3).trim().toLowerCase();
+        } else {
+          // Closing fence: reset so the next block doesn't inherit it
+          codeLang = "";
+        }
+        inCode = !inCode;
+        continue;
+      }
+      if (inCode) {
+        // Preserve raw line: keep indentation, don't strip asterisks
+        const raw = token.replace(/\s+$/, "");
+        const last = segments[segments.length - 1];
+        if (last?.type === "code") {
+          last.lines.push(raw);
+        } else {
+          segments.push({
+            type: "code",
+            lines: [raw],
+            lang: codeLang,
+            key: keyCounter++,
+          });
+        }
+      } else {
+        segments.push({
+          type: "text",
+          line: cleaned,
+          key: keyCounter++,
+        });
+      }
+    }
+
+    // Second pass: render segments
+    return segments.map((seg) => {
+      if (seg.type === "code") {
+        // Dedent: remove the common leading whitespace shared by all
+        // non-empty lines so relative indentation is preserved.
+        const nonEmpty = seg.lines.filter((l) => l.trim() !== "");
+        const minIndent = nonEmpty.reduce((min, l) => {
+          const indent = l.match(/^\s*/)?.[0].length ?? 0;
+          return Math.min(min, indent);
+        }, Infinity);
+        const pad = Number.isFinite(minIndent) ? minIndent : 0;
+        const code = seg.lines.map((l) => l.slice(pad)).join("\n");
+        const highlighted =
+          seg.lang && hljs.getLanguage(seg.lang)
+            ? hljs.highlight(code, { language: seg.lang })
+            : hljs.highlightAuto(code);
+        const langLabel = seg.lang || highlighted.language || "text";
+        return (
+          <div key={seg.key} className="code-block-wrap">
+            <div className="code-block__lang">{langLabel}</div>
+            <pre className="code-block">
+              <code dangerouslySetInnerHTML={{ __html: highlighted.value }} />
+            </pre>
+          </div>
+        );
+      }
+      const match = seg.line.match(/^([A-Za-z][A-Za-z0-9 /]*):(.*)$/);
+      if (match) {
+        return (
+          <pre key={seg.key}>
+            <strong className="answer-label">{match[1]}:</strong>
+            {match[2]}
+          </pre>
+        );
+      }
+      return <pre key={seg.key}>{seg.line}</pre>;
+    });
+  };
+
   return (
     <>
       <div className="page-container">
@@ -460,95 +545,7 @@ export default function Home() {
           <div className="answer-wrapper" ref={answerRef}>
             <p>{botAmswer}</p>
             <p>{pokeData}</p>
-
-            {(() => {
-              // First pass: group tokens into segments (code blocks merged, rest individual)
-              type Segment =
-                | { type: "code"; lines: string[]; lang: string; key: number }
-                | { type: "text"; line: string; key: number };
-              const segments: Segment[] = [];
-              let inCode = false;
-              let codeLang = "";
-              let keyCounter = 0;
-
-              for (const token of botAmswerGroup) {
-                const cleaned = token.replace(/\*/g, "").trim();
-                if (cleaned.startsWith("```")) {
-                  if (!inCode) {
-                    // Opening fence: capture language (e.g. ```typescript)
-                    codeLang = cleaned.slice(3).trim().toLowerCase();
-                  } else {
-                    // Closing fence: reset so the next block doesn't inherit it
-                    codeLang = "";
-                  }
-                  inCode = !inCode;
-                  continue;
-                }
-                if (inCode) {
-                  // Preserve raw line: keep indentation, don't strip asterisks
-                  const raw = token.replace(/\s+$/, "");
-                  const last = segments[segments.length - 1];
-                  if (last?.type === "code") {
-                    last.lines.push(raw);
-                  } else {
-                    segments.push({
-                      type: "code",
-                      lines: [raw],
-                      lang: codeLang,
-                      key: keyCounter++,
-                    });
-                  }
-                } else {
-                  segments.push({
-                    type: "text",
-                    line: cleaned,
-                    key: keyCounter++,
-                  });
-                }
-              }
-
-              // Second pass: render segments
-              return segments.map((seg) => {
-                if (seg.type === "code") {
-                  // Dedent: remove the common leading whitespace shared by all
-                  // non-empty lines so relative indentation is preserved.
-                  const nonEmpty = seg.lines.filter((l) => l.trim() !== "");
-                  const minIndent = nonEmpty.reduce((min, l) => {
-                    const indent = l.match(/^\s*/)?.[0].length ?? 0;
-                    return Math.min(min, indent);
-                  }, Infinity);
-                  const pad = Number.isFinite(minIndent) ? minIndent : 0;
-                  const code = seg.lines
-                    .map((l) => l.slice(pad))
-                    .join("\n");
-                  const highlighted =
-                    seg.lang && hljs.getLanguage(seg.lang)
-                      ? hljs.highlight(code, { language: seg.lang })
-                      : hljs.highlightAuto(code);
-                  const langLabel = seg.lang || highlighted.language || "text";
-                  return (
-                    <div key={seg.key} className="code-block-wrap">
-                      <div className="code-block__lang">{langLabel}</div>
-                      <pre className="code-block">
-                        <code
-                          dangerouslySetInnerHTML={{ __html: highlighted.value }}
-                        />
-                      </pre>
-                    </div>
-                  );
-                }
-                const match = seg.line.match(/^([A-Za-z][A-Za-z0-9 /]*):(.*)$/);
-                if (match) {
-                  return (
-                    <pre key={seg.key}>
-                      <strong className="answer-label">{match[1]}:</strong>
-                      {match[2]}
-                    </pre>
-                  );
-                }
-                return <pre key={seg.key}>{seg.line}</pre>;
-              });
-            })()}
+            {codingBlock()}
           </div>
         </div>
 

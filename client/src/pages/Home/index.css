@@ -122,7 +122,7 @@ pre {
 }
 
 .code-block__lang {
-  display: block;
+  display: flex;
   padding: 4px 10px;
   font-size: 10px;
   font-weight: 600;
