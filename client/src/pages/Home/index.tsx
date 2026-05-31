@@ -475,7 +475,11 @@ export default function Home() {
                 const cleaned = token.replace(/\*/g, "").trim();
                 if (cleaned.startsWith("```")) {
                   if (!inCode) {
-                    codeLang = cleaned.slice(3).trim(); // capture e.g. "typescript"
+                    // Opening fence: capture language (e.g. ```typescript)
+                    codeLang = cleaned.slice(3).trim().toLowerCase();
+                  } else {
+                    // Closing fence: reset so the next block doesn't inherit it
+                    codeLang = "";
                   }
                   inCode = !inCode;
                   continue;
@@ -521,12 +525,16 @@ export default function Home() {
                     seg.lang && hljs.getLanguage(seg.lang)
                       ? hljs.highlight(code, { language: seg.lang })
                       : hljs.highlightAuto(code);
+                  const langLabel = seg.lang || highlighted.language || "text";
                   return (
-                    <pre key={seg.key} className="code-block">
-                      <code
-                        dangerouslySetInnerHTML={{ __html: highlighted.value }}
-                      />
-                    </pre>
+                    <div key={seg.key} className="code-block-wrap">
+                      <div className="code-block__lang">{langLabel}</div>
+                      <pre className="code-block">
+                        <code
+                          dangerouslySetInnerHTML={{ __html: highlighted.value }}
+                        />
+                      </pre>
+                    </div>
                   );
                 }
                 const match = seg.line.match(/^([A-Za-z][A-Za-z0-9 /]*):(.*)$/);

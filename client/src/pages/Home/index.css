@@ -107,14 +107,42 @@ pre {
   box-sizing: border-box;
 }
 
-pre.code-block {
+/* Code block wrapper with language header */
+.code-block-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
+  margin: 6px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border-left: 3px solid var(--accent);
   background: var(--surface-high);
+  box-sizing: border-box;
+}
+
+.code-block__lang {
+  display: block;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--border-dim);
+  user-select: none;
+}
+
+pre.code-block {
+  width: 100%;
+  background: transparent;
   color: #c9d1d9;
   font-family: "Consolas", "Courier New", monospace;
-  border-left: 3px solid var(--accent);
-  padding: 4px 10px;
-  margin: 4px 0;
-  border-radius: 0 4px 4px 0;
+  padding: 8px 10px;
+  margin: 0;
+  overflow-x: auto;
+  box-sizing: border-box;
 }
 
 /* Override hljs theme background to match our surface */
