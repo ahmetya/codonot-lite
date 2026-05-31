@@ -242,13 +242,16 @@ export default function Home() {
 
   const botStream = async () => {
     // Frontend consumption sample:
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/helperbot/stream`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: "Make a joke about robots",
-      }),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/helperbot/stream`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: "Make a joke about robots",
+        }),
+      }
+    );
 
     if (response.body) {
       const reader = response.body.getReader();
@@ -320,7 +323,7 @@ export default function Home() {
     try {
       // 1. Fire a standard POST request to your Express server endpoint
       const response = await fetch(
-        import.meta.env.VITE_API_URL_PROD + "/helperbot/stream-sdk",
+        "https://lite.codonot.com/api/helperbot/stream-sdk",
         {
           method: "POST",
           headers: {
@@ -389,7 +392,9 @@ export default function Home() {
           <h1 className="hero-banner__title">
             codonot<span className="hero-banner__accent">lite</span>
           </h1>
-          <p className="hero-banner__sub">Experiment with live AI streams, token-by-token.</p>
+          <p className="hero-banner__sub">
+            Experiment with live AI streams, token-by-token.
+          </p>
         </div>
 
         <div className="generic">
