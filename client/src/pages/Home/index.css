@@ -51,9 +51,10 @@ button:hover {
 .generic {
   display: flex;
   justify-content: center;
-  margin: 16px;
   flex-wrap: wrap;
   gap: 8px;
+  width: 100%;
+  margin: 16px 0; 
 }
 
 /* ── Stream answer box ────────────────────────────────────── */
@@ -65,7 +66,6 @@ button:hover {
   margin: 16px auto;
   padding: 8px 12px 8px 18px;
   justify-content: flex-start;
-  width: 650px;
   height: 500px;
   max-height: 60vh;
   overflow-y: scroll;
@@ -153,13 +153,13 @@ input:focus {
 .search-bar {
   display: flex;
   gap: 8px;
-  padding: 16px;
   justify-content: center;
   align-items: center;
 }
 
 .search-bar button {
   width: auto;
+  min-width: 100px;
   height: 32px;
   padding: 0 16px;
 }
@@ -243,4 +243,9 @@ input:focus {
 }
 .site-footer__note {
   color: var(--fg-dim);
+}
+
+.bot-wrapper {
+  padding: 8px;
+  max-width: 90%;
 }

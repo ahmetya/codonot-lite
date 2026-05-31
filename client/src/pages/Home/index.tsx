@@ -242,7 +242,7 @@ export default function Home() {
 
   const botStream = async () => {
     // Frontend consumption sample:
-    const response = await fetch("http://localhost:3000/api/helperbot/stream", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/helperbot/stream`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -320,7 +320,7 @@ export default function Home() {
     try {
       // 1. Fire a standard POST request to your Express server endpoint
       const response = await fetch(
-        "http://localhost:3000/api/helperbot/stream-sdk",
+        "http://localhost:3001/api/helperbot/stream-sdk",
         {
           method: "POST",
           headers: {
