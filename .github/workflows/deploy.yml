@@ -1,0 +1,17 @@
+name: Deploy Codonot Lite
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: 161.35.207.4
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: bash ~/codonot-lite/deploy.sh

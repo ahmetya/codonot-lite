@@ -383,6 +383,15 @@ export default function Home() {
           </nav>
         </header>
 
+        <div className="hero-banner">
+          <div className="hero-banner__glow" />
+          <p className="hero-banner__eyebrow">AI · Stream · Playground</p>
+          <h1 className="hero-banner__title">
+            codonot<span className="hero-banner__accent">lite</span>
+          </h1>
+          <p className="hero-banner__sub">Experiment with live AI streams, token-by-token.</p>
+        </div>
+
         <div className="generic">
           <button onClick={getSlotMachine}>HAPPY SLOT </button>
           <button onClick={testLibrary}>Library Test</button>
