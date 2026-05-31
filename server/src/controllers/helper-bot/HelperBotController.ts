@@ -40,12 +40,14 @@ export class HelperBotController {
     }
   }
 
-    async streamBotSDK(req: Request, res: Response) {
+  async streamBotSDK(req: Request, res: Response) {
     const { prompt } = req.body;
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // ← tells Nginx not to buffer
+    res.flushHeaders(); // ← send headers immediately
 
     try {
       await helperBotService.streamBotSDK(prompt, res);

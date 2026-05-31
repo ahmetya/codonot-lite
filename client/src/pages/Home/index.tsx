@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./index.css";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css";
 import { Utils } from "../../services/utils";
 import { Library } from "../../services/library";
 import { Book } from "../../services/book";
@@ -265,7 +267,7 @@ export default function Home() {
 
         const parsed = parseSSELine(rawLine);
         if (parsed) {
-          const text = parsed.candidates[0]?.content?.parts[0].text.trimStart();
+          const text = parsed.candidates[0]?.content?.parts[0].text;
 
           // parsed.candidates[0]?.content?.parts
           //   ?.map((p: Record<string, string>) => p.text)
@@ -284,8 +286,8 @@ export default function Home() {
     if (bufferRef.current.includes("\n")) {
       const lines = bufferRef.current.split("\n");
 
-      // Last element may be incomplete — keep it in buffer
-      bufferRef.current = lines.pop()?.trimStart().trim() ?? "";
+      // Last element may be incomplete — keep it raw in buffer (preserve indentation)
+      bufferRef.current = lines.pop() ?? "";
 
       setBotAnswerGroup((prev) => [...prev, ...lines]);
     }
@@ -462,26 +464,33 @@ export default function Home() {
             {(() => {
               // First pass: group tokens into segments (code blocks merged, rest individual)
               type Segment =
-                | { type: "code"; lines: string[]; key: number }
+                | { type: "code"; lines: string[]; lang: string; key: number }
                 | { type: "text"; line: string; key: number };
               const segments: Segment[] = [];
               let inCode = false;
+              let codeLang = "";
               let keyCounter = 0;
 
               for (const token of botAmswerGroup) {
                 const cleaned = token.replace(/\*/g, "").trim();
                 if (cleaned.startsWith("```")) {
+                  if (!inCode) {
+                    codeLang = cleaned.slice(3).trim(); // capture e.g. "typescript"
+                  }
                   inCode = !inCode;
                   continue;
                 }
                 if (inCode) {
+                  // Preserve raw line: keep indentation, don't strip asterisks
+                  const raw = token.replace(/\s+$/, "");
                   const last = segments[segments.length - 1];
                   if (last?.type === "code") {
-                    last.lines.push(cleaned);
+                    last.lines.push(raw);
                   } else {
                     segments.push({
                       type: "code",
-                      lines: [cleaned],
+                      lines: [raw],
+                      lang: codeLang,
                       key: keyCounter++,
                     });
                   }
@@ -497,9 +506,26 @@ export default function Home() {
               // Second pass: render segments
               return segments.map((seg) => {
                 if (seg.type === "code") {
+                  // Dedent: remove the common leading whitespace shared by all
+                  // non-empty lines so relative indentation is preserved.
+                  const nonEmpty = seg.lines.filter((l) => l.trim() !== "");
+                  const minIndent = nonEmpty.reduce((min, l) => {
+                    const indent = l.match(/^\s*/)?.[0].length ?? 0;
+                    return Math.min(min, indent);
+                  }, Infinity);
+                  const pad = Number.isFinite(minIndent) ? minIndent : 0;
+                  const code = seg.lines
+                    .map((l) => l.slice(pad))
+                    .join("\n");
+                  const highlighted =
+                    seg.lang && hljs.getLanguage(seg.lang)
+                      ? hljs.highlight(code, { language: seg.lang })
+                      : hljs.highlightAuto(code);
                   return (
                     <pre key={seg.key} className="code-block">
-                      {seg.lines.join("\n")}
+                      <code
+                        dangerouslySetInnerHTML={{ __html: highlighted.value }}
+                      />
                     </pre>
                   );
                 }
