@@ -320,7 +320,7 @@ export default function Home() {
     try {
       // 1. Fire a standard POST request to your Express server endpoint
       const response = await fetch(
-        "http://localhost:3001/api/helperbot/stream-sdk",
+        import.meta.env.VITE_API_URL_PROD + "/helperbot/stream-sdk",
         {
           method: "POST",
           headers: {
