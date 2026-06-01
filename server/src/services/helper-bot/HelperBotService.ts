@@ -14,8 +14,8 @@ import { GoogleGenAI } from '@google/genai';
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 
-// const MODEL = 'gemma-4-26b-a4b-it';
-const MODEL = 'gemini-3.5-flash';
+const MODEL = 'gemma-4-26b-a4b-it';
+// const MODEL = 'gemini-3.5-flash';
 
 class HelperBotService {
   async askGemma(prompt: string): Promise<string> {
