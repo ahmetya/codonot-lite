@@ -14,7 +14,8 @@ import { GoogleGenAI } from '@google/genai';
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 
-const MODEL = 'gemma-4-26b-a4b-it';
+// const MODEL = 'gemma-4-26b-a4b-it';
+const MODEL = 'gemini-3.5-flash';
 
 class HelperBotService {
   async askGemma(prompt: string): Promise<string> {
@@ -112,9 +113,11 @@ class HelperBotService {
           maxOutputTokens: 6000,
           systemInstruction: {
             parts: [
-                {text: "Use a lot of emojis"},
+              {
+                text: 'Use some emojis explain it to a someone with very low iq and tell him that he is very low iq and remind that teling this to someone with low iq and ensure phases like dont afraid everything is safe without any insult.',
+              },
             ],
-          }
+          },
         },
       });
 
