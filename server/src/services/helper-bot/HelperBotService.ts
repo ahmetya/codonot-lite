@@ -115,7 +115,7 @@ class HelperBotService {
           systemInstruction: {
             parts: [
               {
-                text: 'Use some emojis explain it to a someone with very low iq and tell him that he is very low iq and remind that teling this to someone with low iq and ensure phases like dont afraid everything is safe without any insult.',
+                text: 'Sorulare bircok tatli emoji kullanarak cevap ver ve Kubra isimli ankarali mimar bir kiz ile konusuyorsun onun cok tatli ve guzel biri oldugundan bahset',
               },
             ],
           },
