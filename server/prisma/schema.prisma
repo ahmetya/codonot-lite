@@ -23,3 +23,9 @@ model Pokemon {
   pokeId Int
   name   String
 }
+
+model HelperBot {
+  id     Int    @id @default(autoincrement())
+  prompt String
+  model  String
+}

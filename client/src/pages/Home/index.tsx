@@ -325,7 +325,7 @@ export default function Home() {
     try {
       // 1. Fire a standard POST request to your Express server endpoint
       const response = await fetch(
-        "https://lite.codonot.com/api/helperbot/stream-sdk",
+        "http://localhost:3001/api/helperbot/stream-sdk",
         {
           method: "POST",
           headers: {

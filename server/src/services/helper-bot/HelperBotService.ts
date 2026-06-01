@@ -10,12 +10,13 @@ interface GemmaResponse {
 
 import { Response } from 'express';
 import { GoogleGenAI } from '@google/genai';
+import prisma from '@config/db';
 
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 
-// const MODEL = 'gemma-4-26b-a4b-it';
-const MODEL = 'gemini-3.5-flash';
+const MODEL = 'gemma-4-26b-a4b-it';
+// const MODEL = 'gemini-3.5-flash';
 
 class HelperBotService {
   async askGemma(prompt: string): Promise<string> {
@@ -120,6 +121,11 @@ class HelperBotService {
           },
         },
       });
+
+      const prismaResponse = await prisma.helperBot.create({
+        data: { prompt, model: MODEL },
+      });
+      console.log('PRISMA RESPONSE: ', prismaResponse);
 
       console.log(`🤖 Gemma 4 Thinking...\n`);
 
