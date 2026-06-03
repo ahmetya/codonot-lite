@@ -16,7 +16,7 @@
       "@middleware/*": ["src/middleware/*"],
       "@config/*": ["src/config/*"],
       "@utils/*": ["src/utils/*"],
-      "@types/*": ["src/types/*"]
+      "@app-types/*": ["src/app-types/*"]
     }
   },
   "include": ["src"]

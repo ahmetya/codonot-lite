@@ -8,14 +8,14 @@ interface GemmaResponse {
   }>;
 }
 
-import { Response } from 'express';
-import { GoogleGenAI } from '@google/genai';
-import prisma from '@config/db';
+import { Response } from "express";
+import { GoogleGenAI } from "@google/genai";
+import prisma from "@config/db";
 
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 
-const MODEL = 'gemma-4-26b-a4b-it';
+const MODEL = "gemma-4-26b-a4b-it";
 // const MODEL = 'gemini-3.5-flash';
 
 class HelperBotService {
@@ -23,21 +23,21 @@ class HelperBotService {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey)
-      throw new Error('Missing GEMINI_API_KEY environment variable.');
+      throw new Error("Missing GEMINI_API_KEY environment variable.");
 
     // Using the Gemma 4 26B Mixture of Experts endpoint
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         system_instruction: {
           parts: [
             {
-              text: 'You are a direct, concise joke generator. Do NOT show your thinking, notes, tropes, or brainstorming ideas. Output exactly one short punchline.',
+              text: "You are a direct, concise joke generator. Do NOT show your thinking, notes, tropes, or brainstorming ideas. Output exactly one short punchline.",
             },
           ],
         },
@@ -64,21 +64,21 @@ class HelperBotService {
 
     // Navigate Google's deeply nested JSON response safely
     const outputText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    return outputText || 'No text returned from model.';
+    return outputText || "No text returned from model.";
   }
 
   async streamGemmaToClient(prompt: string, res: Response): Promise<void> {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error('Missing GEMINI_API_KEY environment variable.');
+      throw new Error("Missing GEMINI_API_KEY environment variable.");
     }
 
     // Adding ?alt=sse forces Google to output clear, line-by-line SSE events
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?key=${apiKey}&alt=sse`;
 
     const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
       }),
@@ -115,7 +115,7 @@ class HelperBotService {
           systemInstruction: {
             parts: [
               {
-                text: 'Sorulare bircok tatli emoji kullanarak cevap ver ve Kubra isimli ankarali mimar bir kiz ile konusuyorsun onun cok tatli ve guzel biri oldugundan bahset',
+                text: "You are a direct, concise joke generator. Do NOT show your thinking, notes, tropes, or brainstorming ideas. Output exactly one short punchline.",
               },
             ],
           },
@@ -125,7 +125,7 @@ class HelperBotService {
       const prismaResponse = await prisma.helperBot.create({
         data: { prompt, model: MODEL },
       });
-      console.log('PRISMA RESPONSE: ', prismaResponse);
+      console.log("PRISMA RESPONSE: ", prismaResponse);
 
       console.log(`🤖 Gemma 4 Thinking...\n`);
 
@@ -144,14 +144,14 @@ class HelperBotService {
           res.write(textToStream);
 
           // Explicitly flush the Node response stream down the network pipe
-          if ('flush' in res && typeof res.flush === 'function') {
+          if ("flush" in res && typeof res.flush === "function") {
             (res as any).flush();
           }
         }
       }
-      console.log('\n\n--- Stream Completed ---');
+      console.log("\n\n--- Stream Completed ---");
     } catch (error) {
-      console.error('API Error:', error);
+      console.error("API Error:", error);
     }
   }
 }

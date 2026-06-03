@@ -6,6 +6,7 @@ import { Utils } from "../../services/utils";
 import { Library } from "../../services/library";
 import { Book } from "../../services/book";
 import { SlotMachine } from "../../services/slotMachine";
+import { apiService } from "../../services/ApiService";
 
 interface HelloResponse {
   message: string;
@@ -458,6 +459,31 @@ export default function Home() {
     });
   };
 
+  const apiRegisterTest = async () => {
+    const email = "admin@example.com";
+    const password = "admin123";
+    const name = "admin";
+
+    try {
+      const response = await apiService.register(email, password, name);
+      console.log("Registration successful:", response);
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
+  };
+
+  const apiLoginTest = async () => {
+    const email = "admin@example.com";
+    const password = "admin123";
+
+    try {
+      const response = await apiService.login(email, password);
+      console.log("Login successful:", response);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
   return (
     <>
       <div className="page-container">
@@ -485,6 +511,9 @@ export default function Home() {
         </div>
 
         <div className="generic">
+          <button onClick={apiRegisterTest}>API Register Test</button>
+          <button onClick={apiLoginTest}>API Login Test</button>
+
           <button onClick={getSlotMachine}>HAPPY SLOT </button>
           <button onClick={testLibrary}>Library Test</button>
           <button onClick={arrayManipulation}>Array Manipulation</button>
@@ -507,6 +536,7 @@ export default function Home() {
           <button onClick={testPokemonServiceExternal}>
             Test Pokemon Service External
           </button>
+          <button onClick={cleanAnswers}>Clean Answers</button>
 
           <button
             onClick={() =>
