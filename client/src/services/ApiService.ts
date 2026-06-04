@@ -1,6 +1,6 @@
 // src/services/ApiService.ts
 class ApiService {
-  private baseUrl = "http://localhost:3001/api";
+  private baseUrl = "https://lite.codonot.com/api";
 
   private getHeaders() {
     const token = localStorage.getItem("token");
