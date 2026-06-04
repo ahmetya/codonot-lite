@@ -350,5 +350,12 @@ input:focus {
 
 .bot-wrapper {
   padding: 8px;
-  width: 90%  ;
+  width: 90%;
+}
+
+.auth {
+  button {
+    height: 32px;
+    margin: 0 8px;
+  }
 }

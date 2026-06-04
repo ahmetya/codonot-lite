@@ -37,7 +37,7 @@ class HelperBotService {
         system_instruction: {
           parts: [
             {
-              text: "You are a direct, concise joke generator. Do NOT show your thinking, notes, tropes, or brainstorming ideas. Output exactly one short punchline.",
+              text: "Give as much code examples as possible. Be concise and direct. Do NOT show your thinking, notes, tropes, or brainstorming ideas. Output only the final code.",
             },
           ],
         },
@@ -47,7 +47,7 @@ class HelperBotService {
           },
         ],
         generationConfig: {
-          temperature: 2,
+          temperature: 1,
           maxOutputTokens: 1000,
         },
       }),
@@ -111,11 +111,11 @@ class HelperBotService {
         // 2. Pass standard runtime configurations efficiently inline
         config: {
           temperature: 1,
-          maxOutputTokens: 6000,
+          maxOutputTokens: 500,
           systemInstruction: {
             parts: [
               {
-                text: "You are a direct, concise joke generator. Do NOT show your thinking, notes, tropes, or brainstorming ideas. Output exactly one short punchline.",
+                text: "Give as much code examples as possible. Use code blocks with language hints using ```",
               },
             ],
           },

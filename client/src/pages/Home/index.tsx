@@ -7,6 +7,7 @@ import { Library } from "../../services/library";
 import { Book } from "../../services/book";
 import { SlotMachine } from "../../services/slotMachine";
 import { apiService } from "../../services/ApiService";
+import { useAuth } from "../../context/AuthContext";
 
 interface HelloResponse {
   message: string;
@@ -16,6 +17,7 @@ const utils = new Utils("Ahmet");
 const slotMachine = new SlotMachine(100);
 
 export default function Home() {
+  const { isAuthenticated, user, login, logout } = useAuth();
   const [message, setMessage] = useState<string>("");
   const [pokeData, setPokeData] = useState<string>("");
   const [botAmswerGroup, setBotAnswerGroup] = useState<string[]>([]);
@@ -261,7 +263,10 @@ export default function Home() {
       const decoder = new TextDecoder();
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        if (done) {
+          flushBuffer();
+          break;
+        }
 
         const rawLine = decoder.decode(value);
         // Parse lines starting with "data: " to read incoming JSON patches safely!
@@ -291,6 +296,14 @@ export default function Home() {
       bufferRef.current = lines.pop() ?? "";
 
       setBotAnswerGroup((prev) => [...prev, ...lines]);
+    }
+  }
+
+  function flushBuffer() {
+    if (bufferRef.current !== "") {
+      const remaining = bufferRef.current;
+      bufferRef.current = "";
+      setBotAnswerGroup((prev) => [...prev, remaining]);
     }
   }
 
@@ -352,6 +365,7 @@ export default function Home() {
 
         // If done is true, the server has closed the response via res.end()
         if (done) {
+          flushBuffer();
           break;
         }
 
@@ -486,6 +500,10 @@ export default function Home() {
 
   return (
     <>
+      {
+        // <p>{isAuthenticated ? "You are logged in" : "You are not logged in"}</p>
+      }
+
       <div className="page-container">
         <header className="site-header">
           <div className="site-header__logo">
@@ -495,7 +513,29 @@ export default function Home() {
             </span>
           </div>
           <nav className="site-header__nav">
-            <span className="site-header__nav-item">{message}</span>
+            <div className="auth">
+              {!isAuthenticated && (
+                <>
+                  <span className="site-header__nav-item">{message}</span>
+                  <button
+                    onClick={() => login("admin@example.com", "admin123")}
+                  >
+                    Login
+                  </button>
+                  <button>Register</button>
+                </>
+              )}
+
+              {isAuthenticated && (
+                <>
+                  <span className="site-header__nav-item">
+                    Hello {user?.name}!
+                  </span>
+                  <button onClick={logout}>Logout</button>
+                  <button>Create Post</button>
+                </>
+              )}
+            </div>
           </nav>
         </header>
 
@@ -512,7 +552,7 @@ export default function Home() {
 
         <div className="generic">
           <button onClick={apiRegisterTest}>API Register Test</button>
-          <button onClick={apiLoginTest}>API Login Test</button>
+          <button onClick={() => apiLoginTest()}>API Login Test</button>
 
           <button onClick={getSlotMachine}>HAPPY SLOT </button>
           <button onClick={testLibrary}>Library Test</button>
