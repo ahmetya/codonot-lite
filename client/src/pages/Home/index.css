@@ -354,8 +354,40 @@ input:focus {
 }
 
 .auth {
+  display: flex;
   button {
     height: 32px;
     margin: 0 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .site-header__nav {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-banner__title {
+    font-size: 32px;
+  }
+
+  .hero-banner__sub {
+    font-size: 12px;
+    max-width: 100%;
+  }
+
+  .auth {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
   }
 }

@@ -517,12 +517,14 @@ export default function Home() {
               {!isAuthenticated && (
                 <>
                   <span className="site-header__nav-item">{message}</span>
-                  <button
-                    onClick={() => login("admin@example.com", "admin123")}
-                  >
-                    Login
-                  </button>
-                  <button>Register</button>
+                  <div className="header-buttons">
+                    <button
+                      onClick={() => login("admin@example.com", "admin123")}
+                    >
+                      Login
+                    </button>
+                    <button>Register</button>
+                  </div>
                 </>
               )}
 
@@ -531,8 +533,14 @@ export default function Home() {
                   <span className="site-header__nav-item">
                     Hello {user?.name}!
                   </span>
-                  <button onClick={logout}>Logout</button>
-                  <button>Create Post</button>
+                  <div className="header-buttons">
+                    <button onClick={logout}>Logout</button>
+                    <button>Create Post</button>
+                  </div>
+                  {/* <div className="header-buttons">
+                    <button onClick={logout}>Logout</button>
+                    <button>Create Post</button>
+                  </div> */}
                 </>
               )}
             </div>
