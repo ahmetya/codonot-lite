@@ -8,7 +8,7 @@ import { Book } from "../../services/book";
 import { SlotMachine } from "../../services/slotMachine";
 import { apiService } from "../../services/ApiService";
 import { useAuth } from "../../context/AuthContext";
-import mainBanner2 from "../../assets/main-banner-2.jpg";
+import mainBanner from "../../assets/main-banner-3.jpg";
 
 interface HelloResponse {
   message: string;
@@ -659,7 +659,7 @@ export default function Home() {
           <>
             <div>
               <img
-                src={mainBanner2}
+                src={mainBanner}
                 alt="Robot"
                 className="robot-image"
               />
