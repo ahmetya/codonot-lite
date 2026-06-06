@@ -43,8 +43,6 @@ button {
 }
 
 .button-auth {
-  background: var(--accent);
-  color: var(--bg);
   border-color: var(--accent);
 }
 
@@ -60,8 +58,7 @@ button {
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  width: 100%;
-  margin: 16px 0;
+  margin: 16px 16px;
 }
 
 /* ── Stream answer box ────────────────────────────────────── */
@@ -262,6 +259,7 @@ input:focus {
   font-size: 11px;
   color: var(--fg-dim);
   letter-spacing: 0.04em;
+  margin: 0 8px;
 }
 
 /* ── Hero banner ─────────────────────────────────────────── */
@@ -361,6 +359,7 @@ input:focus {
 
 .auth {
   display: flex;
+  align-items: center;
   button {
     height: 32px;
     margin: 0 8px;
@@ -368,9 +367,9 @@ input:focus {
 }
 
 .button-auth {
-  background: var(--accent);
-  color: var(--bg);
-  border-color: var(--accent);
+  /* background: var(--accent); */
+  /* color: var(--bg); */
+  /* border-color: var(--accent); */
 }
 
 .robot-image {
@@ -405,5 +404,9 @@ input:focus {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+  }
+
+  .robot-image {
+    height: 250px;
   }
 }

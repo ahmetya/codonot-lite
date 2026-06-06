@@ -658,11 +658,7 @@ export default function Home() {
         {!isAuthenticated && (
           <>
             <div>
-              <img
-                src={mainBanner}
-                alt="Robot"
-                className="robot-image"
-              />
+              <img src={mainBanner} alt="Robot" className="robot-image" />
             </div>
           </>
         )}
