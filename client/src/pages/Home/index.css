@@ -42,8 +42,14 @@ button {
     border-color 0.15s;
 }
 
-button:hover {
-  background: var(--surface-high);
+.button-auth {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.button-auth:hover {
+  background: var(--accent-glow);
   color: var(--fg);
   border-color: var(--accent);
 }
@@ -359,6 +365,16 @@ input:focus {
     height: 32px;
     margin: 0 8px;
   }
+}
+
+.button-auth {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.robot-image {
+  height: 400px;
 }
 
 @media (max-width: 600px) {

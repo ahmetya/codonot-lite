@@ -500,10 +500,6 @@ export default function Home() {
 
   return (
     <>
-      {
-        // <p>{isAuthenticated ? "You are logged in" : "You are not logged in"}</p>
-      }
-
       <div className="page-container">
         <header className="site-header">
           <div className="site-header__logo">
@@ -537,10 +533,6 @@ export default function Home() {
                     <button onClick={logout}>Logout</button>
                     <button>Create Post</button>
                   </div>
-                  {/* <div className="header-buttons">
-                    <button onClick={logout}>Logout</button>
-                    <button>Create Post</button>
-                  </div> */}
                 </>
               )}
             </div>
@@ -562,16 +554,47 @@ export default function Home() {
           <button onClick={apiRegisterTest}>API Register Test</button>
           <button onClick={() => apiLoginTest()}>API Login Test</button>
 
-          <button onClick={getSlotMachine}>HAPPY SLOT </button>
-          <button onClick={testLibrary}>Library Test</button>
-          <button onClick={arrayManipulation}>Array Manipulation</button>
-          <button onClick={someSample}>Some Sample</button>
-          <button onClick={() => someCallback("Hello")}>Some Callback</button>
-          <button onClick={handlePoke}>Poke Button</button>
-          <button onClick={testPokemonService}>Test Pokemon Service</button>
-          <button onClick={() => utils.sayHello()}>Say Hello</button>
-          <button onClick={() => utils.sayGoodbye()}>Say Goodbye</button>
-          <button onClick={() => saySimple()}>Say Simple</button>
+          {isAuthenticated && (
+            <>
+              <button className="button-auth" onClick={getSlotMachine}>
+                HAPPY SLOT{" "}
+              </button>
+              <button className="button-auth" onClick={testLibrary}>
+                Library Test
+              </button>
+              <button className="button-auth" onClick={arrayManipulation}>
+                Array Manipulation
+              </button>
+              <button className="button-auth" onClick={someSample}>
+                Some Sample
+              </button>
+              <button
+                className="button-auth"
+                onClick={() => someCallback("Hello")}
+              >
+                Some Callback
+              </button>
+              <button className="button-auth" onClick={handlePoke}>
+                Poke Button
+              </button>
+              <button className="button-auth" onClick={testPokemonService}>
+                Test Pokemon Service
+              </button>
+              <button className="button-auth" onClick={() => utils.sayHello()}>
+                Say Hello
+              </button>
+              <button
+                className="button-auth"
+                onClick={() => utils.sayGoodbye()}
+              >
+                Say Goodbye
+              </button>
+              <button className="button-auth" onClick={() => saySimple()}>
+                Say Simple
+              </button>
+            </>
+          )}
+
           <button onClick={testCallbackWithPromise}>
             Callback with Promise Test
           </button>
@@ -599,33 +622,49 @@ export default function Home() {
           <button onClick={() => botStream()}>Stream Answer</button>
         </div>
 
-        <div className="bot-wrapper">
-          <div className="search-bar">
-            <input
-              type="text"
-              id="ai-prompt"
-              value={streamPrompt}
-              onChange={(e) => setStreamPrompt(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && streamPrompt.trim() !== "") {
-                  consumeGemmaStream(streamPrompt);
-                } else if (e.key === "Escape") {
-                  setStreamPrompt("");
-                }
-              }}
-              placeholder="Enter prompt..."
-            />
+        {isAuthenticated && (
+          <>
+            <div className="bot-wrapper">
+              <div className="search-bar">
+                <input
+                  type="text"
+                  id="ai-prompt"
+                  value={streamPrompt}
+                  onChange={(e) => setStreamPrompt(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && streamPrompt.trim() !== "") {
+                      consumeGemmaStream(streamPrompt);
+                    } else if (e.key === "Escape") {
+                      setStreamPrompt("");
+                    }
+                  }}
+                  placeholder="Enter prompt..."
+                />
 
-            <button onClick={() => consumeGemmaStream(streamPrompt)}>
-              Stream Bot
-            </button>
-          </div>{" "}
-          <div className="answer-wrapper" ref={answerRef}>
-            <p>{botAmswer}</p>
-            <p>{pokeData}</p>
-            {codingBlock()}
-          </div>
-        </div>
+                <button onClick={() => consumeGemmaStream(streamPrompt)}>
+                  Stream Bot
+                </button>
+              </div>{" "}
+              <div className="answer-wrapper" ref={answerRef}>
+                <p>{botAmswer}</p>
+                <p>{pokeData}</p>
+                {codingBlock()}
+              </div>
+            </div>
+          </>
+        )}
+
+        {!isAuthenticated && (
+          <>
+            <div>
+              <img
+                src="src/assets/main-banner-2.jpg"
+                alt="Robot"
+                className="robot-image"
+              />
+            </div>
+          </>
+        )}
 
         <footer className="site-footer">
           <span className="site-footer__brand">
