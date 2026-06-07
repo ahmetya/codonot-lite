@@ -15,6 +15,11 @@ interface HelloResponse {
   message: string;
 }
 
+type Segment =
+  | { type: "code"; lines: string[]; lang: string; key: number }
+  | { type: "text"; line: string; key: number }
+  | { type: "prompt"; line: string; key: number };
+
 const utils = new Utils("Ahmet");
 const slotMachine = new SlotMachine(100);
 
@@ -25,6 +30,7 @@ export default function Home() {
   const [botAmswerGroup, setBotAnswerGroup] = useState<string[]>([]);
   const [botAmswer, setBotAnswer] = useState<string>("");
   const [streamPrompt, setStreamPrompt] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
   const bufferRef = useRef("");
   const answerRef = useRef<HTMLDivElement>(null);
 
@@ -335,8 +341,11 @@ export default function Home() {
     prompt: string,
     onTokenReceived?: (token: string) => void
   ): Promise<void> {
-    cleanAnswers();
+    if (isLoading) return;
+    setIsLoading(true);
     bufferRef.current = "";
+
+    botAmswerGroup.push("Prompt: " + prompt + "\n\n");
 
     try {
       // 1. Fire a standard POST request to your Express server endpoint
@@ -355,6 +364,7 @@ export default function Home() {
 
       // 3. Attach a reader to lock and read the raw incoming body stream
       const reader = response.body.getReader();
+
       // TextDecoder transforms binary Uint8Array chunks back into readable UTF-8 text strings
       const decoder = new TextDecoder();
 
@@ -384,21 +394,22 @@ export default function Home() {
       console.log("Stream successfully finished.");
     } catch (error) {
       console.error("Error reading frontend stream:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   const codingBlock = () => {
     // First pass: group tokens into segments (code blocks merged, rest individual)
-    type Segment =
-      | { type: "code"; lines: string[]; lang: string; key: number }
-      | { type: "text"; line: string; key: number };
+
     const segments: Segment[] = [];
     let inCode = false;
     let codeLang = "";
     let keyCounter = 0;
 
-    for (const token of botAmswerGroup) {
+    for (const [index, token] of botAmswerGroup.entries()) {
       const cleaned = token.replace(/\*/g, "").trim();
+
       if (cleaned.startsWith("```")) {
         if (!inCode) {
           // Opening fence: capture language (e.g. ```typescript)
@@ -410,6 +421,7 @@ export default function Home() {
         inCode = !inCode;
         continue;
       }
+
       if (inCode) {
         // Preserve raw line: keep indentation, don't strip asterisks
         const raw = token.replace(/\s+$/, "");
@@ -425,16 +437,35 @@ export default function Home() {
           });
         }
       } else {
-        segments.push({
-          type: "text",
-          line: cleaned,
-          key: keyCounter++,
-        });
+        if (cleaned.startsWith("Prompt:")) {
+          segments.push({
+            type: "prompt",
+            line: cleaned,
+            key: keyCounter++,
+          });
+        } else if (cleaned !== "") {
+          segments.push({
+            type: "text",
+            line: cleaned,
+            key: keyCounter++,
+          });
+        }
       }
+    }
+
+    // Stream may end while still inside a code block (no closing ```).
+    // Force-close it so the accumulated lines still render as a code block.
+    if (inCode) {
+      inCode = false;
+      codeLang = "";
     }
 
     // Second pass: render segments
     return segments.map((seg) => {
+      if (seg.type === "prompt") {
+        return <pre className="prompt-block">{seg.line}</pre>;
+      }
+
       if (seg.type === "code") {
         // Dedent: remove the common leading whitespace shared by all
         // non-empty lines so relative indentation is preserved.
@@ -636,17 +667,25 @@ export default function Home() {
                   value={streamPrompt}
                   onChange={(e) => setStreamPrompt(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && streamPrompt.trim() !== "") {
+                    if (
+                      e.key === "Enter" &&
+                      streamPrompt.trim() !== "" &&
+                      !isLoading
+                    ) {
                       consumeGemmaStream(streamPrompt);
                     } else if (e.key === "Escape") {
                       setStreamPrompt("");
                     }
                   }}
                   placeholder="Enter prompt..."
+                  disabled={isLoading}
                 />
 
-                <button onClick={() => consumeGemmaStream(streamPrompt)}>
-                  Stream Bot
+                <button
+                  onClick={() => consumeGemmaStream(streamPrompt)}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Streaming..." : "Stream Bot"}
                 </button>
               </div>{" "}
               <div className="answer-wrapper" ref={answerRef}>

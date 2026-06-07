@@ -16,7 +16,7 @@ import prisma from "@config/db";
 const ai = new GoogleGenAI({});
 
 const MODEL = "gemma-4-26b-a4b-it";
-// const MODEL = 'gemini-3.5-flash';
+// const MODEL = "gemini-3.5-flash";
 
 class HelperBotService {
   async askGemma(prompt: string): Promise<string> {
@@ -48,7 +48,7 @@ class HelperBotService {
         ],
         generationConfig: {
           temperature: 1,
-          maxOutputTokens: 1000,
+          maxOutputTokens: 3000,
         },
       }),
     });
@@ -111,11 +111,27 @@ class HelperBotService {
         // 2. Pass standard runtime configurations efficiently inline
         config: {
           temperature: 1,
-          maxOutputTokens: 500,
+          maxOutputTokens: 1500,
           systemInstruction: {
             parts: [
               {
-                text: "Give as much code examples as possible. Use code blocks with language hints using ```",
+                text: `You are an expert software engineer. Rules:
+                - Start with brief and simple introduction. 
+                - Give as much code examples as possible. 
+                - Do not show your thinking, notes, tropes, or brainstorming ideas.
+                - Do not show constraints. Do not show final check on instructions. 
+                - Use code blocks with language hints using \`\`\`
+                - Do not make final check on instructions. Just output the final code.
+                - Do not use more than 3 sentences in your introduction. Be concise and direct.
+                - Use some emojis in your introduction to make it more friendly and engaging.
+                - Do not use markown formattting.
+                - No meta-commentary. Never say what you are about to do, just do it.
+                - No thinking out loud. No notes, no brainstorming, no self-checks.
+                - Divide code into multiple code blocks. Make smaller examples. Use language hints in code blocks. Use \`\`\`js for JavaScript code, \`\`\`python for Python code, etc.
+                - Add brief explanation before each code block, but do not explain the code itself. Just a one-line introduction to what the next code block is doing.   
+                - Always finish code block with \`\`\` even if it is the last one. Never finish stream without it.
+                - Allwaays finish with a brief explanation after the last code block, but do not explain the code itself. Just a one-line conclusion to what was shown in the code blocks.         
+                `,
               },
             ],
           },

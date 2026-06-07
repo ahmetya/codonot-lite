@@ -118,7 +118,6 @@ pre {
   flex-shrink: 0;
   margin: 6px 0;
   border-radius: 6px;
-  overflow: hidden;
   border-left: 3px solid var(--accent);
   background: var(--surface-high);
   box-sizing: border-box;
@@ -146,6 +145,23 @@ pre.code-block {
   margin: 0;
   overflow-x: auto;
   box-sizing: border-box;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+pre.code-block::-webkit-scrollbar {
+  height: 6px;
+}
+pre.code-block::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+pre.code-block:hover::-webkit-scrollbar-thumb {
+  background: var(--fg-dim);
+}
+pre.code-block::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Override hljs theme background to match our surface */
@@ -166,6 +182,21 @@ pre.code-block code {
   font-size: 14px;
   font-weight: 600;
   color: var(--accent);
+}
+
+.prompt-block {
+  background: rgba(255, 140, 0, 0.1);
+  border-left: 3px solid orange;
+  padding: 4px 6px;
+  margin: 4px 0;
+  border-radius: 0 6px 6px 0;
+  color: #ffb347;
+  font-style: italic;
+  font-size: 10px;
+}
+
+code {
+  font-size: 12px;
 }
 
 /* ── Fade-in animation ────────────────────────────────────── */
