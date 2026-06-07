@@ -340,16 +340,13 @@ export default function Home() {
 
     try {
       // 1. Fire a standard POST request to your Express server endpoint
-      const response = await fetch(
-        `https://lite.codonot.com/api/helperbot/stream-sdk`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt }),
-        }
-      );
+      const response = await fetch(`/api/helperbot/stream-sdk`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
       // 2. Error handling if the server breaks down immediately
       if (!response.ok || !response.body) {
