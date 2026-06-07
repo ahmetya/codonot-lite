@@ -10,6 +10,8 @@ import { apiService } from "../../services/ApiService";
 import { useAuth } from "../../context/AuthContext";
 import mainBanner from "../../assets/main-banner-5.png";
 import favicon from "../../assets/favicon.svg";
+import trash from "../../assets/trash.svg";
+import { ToggleGroup } from "../../components/toggle-group/toggle-group";
 
 interface HelloResponse {
   message: string;
@@ -27,23 +29,22 @@ export default function Home() {
   const { isAuthenticated, user, login, logout } = useAuth();
   const [message, setMessage] = useState<string>("");
   const [pokeData, setPokeData] = useState<string>("");
-  const [botAmswerGroup, setBotAnswerGroup] = useState<string[]>([]);
+  const [botAnswerGroup, setBotAnswerGroup] = useState<string[]>([]);
   const [botAmswer, setBotAnswer] = useState<string>("");
   const [streamPrompt, setStreamPrompt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const bufferRef = useRef("");
   const answerRef = useRef<HTMLDivElement>(null);
-
+  const [model, setModel] = useState("gemini-3.5-flash");
   useEffect(() => {
     fetch("/api/hello")
       .then((res) => res.json())
       .then((data: HelloResponse) => setMessage(data.message));
   }, []);
-
   useEffect(() => {
     const el = answerRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [botAmswerGroup]);
+  }, [botAnswerGroup]);
 
   const handlePoke = () => {
     fetch("/api/poke")
@@ -134,7 +135,6 @@ export default function Home() {
     console.log("Result from fetchWithPromise (error case):", res);
   };
 
-  // Gets pokemon data and writes to db
   const testPokemonService = async () => {
     await fetch("/api/pokemon", {
       method: "POST",
@@ -188,7 +188,6 @@ export default function Home() {
     });
 
     numbers.reduce;
-
     console.log("Squared Numbers:", squaredNumbers);
   };
 
@@ -345,11 +344,11 @@ export default function Home() {
     setIsLoading(true);
     bufferRef.current = "";
 
-    botAmswerGroup.push("Prompt: " + prompt + "\n\n");
+    botAnswerGroup.push("Prompt: " + prompt + "\n\n");
 
     try {
       // 1. Fire a standard POST request to your Express server endpoint
-      const response = await fetch(`/api/helperbot/stream-sdk`, {
+      const response = await fetch(`/api/helperbot/stream-sdk?model=${model}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -407,7 +406,7 @@ export default function Home() {
     let codeLang = "";
     let keyCounter = 0;
 
-    for (const [index, token] of botAmswerGroup.entries()) {
+    for (const [index, token] of botAnswerGroup.entries()) {
       const cleaned = token.replace(/\*/g, "").trim();
 
       if (cleaned.startsWith("```")) {
@@ -588,7 +587,27 @@ export default function Home() {
         <div className="generic">
           <button onClick={apiRegisterTest}>API Register Test</button>
           <button onClick={() => apiLoginTest()}>API Login Test</button>
+          <button onClick={testCallbackWithPromise}>
+            Callback with Promise Test
+          </button>
+          <button onClick={testFetchWithPromise}>
+            Fetch with Promise Test
+          </button>
+          <button onClick={testFetchWithPromiseError}>
+            Fetch with Promise Error Test
+          </button>
 
+          <button
+            onClick={() =>
+              utils.callbackTest(5, (result) => {
+                console.log("Callback result:", result);
+              })
+            }
+          >
+            Callback Test
+          </button>
+          <button onClick={helperBot}>Helper Bot</button>
+          <button onClick={() => botStream()}>Stream Answer</button>
           {isAuthenticated && (
             <>
               <button className="button-auth" onClick={getSlotMachine}>
@@ -627,38 +646,21 @@ export default function Home() {
               <button className="button-auth" onClick={() => saySimple()}>
                 Say Simple
               </button>
+              <button
+                className="button-auth"
+                onClick={testPokemonServiceExternal}
+              >
+                Test Pokemon Service External
+              </button>
             </>
           )}
-
-          <button onClick={testCallbackWithPromise}>
-            Callback with Promise Test
-          </button>
-          <button onClick={testFetchWithPromise}>
-            Fetch with Promise Test
-          </button>
-          <button onClick={testFetchWithPromiseError}>
-            Fetch with Promise Error Test
-          </button>
-          <button onClick={testPokemonServiceExternal}>
-            Test Pokemon Service External
-          </button>
-          <button onClick={cleanAnswers}>Clean Answers</button>
-
-          <button
-            onClick={() =>
-              utils.callbackTest(5, (result) => {
-                console.log("Callback result:", result);
-              })
-            }
-          >
-            Callback Test
-          </button>
-          <button onClick={helperBot}>Helper Bot</button>
-          <button onClick={() => botStream()}>Stream Answer</button>
         </div>
 
         {isAuthenticated && (
           <>
+            <div className="toggle-group">
+              <ToggleGroup onChange={setModel} />
+            </div>
             <div className="bot-wrapper">
               <div className="search-bar">
                 <input
@@ -687,12 +689,20 @@ export default function Home() {
                 >
                   {isLoading ? "Streaming..." : "Stream Bot"}
                 </button>
+                <button
+                  className="clean-button"
+                  onClick={cleanAnswers}
+                  title="Clean Answers"
+                >
+                  <img src={trash} alt="Trash" />
+                </button>
               </div>{" "}
               <div className="answer-wrapper" ref={answerRef}>
                 <p>{botAmswer}</p>
                 <p>{pokeData}</p>
                 {codingBlock()}
               </div>
+              s
             </div>
           </>
         )}

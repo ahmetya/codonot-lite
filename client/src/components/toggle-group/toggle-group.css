@@ -1,0 +1,25 @@
+.toggle-group {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.toggle-item {
+  padding: 8px 20px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--fg-muted);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.toggle-item.active {
+  background: #56d67e;
+  color: #0d1117;
+  font-weight: 500;
+}

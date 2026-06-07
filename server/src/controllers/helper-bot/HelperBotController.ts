@@ -49,12 +49,18 @@ export class HelperBotController {
     res.setHeader("X-Accel-Buffering", "no"); // ← tells Nginx not to buffer
     res.flushHeaders(); // ← send headers immediately
 
+    console.log(`Request query:`, req.query.model); // add this for debugging
+
     try {
-      await helperBotService.streamBotSDK(prompt, res);
+      await helperBotService.streamBotSDK(
+        prompt,
+        res,
+        req.query.model as string
+      );
       // End the response stream cleanly once Google is finished
       res.end();
     } catch (error: any) {
-      console.error("Streaming Error:", error);
+      console.error("###### Streaming Error:", error);
       // If headers haven't sent yet, we can send a proper status code
       if (!res.headersSent) {
         res

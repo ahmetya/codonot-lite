@@ -58,7 +58,8 @@ button {
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 16px 16px;
+  padding: 16px 16px;
+  border-bottom: 1px solid var(--border-dim);
 }
 
 /* ── Stream answer box ────────────────────────────────────── */
@@ -242,6 +243,11 @@ input:focus {
   padding: 0 16px;
 }
 
+.search-bar button.clean-button {
+  width: 64px;
+  min-width: auto;
+}
+
 /* ── Site header ──────────────────────────────────────────── */
 .site-header {
   display: flex;
@@ -421,6 +427,29 @@ input:focus {
 
 .highlight-low {
   border-color: var(--fg);
+}
+
+.toggle-group {
+  display: flex;
+
+  overflow: hidden;
+  width: fit-content;
+  padding-top: 8px;
+}
+
+.toggle-item {
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--fg-muted);
+  height: 32px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.toggle-item.active {
+  background: var(--accent);
+  color: var(--surface);
 }
 
 @media (max-width: 600px) {

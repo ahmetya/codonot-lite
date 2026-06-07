@@ -19,6 +19,30 @@ const MODEL = "gemma-4-26b-a4b-it";
 // const MODEL = "gemini-3.5-flash";
 
 class HelperBotService {
+  private extractErrorMessage(error: any): string {
+    let message = error?.message || "An error occurred while streaming.";
+
+    try {
+      while (typeof message === "string") {
+        const parsed = JSON.parse(message);
+        if (parsed && typeof parsed === "object") {
+          const nestedMessage = parsed.error?.message || parsed.message;
+          if (nestedMessage && nestedMessage !== message) {
+            message = nestedMessage;
+          } else {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    } catch (e) {
+      // Not JSON, keep current message
+    }
+
+    return typeof message === "string" ? message : JSON.stringify(message);
+  }
+
   async askGemma(prompt: string): Promise<string> {
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -102,16 +126,23 @@ class HelperBotService {
     }
   }
 
-  async streamBotSDK(prompt: string, res: Response): Promise<void> {
+  async streamBotSDK(
+    prompt: string,
+    res: Response,
+    model?: string
+  ): Promise<void> {
     try {
-      // 1. Initiate a streaming request so the user doesn't wait for the full response
+      console.log(`Selected model for streaming: ${model}`); // Debug log to verify model selection
+
+      // 1. Ini
+      // tiate a streaming request so the user doesn't wait for the full response
       const responseStream = await ai.models.generateContentStream({
-        model: MODEL,
+        model: model || MODEL,
         contents: prompt,
         // 2. Pass standard runtime configurations efficiently inline
         config: {
-          temperature: 1,
-          maxOutputTokens: 1500,
+          temperature: 0.7,
+          maxOutputTokens: 3000,
           systemInstruction: {
             parts: [
               {
@@ -166,8 +197,12 @@ class HelperBotService {
         }
       }
       console.log("\n\n--- Stream Completed ---");
-    } catch (error) {
+    } catch (error: any) {
       console.error("API Error:", error);
+      res.write(
+        `data: ${JSON.stringify({ error: this.extractErrorMessage(error) })}\n\n`
+      );
+      res.end();
     }
   }
 }
