@@ -224,6 +224,9 @@ input:focus {
   z-index: 10;
   border-radius: 8px;
   width: stretch;
+
+  border: solid 1px;
+  border-color: var(--accent);
 }
 
 .site-header__logo {
@@ -385,6 +388,10 @@ input:focus {
   height: 32px;
 }
 
+.highlight-low {
+  border-color: var(--fg);
+}
+
 @media (max-width: 600px) {
   .site-header {
     display: flex;
@@ -398,6 +405,16 @@ input:focus {
     justify-content: space-between;
     flex-direction: column;
     align-items: center;
+  }
+
+  .site-header__nav-item {
+    margin-bottom: 8px;
+  }
+
+  .site-header__logo {
+    display: grid;
+    width: 200px;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .hero-banner__title {

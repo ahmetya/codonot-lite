@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" style="margin: auto;">
+  <!-- RIGHT EARCUP (Behind Head) -->
+  <rect x="212" y="125" width="22" height="50" rx="11" fill="#98a7b3" stroke="#171b21" stroke-width="8" style="fill:rgb(152, 167, 179);stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- MAIN HEAD SHAPE -->
+  <path d="M 70,90 &#10;           C 90,45 180,50 210,95 &#10;           C 235,130 230,195 180,225 &#10;           C 120,260 50,225 50,165 &#10;           C 50,135 55,115 70,90 Z" fill="#98a7b3" stroke="#171b21" stroke-width="8" style="fill:rgb(152, 167, 179);stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- LEFT EARCUP -->
+  <rect x="38" y="122" width="24" height="40" rx="6" fill="#98a7b3" stroke="#171b21" stroke-width="8" style="fill:rgb(152, 167, 179);stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="18" y="112" width="34" height="60" rx="17" fill="#98a7b3" stroke="#171b21" stroke-width="8" style="fill:rgb(152, 167, 179);stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- HELMET SEAM LINES -->
+  <path d="M 98,72 C 110,95 120,115 120,125" fill="none" stroke="#171b21" stroke-width="6" stroke-linecap="round" style="fill:none;stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:6px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <path d="M 188,72 C 175,95 165,115 160,125" fill="none" stroke="#171b21" stroke-width="6" stroke-linecap="round" style="fill:none;stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:6px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- FACEPLATE -->
+  <path d="M 115,115 &#10;           C 150,102 185,108 205,125 &#10;           C 225,145 220,185 195,205 &#10;           C 165,230 110,230 95,205 &#10;           C 80,180 80,130 115,115 Z" fill="#252c33" stroke="#171b21" stroke-width="8" style="fill:rgb(37, 44, 51);stroke:rgb(23, 27, 33);color:rgb(255, 255, 255);stroke-width:8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Left Eye -->
+  <rect x="126" y="146" width="16" height="26" rx="8" fill="#70e38c" style="fill:rgb(112, 227, 140);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Right Eye -->
+  <rect x="180" y="146" width="16" height="26" rx="8" fill="#6ee48c" style="fill:rgb(110, 228, 140);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Mouth -->
+  <rect x="150" y="182" width="22" height="6" rx="3" fill="#63d881" style="fill:rgb(99, 216, 129);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+</svg>

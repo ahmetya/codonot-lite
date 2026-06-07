@@ -516,6 +516,7 @@ export default function Home() {
                   <span className="site-header__nav-item">{message}</span>
                   <div className="header-buttons">
                     <button
+                      className="highlight-low"
                       onClick={() => login("admin@example.com", "admin123")}
                     >
                       Login
@@ -531,7 +532,9 @@ export default function Home() {
                     Hello {user?.name}!
                   </span>
                   <div className="header-buttons">
-                    <button onClick={logout}>Logout</button>
+                    <button className="highlight-low" onClick={logout}>
+                      Logout
+                    </button>
                     <button className="highlight">Create Post</button>
                   </div>
                 </>

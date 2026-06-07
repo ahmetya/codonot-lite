@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <!-- Background Color -->
+
+  <!-- HEADPHONES (BACK HEADBAND) -->
+  <!-- Outer Dark Outline -->
+  <!-- Inner Band -->
+
+  <!-- RIGHT EARCUP (Behind Head) -->
+  <rect x="212" y="125" width="22" height="50" rx="11" fill="#98a7b3" stroke="#171b21" stroke-width="8"/>
+
+  <!-- MAIN HEAD SHAPE -->
+  <path d="M 70,90 
+           C 90,45 180,50 210,95 
+           C 235,130 230,195 180,225 
+           C 120,260 50,225 50,165 
+           C 50,135 55,115 70,90 Z" 
+        fill="#98a7b3" stroke="#171b21" stroke-width="8"/>
+
+  <!-- LEFT EARCUP -->
+  <!-- Connector -->
+  <rect x="38" y="122" width="24" height="40" rx="6" fill="#98a7b3" stroke="#171b21" stroke-width="8"/>
+  <!-- Main Cushion -->
+  <rect x="18" y="112" width="34" height="60" rx="17" fill="#98a7b3" stroke="#171b21" stroke-width="8"/>
+
+  <!-- HELMET SEAM LINES -->
+  <path d="M 98,72 C 110,95 120,115 120,125" fill="none" stroke="#171b21" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 188,72 C 175,95 165,115 160,125" fill="none" stroke="#171b21" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- FACEPLATE -->
+  <path d="M 115,115 
+           C 150,102 185,108 205,125 
+           C 225,145 220,185 195,205 
+           C 165,230 110,230 95,205 
+           C 80,180 80,130 115,115 Z" 
+        fill="#252c33" stroke="#171b21" stroke-width="8"/>
+
+  <!-- FACE ELEMENTS (GLOWING GREEN) -->
+  <!-- Left Eye -->
+  <rect x="126" y="146" width="16" height="26" rx="8" fill="#70e38c"/>
+  <!-- Right Eye -->
+  <rect x="180" y="146" width="16" height="26" rx="8" fill="#6ee48c"/>
+  <!-- Mouth -->
+  <rect x="150" y="182" width="22" height="6" rx="3" fill="#63d881"/>
+</svg>
