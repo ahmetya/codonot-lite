@@ -8,7 +8,7 @@ import { Book } from "../../services/book";
 import { SlotMachine } from "../../services/slotMachine";
 import { apiService } from "../../services/ApiService";
 import { useAuth } from "../../context/AuthContext";
-import mainBanner from "../../assets/main-banner-3.jpg";
+import mainBanner from "../../assets/main-banner-5.png";
 
 interface HelloResponse {
   message: string;
@@ -520,7 +520,7 @@ export default function Home() {
                     >
                       Login
                     </button>
-                    <button>Register</button>
+                    <button className="highlight">Register</button>
                   </div>
                 </>
               )}
@@ -532,7 +532,7 @@ export default function Home() {
                   </span>
                   <div className="header-buttons">
                     <button onClick={logout}>Logout</button>
-                    <button>Create Post</button>
+                    <button className="highlight">Create Post</button>
                   </div>
                 </>
               )}
