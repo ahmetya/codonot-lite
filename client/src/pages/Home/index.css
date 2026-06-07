@@ -431,10 +431,7 @@ input:focus {
 
 .toggle-group {
   display: flex;
-
-  overflow: hidden;
   width: fit-content;
-  padding-top: 8px;
 }
 
 .toggle-item {
@@ -450,6 +447,11 @@ input:focus {
 .toggle-item.active {
   background: var(--accent);
   color: var(--surface);
+}
+
+.bot-controls {
+  display: flex;
+  gap: 8px;
 }
 
 @media (max-width: 600px) {
@@ -490,5 +492,17 @@ input:focus {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+  }
+
+  input {
+    width: 80vw;
+  }
+
+  .search-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 }

@@ -334,6 +334,7 @@ export default function Home() {
     setBotAnswerGroup([]);
     setBotAnswer("");
     setPokeData("");
+    setStreamPrompt("");
   }
 
   async function consumeGemmaStream(
@@ -407,6 +408,10 @@ export default function Home() {
     let keyCounter = 0;
 
     for (const [index, token] of botAnswerGroup.entries()) {
+      if (index === 1000) {
+        console.log(`Processing token ${index}:`, token);
+      }
+
       const cleaned = token.replace(/\*/g, "").trim();
 
       if (cleaned.startsWith("```")) {
@@ -462,7 +467,11 @@ export default function Home() {
     // Second pass: render segments
     return segments.map((seg) => {
       if (seg.type === "prompt") {
-        return <pre className="prompt-block">{seg.line}</pre>;
+        return (
+          <pre className="prompt-block" key={seg.key}>
+            {seg.line}
+          </pre>
+        );
       }
 
       if (seg.type === "code") {
@@ -658,11 +667,17 @@ export default function Home() {
 
         {isAuthenticated && (
           <>
-            <div className="toggle-group">
-              <ToggleGroup onChange={setModel} />
-            </div>
             <div className="bot-wrapper">
+              <div className="answer-wrapper" ref={answerRef}>
+                <p>{botAmswer}</p>
+                <p>{pokeData}</p>
+                {codingBlock()}
+              </div>
+
               <div className="search-bar">
+                <div className="toggle-group">
+                  <ToggleGroup onChange={setModel} />
+                </div>
                 <input
                   type="text"
                   id="ai-prompt"
@@ -683,26 +698,22 @@ export default function Home() {
                   disabled={isLoading}
                 />
 
-                <button
-                  onClick={() => consumeGemmaStream(streamPrompt)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Streaming..." : "Stream Bot"}
-                </button>
-                <button
-                  className="clean-button"
-                  onClick={cleanAnswers}
-                  title="Clean Answers"
-                >
-                  <img src={trash} alt="Trash" />
-                </button>
-              </div>{" "}
-              <div className="answer-wrapper" ref={answerRef}>
-                <p>{botAmswer}</p>
-                <p>{pokeData}</p>
-                {codingBlock()}
+                <div className="bot-controls">
+                  <button
+                    onClick={() => consumeGemmaStream(streamPrompt)}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Streaming..." : "Stream Bot"}
+                  </button>
+                  <button
+                    className="clean-button"
+                    onClick={cleanAnswers}
+                    title="Clean Answers"
+                  >
+                    <img src={trash} alt="Trash" />
+                  </button>
+                </div>
               </div>
-              s
             </div>
           </>
         )}

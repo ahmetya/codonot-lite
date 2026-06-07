@@ -141,8 +141,8 @@ class HelperBotService {
         contents: prompt,
         // 2. Pass standard runtime configurations efficiently inline
         config: {
-          temperature: 0.7,
-          maxOutputTokens: 3000,
+          temperature: 0.5,
+          maxOutputTokens: 2000,
           systemInstruction: {
             parts: [
               {
@@ -161,7 +161,8 @@ class HelperBotService {
                 - Divide code into multiple code blocks. Make smaller examples. Use language hints in code blocks. Use \`\`\`js for JavaScript code, \`\`\`python for Python code, etc.
                 - Add brief explanation before each code block, but do not explain the code itself. Just a one-line introduction to what the next code block is doing.   
                 - Always finish code block with \`\`\` even if it is the last one. Never finish stream without it.
-                - Allwaays finish with a brief explanation after the last code block, but do not explain the code itself. Just a one-line conclusion to what was shown in the code blocks.         
+                - Always finish with a brief explanation after the last code block, but do not explain the code itself. Just a one-line conclusion to what was shown in the code blocks.
+                - You do not have to use maxOutputTokens if the answer is complete. Do not try to fill up all tokens if the answer is already complete. Just end the stream with \`\`\` when the answer is complete, even if maxOutputTokens is not reached.         
                 `,
               },
             ],
