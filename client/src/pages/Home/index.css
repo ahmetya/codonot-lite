@@ -380,6 +380,11 @@ input:focus {
   border-color: var(--accent);
 }
 
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
 @media (max-width: 600px) {
   .site-header {
     display: flex;

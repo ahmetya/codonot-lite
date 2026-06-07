@@ -9,6 +9,7 @@ import { SlotMachine } from "../../services/slotMachine";
 import { apiService } from "../../services/ApiService";
 import { useAuth } from "../../context/AuthContext";
 import mainBanner from "../../assets/main-banner-5.png";
+import favicon from "../../assets/favicon.svg";
 
 interface HelloResponse {
   message: string;
@@ -504,7 +505,9 @@ export default function Home() {
       <div className="page-container">
         <header className="site-header">
           <div className="site-header__logo">
-            <span className="site-header__logo-icon">&#9644;</span>
+            <span className="site-header__logo-icon">
+              <img className="logo" src={favicon} alt="Codonot Lite Logo" />
+            </span>
             <span className="site-header__brand">
               codonot<span className="site-header__accent">lite</span>
             </span>
