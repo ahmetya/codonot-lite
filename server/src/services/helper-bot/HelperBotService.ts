@@ -16,7 +16,20 @@ import prisma from "@config/db";
 const ai = new GoogleGenAI({});
 
 const MODEL = "gemma-4-26b-a4b-it";
-// const MODEL = "gemini-3.5-flash";
+
+const GEMMA_SYSTEM_INSTRUCTION = `You are a senior software engineer helping with practical programming tasks.
+
+Response rules:
+1. Answer the user's request directly. Do not reveal hidden reasoning, internal notes, or self-checks.
+2. Keep explanations concise and useful. Skip introductions when they add no value.
+3. Prefer one complete, production-ready solution over many small or repetitive examples.
+4. Use Markdown fenced code blocks for code. Always add the correct language identifier.
+5. Every opened code fence must be closed before the response ends.
+6. Put filenames or short context immediately before a code block when useful.
+7. Preserve existing project conventions when the user provides code or repository context.
+8. Mention important assumptions, risks, or verification steps briefly after the implementation.
+9. Do not use emojis, filler, meta-commentary, or phrases describing what you are about to do.
+10. Stop when the answer is complete. Do not use extra tokens to repeat or summarize the same content.`;
 
 class HelperBotService {
   private extractErrorMessage(error: any): string {
@@ -132,46 +145,23 @@ class HelperBotService {
     model?: string
   ): Promise<void> {
     try {
-      console.log(`Selected model for streaming: ${model}`); // Debug log to verify model selection
+      const selectedModel = model || MODEL;
+      console.log(`Selected model for streaming: ${selectedModel}`);
 
-      // 1. Ini
-      // tiate a streaming request so the user doesn't wait for the full response
       const responseStream = await ai.models.generateContentStream({
-        model: model || MODEL,
+        model: selectedModel,
         contents: prompt,
-        // 2. Pass standard runtime configurations efficiently inline
         config: {
-          temperature: 0.5,
-          maxOutputTokens: 2000,
+          temperature: 0.35,
+          maxOutputTokens: 3000,
           systemInstruction: {
-            parts: [
-              {
-                text: `You are an expert software engineer. Rules:
-                - Start with brief and simple introduction. 
-                - Give as much code examples as possible. 
-                - Do not show your thinking, notes, tropes, or brainstorming ideas.
-                - Do not show constraints. Do not show final check on instructions. 
-                - Use code blocks with language hints using \`\`\`
-                - Do not make final check on instructions. Just output the final code.
-                - Do not use more than 3 sentences in your introduction. Be concise and direct.
-                - Use some emojis in your introduction to make it more friendly and engaging.
-                - Do not use markown formattting.
-                - No meta-commentary. Never say what you are about to do, just do it.
-                - No thinking out loud. No notes, no brainstorming, no self-checks.
-                - Divide code into multiple code blocks. Make smaller examples. Use language hints in code blocks. Use \`\`\`js for JavaScript code, \`\`\`python for Python code, etc.
-                - Add brief explanation before each code block, but do not explain the code itself. Just a one-line introduction to what the next code block is doing.   
-                - Always finish code block with \`\`\` even if it is the last one. Never finish stream without it.
-                - Always finish with a brief explanation after the last code block, but do not explain the code itself. Just a one-line conclusion to what was shown in the code blocks.
-                - You do not have to use maxOutputTokens if the answer is complete. Do not try to fill up all tokens if the answer is already complete. Just end the stream with \`\`\` when the answer is complete, even if maxOutputTokens is not reached.         
-                `,
-              },
-            ],
+            parts: [{ text: GEMMA_SYSTEM_INSTRUCTION }],
           },
         },
       });
 
       const prismaResponse = await prisma.helperBot.create({
-        data: { prompt, model: MODEL },
+        data: { prompt, model: selectedModel },
       });
       console.log("PRISMA RESPONSE: ", prismaResponse);
 
