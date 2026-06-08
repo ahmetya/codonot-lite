@@ -5,6 +5,7 @@ interface HomeHeaderProps {
   message: string;
   userName?: string;
   onLogin: () => void;
+  onRegister: () => void;
   onLogout: () => void;
 }
 
@@ -13,6 +14,7 @@ export function HomeHeader({
   message,
   userName,
   onLogin,
+  onRegister,
   onLogout,
 }: HomeHeaderProps) {
   return (
@@ -39,7 +41,10 @@ export function HomeHeader({
               >
                 {isAuthenticated ? "Logout" : "Login"}
               </button>
-              <button className="highlight">
+              <button
+                className="highlight"
+                onClick={isAuthenticated ? undefined : onRegister}
+              >
                 {isAuthenticated ? "Create Post" : "Register"}
               </button>
             </div>

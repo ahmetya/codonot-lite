@@ -3,6 +3,8 @@ import mainBanner from "../../assets/main-banner-5.png";
 import { useAuth } from "../../context/AuthContext";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
+import { LoginModal } from "./LoginModal";
+import { RegisterModal } from "./RegisterModal";
 import { StreamPanel } from "./StreamPanel";
 import { useBotStream } from "./useBotStream";
 import "./index.css";
@@ -12,10 +14,12 @@ interface HelloResponse {
 }
 
 export default function Home() {
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { isAuthenticated, user, register, login, logout } = useAuth();
   const [message, setMessage] = useState("");
   const [pokeData, setPokeData] = useState("");
   const [botAnswer, setBotAnswer] = useState("");
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const stream = useBotStream();
 
   useEffect(() => {
@@ -37,8 +41,21 @@ export default function Home() {
         isAuthenticated={isAuthenticated}
         message={message}
         userName={user?.name}
-        onLogin={() => login("admin@example.com", "admin123")}
+        onLogin={() => setIsLoginOpen(true)}
+        onRegister={() => setIsRegisterOpen(true)}
         onLogout={logout}
+      />
+
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onLogin={login}
+      />
+
+      <RegisterModal
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        onRegister={register}
       />
 
       <section className="hero-banner">

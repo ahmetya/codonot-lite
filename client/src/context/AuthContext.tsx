@@ -7,9 +7,15 @@ interface User {
   name: string;
 }
 
+interface AuthResponse {
+  token: string;
+  user: User;
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  register: (name: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -21,6 +27,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
+  const saveSession = (data: AuthResponse) => {
+    setToken(data.token);
+    setUser(data.user);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+  };
+
   // restore session on page refresh
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -31,6 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const register = async (name: string, email: string, password: string) => {
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = (await res.json()) as AuthResponse & { error?: string };
+
+    if (!res.ok) {
+      throw new Error(data.error || "Registration failed");
+    }
+
+    saveSession(data);
+  };
+
   const login = async (email: string, password: string) => {
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -40,11 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!res.ok) throw new Error("Invalid credentials");
 
-    const data = await res.json();
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    const data = (await res.json()) as AuthResponse;
+    saveSession(data);
   };
 
   const logout = () => {
@@ -59,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         token,
+        register,
         login,
         logout,
         isAuthenticated: !!user,
