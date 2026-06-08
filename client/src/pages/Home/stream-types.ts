@@ -4,6 +4,12 @@ export type StreamEntry =
   | { type: "response-end" };
 
 export type StreamSegment =
-  | { type: "code"; lines: string[]; lang: string; key: number }
+  | {
+      type: "code";
+      lines: string[];
+      lang: string;
+      key: number;
+      complete: boolean;
+    }
   | { type: "text"; line: string; key: number }
   | { type: "prompt"; line: string; key: number };

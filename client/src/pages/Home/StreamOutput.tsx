@@ -1,5 +1,6 @@
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
+import { MermaidDiagram } from "./MermaidDiagram";
 import type { StreamEntry, StreamSegment } from "./stream-types";
 
 interface StreamOutputProps {
@@ -33,6 +34,10 @@ function buildSegments(entries: StreamEntry[]): StreamSegment[] {
     const cleaned = entry.value.replace(/\*/g, "").trim();
 
     if (cleaned.startsWith("```")) {
+      if (inCode) {
+        const previous = segments[segments.length - 1];
+        if (previous?.type === "code") previous.complete = true;
+      }
       codeLang = inCode ? "" : cleaned.slice(3).trim().toLowerCase();
       inCode = !inCode;
       continue;
@@ -50,6 +55,7 @@ function buildSegments(entries: StreamEntry[]): StreamSegment[] {
           lines: [line],
           lang: codeLang,
           key: key++,
+          complete: false,
         });
       }
       continue;
@@ -76,8 +82,8 @@ function renderCodeSegment(segment: Extract<StreamSegment, { type: "code" }>) {
       ? hljs.highlight(code, { language: segment.lang })
       : hljs.highlightAuto(code);
 
-  return (
-    <div key={segment.key} className="code-block-wrap">
+  const codeBlock = (
+    <div className="code-block-wrap">
       <div className="code-block__lang">
         {segment.lang || highlighted.language || "text"}
       </div>
@@ -86,6 +92,14 @@ function renderCodeSegment(segment: Extract<StreamSegment, { type: "code" }>) {
       </pre>
     </div>
   );
+
+  if (segment.lang === "mermaid" && segment.complete) {
+    return (
+      <MermaidDiagram key={segment.key} code={code} fallback={codeBlock} />
+    );
+  }
+
+  return <div key={segment.key}>{codeBlock}</div>;
 }
 
 export function StreamOutput({ entries }: StreamOutputProps) {
