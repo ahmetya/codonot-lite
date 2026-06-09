@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import mainBanner from "../../assets/main-banner-5.png";
+import mainBanner from "../../assets/ai-stream-hero.svg";
 import { useAuth } from "../../context/AuthContext";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
@@ -93,9 +93,17 @@ export default function Home() {
           onClear={clearAnswers}
         />
       ) : (
-        <div>
-          <img src={mainBanner} alt="Robot" className="robot-image" />
-        </div>
+        <section className="guest-visual" aria-label="AI stream preview">
+          <div className="guest-visual__copy">
+            <span>Live workspace</span>
+            <strong>Ideas become working code, one token at a time.</strong>
+          </div>
+          <img
+            src={mainBanner}
+            alt="Abstract AI terminal streaming code between interface panels"
+            className="robot-image"
+          />
+        </section>
       )}
 
       <footer className="site-footer">

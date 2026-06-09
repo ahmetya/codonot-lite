@@ -2,7 +2,9 @@
   "name": "codonot-lite",
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev": "concurrently \"npm run restart:server\" \"npm run dev --prefix client\"",
+    "restart:server": "node scripts/free-port.cjs 3001 && npm run dev --prefix server",
+    "stop:server": "node scripts/free-port.cjs 3001",
     "start:server": "npm run start --prefix server",
     "start:client": "npm run dev --prefix client"
   },
