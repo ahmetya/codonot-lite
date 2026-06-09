@@ -871,27 +871,25 @@
 
 /* Supporting media */
 .guest-visual {
-  position: relative;
+  display: grid;
+  gap: 14px;
   width: 100%;
   padding: 18px 12px 24px;
   box-sizing: border-box;
 }
 
 .guest-visual__copy {
-  position: absolute;
-  z-index: 1;
-  top: 48px;
-  left: 52px;
   display: grid;
   gap: 7px;
-  max-width: 290px;
+  justify-self: center;
+  max-width: 420px;
   padding: 12px 14px;
   border: 1px solid rgba(86, 214, 126, 0.32);
   border-radius: 10px;
   background: rgba(13, 17, 23, 0.58);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(8px);
-  text-align: left;
+  text-align: center;
 }
 
 .guest-visual__copy span {
@@ -909,20 +907,46 @@
   line-height: 1.35;
 }
 
-.robot-image {
+.guest-visual__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: min(100%, 920px);
+  justify-self: center;
+}
+
+.guest-visual__panel {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--home-border);
+  border-radius: 14px;
+  background: var(--home-surface);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+.guest-visual__image {
   display: block;
   width: 100%;
-  max-width: none;
-  aspect-ratio: 1898 / 829;
+  aspect-ratio: 1;
   object-fit: cover;
-  object-position: center;
   image-rendering: pixelated;
-  margin: 0;
-  border: 1px solid var(--home-border);
-  border-radius: 18px;
-  background: var(--home-surface);
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
-  box-sizing: border-box;
+}
+
+.guest-visual__panel figcaption {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px 7px;
+  border: 1px solid rgba(86, 214, 126, 0.26);
+  border-radius: 6px;
+  background: rgba(13, 17, 23, 0.72);
+  color: var(--home-fg);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Footer */
@@ -1059,19 +1083,27 @@
   }
 
   .guest-visual__copy {
-    position: static;
     max-width: 100%;
     margin: 0 8px 12px;
-    text-align: center;
   }
 
   .guest-visual__copy strong {
     font-size: 15px;
   }
 
-  .robot-image {
-    aspect-ratio: 16 / 9;
-    border-radius: 12px;
+  .guest-visual__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .guest-visual__panel {
+    border-radius: 10px;
+  }
+
+  .guest-visual__panel figcaption {
+    right: 6px;
+    bottom: 6px;
+    font-size: 8px;
   }
 
   .bot-wrapper {

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import mainBanner from "../../assets/ai-stream-hero.png";
+import analyticsImage from "../../assets/ai-feature-analytics.png";
+import assistantImage from "../../assets/ai-feature-assistant.png";
+import codeImage from "../../assets/ai-feature-code.png";
+import streamImage from "../../assets/ai-feature-stream.png";
 import { useAuth } from "../../context/AuthContext";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
@@ -12,6 +15,13 @@ import "./index.css";
 interface HelloResponse {
   message: string;
 }
+
+const guestVisuals = [
+  { label: "Code workspace", image: codeImage },
+  { label: "AI data stream", image: streamImage },
+  { label: "AI assistant", image: assistantImage },
+  { label: "Analytics workspace", image: analyticsImage },
+];
 
 export default function Home() {
   const { isAuthenticated, user, register, login, logout } = useAuth();
@@ -98,11 +108,18 @@ export default function Home() {
             <span>Live workspace</span>
             <strong>Ideas become working code, one token at a time.</strong>
           </div>
-          <img
-            src={mainBanner}
-            alt="Pixel art AI terminal streaming code between workspace panels"
-            className="robot-image"
-          />
+          <div className="guest-visual__grid">
+            {guestVisuals.map(({ label, image }) => (
+              <figure className="guest-visual__panel" key={label}>
+                <img
+                  src={image}
+                  alt={`Pixel art ${label.toLowerCase()}`}
+                  className="guest-visual__image"
+                />
+                <figcaption>{label}</figcaption>
+              </figure>
+            ))}
+          </div>
         </section>
       )}
 
