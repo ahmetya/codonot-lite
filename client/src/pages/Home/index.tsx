@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import mainBanner from "../../assets/ai-stream-hero.svg";
+import mainBanner from "../../assets/ai-stream-hero.png";
 import { useAuth } from "../../context/AuthContext";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
@@ -100,7 +100,7 @@ export default function Home() {
           </div>
           <img
             src={mainBanner}
-            alt="Abstract AI terminal streaming code between interface panels"
+            alt="Pixel art AI terminal streaming code between workspace panels"
             className="robot-image"
           />
         </section>

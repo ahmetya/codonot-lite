@@ -885,6 +885,12 @@
   display: grid;
   gap: 7px;
   max-width: 290px;
+  padding: 12px 14px;
+  border: 1px solid rgba(86, 214, 126, 0.32);
+  border-radius: 10px;
+  background: rgba(13, 17, 23, 0.58);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
   text-align: left;
 }
 
@@ -907,7 +913,10 @@
   display: block;
   width: 100%;
   max-width: none;
-  height: auto;
+  aspect-ratio: 1898 / 829;
+  object-fit: cover;
+  object-position: center;
+  image-rendering: pixelated;
   margin: 0;
   border: 1px solid var(--home-border);
   border-radius: 18px;
@@ -1061,6 +1070,7 @@
   }
 
   .robot-image {
+    aspect-ratio: 16 / 9;
     border-radius: 12px;
   }
 
