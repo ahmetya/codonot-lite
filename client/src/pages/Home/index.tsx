@@ -67,6 +67,12 @@ export default function Home() {
         onClose={() => setIsRegisterOpen(false)}
         onRegister={register}
       />
+      <DemoControls
+        isAuthenticated={isAuthenticated}
+        onBotAnswerChange={setBotAnswer}
+        onPokeDataChange={setPokeData}
+        onRawStream={stream.consumeRawStream}
+      />
 
       <section className="hero-banner">
         <div className="hero-banner__glow" />
@@ -78,13 +84,6 @@ export default function Home() {
           Experiment with live AI streams, token-by-token.
         </p>
       </section>
-
-      <DemoControls
-        isAuthenticated={isAuthenticated}
-        onBotAnswerChange={setBotAnswer}
-        onPokeDataChange={setPokeData}
-        onRawStream={stream.consumeRawStream}
-      />
 
       {isAuthenticated ? (
         <StreamPanel
@@ -113,7 +112,6 @@ export default function Home() {
               <figure className="guest-visual__panel" key={label}>
                 <img
                   loading="lazy"
-                  decoding="async"
                   src={image}
                   alt={`Pixel art ${label.toLowerCase()}`}
                   className="guest-visual__image"

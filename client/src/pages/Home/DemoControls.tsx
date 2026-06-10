@@ -35,10 +35,7 @@ export function DemoControls({
 
   const login = async () => {
     try {
-      const response = await apiService.login(
-        "admin@example.com",
-        "admin123"
-      );
+      const response = await apiService.login("admin@example.com", "admin123");
       console.log("Login successful:", response);
     } catch (error) {
       console.error("Login failed:", error);
@@ -104,9 +101,7 @@ export function DemoControls({
 
   const fetchPokemon = async (id: number) => {
     try {
-      const response = await fetch(
-        `/api/pokemon/${id}?poke=${id}&gender=male`
-      );
+      const response = await fetch(`/api/pokemon/${id}?poke=${id}&gender=male`);
       const data = (await response.json()) as { name?: string };
       console.log("Fetched Pokemon:", data);
       if (data.name) onPokeDataChange(data.name);
@@ -134,12 +129,8 @@ export function DemoControls({
 
   const testLibrary = () => {
     const library = new Library("Kutupanne");
-    library.catalog.add(
-      new Book("Hayat Bilgisi", "Ahmet", "978-0135957059")
-    );
-    library.catalog.add(
-      new Book("Mezat Bilgisi", "Ahmet", "978-0135957060")
-    );
+    library.catalog.add(new Book("Hayat Bilgisi", "Ahmet", "978-0135957059"));
+    library.catalog.add(new Book("Mezat Bilgisi", "Ahmet", "978-0135957060"));
     library.loan.borrow("978-0135957059");
     library.loan.borrow("978-0135957060");
     library.loan.listBorrowed();
@@ -158,71 +149,97 @@ export function DemoControls({
   };
 
   return (
-    <div className="generic">
-      <button onClick={register}>API Register Test</button>
-      <button onClick={login}>API Login Test</button>
-      <button onClick={testCallbackWithPromise}>
-        Callback with Promise Test
-      </button>
-      <button onClick={testFetchWithPromise}>Fetch with Promise Test</button>
-      <button onClick={testFetchWithPromiseError}>
-        Fetch with Promise Error Test
-      </button>
-      <button
-        onClick={() =>
-          utils.callbackTest(5, (result) =>
-            console.log("Callback result:", result)
-          )
-        }
-      >
-        Callback Test
-      </button>
-      <button onClick={runHelperBot}>Helper Bot</button>
-      <button onClick={onRawStream}>Stream Answer</button>
+    <section className="generic" aria-label="Demo controls">
+      {/* <div className="generic__primary">
+        <button onClick={runHelperBot}>Helper Bot</button>
+        <button onClick={onRawStream}>Stream Answer</button>
+      </div> */}
 
-      {isAuthenticated && (
-        <>
-          <button className="button-auth" onClick={() => slotMachine.spin()}>
-            HAPPY SLOT
+      <details className="demo-tools">
+        <summary>
+          <span>Developer tools</span>
+          <span className="demo-tools__count">
+            {isAuthenticated ? "17 actions" : "6 actions"}
+          </span>
+        </summary>
+
+        <div className="demo-tools__actions">
+          <button onClick={runHelperBot}>Helper Bot</button>
+          <button onClick={onRawStream}>Stream Answer</button>
+          <button onClick={register}>API Register Test</button>
+          <button onClick={login}>API Login Test</button>
+          <button onClick={testCallbackWithPromise}>
+            Callback with Promise Test
           </button>
-          <button className="button-auth" onClick={testLibrary}>
-            Library Test
+          <button onClick={testFetchWithPromise}>
+            Fetch with Promise Test
           </button>
-          <button className="button-auth" onClick={testArray}>
-            Array Manipulation
-          </button>
-          <button className="button-auth" onClick={testFetchTiming}>
-            Some Sample
-          </button>
-          <button className="button-auth" onClick={someCallback}>
-            Some Callback
-          </button>
-          <button className="button-auth" onClick={fetchDefaultPokemon}>
-            Poke Button
-          </button>
-          <button className="button-auth" onClick={createPokemon}>
-            Test Pokemon Service
-          </button>
-          <button className="button-auth" onClick={() => utils.sayHello()}>
-            Say Hello
-          </button>
-          <button className="button-auth" onClick={() => utils.sayGoodbye()}>
-            Say Goodbye
+          <button onClick={testFetchWithPromiseError}>
+            Fetch with Promise Error Test
           </button>
           <button
-            className="button-auth"
-            onClick={() => console.log("Simple say function")}
+            onClick={() =>
+              utils.callbackTest(5, (result) =>
+                console.log("Callback result:", result)
+              )
+            }
           >
-            Say Simple
+            Callback Test
           </button>
-          <button
-            className="button-auth"
-            onClick={() => fetchPokemon(Math.floor(Math.random() * 100) + 1)}
-          >
-            Test Pokemon Service External
-          </button>
-        </>
-      )}
-    </div>
+
+          {isAuthenticated && (
+            <>
+              <button
+                className="button-auth"
+                onClick={() => slotMachine.spin()}
+              >
+                HAPPY SLOT
+              </button>
+              <button className="button-auth" onClick={testLibrary}>
+                Library Test
+              </button>
+              <button className="button-auth" onClick={testArray}>
+                Array Manipulation
+              </button>
+              <button className="button-auth" onClick={testFetchTiming}>
+                Some Sample
+              </button>
+              <button className="button-auth" onClick={someCallback}>
+                Some Callback
+              </button>
+              <button className="button-auth" onClick={fetchDefaultPokemon}>
+                Poke Button
+              </button>
+              <button className="button-auth" onClick={createPokemon}>
+                Test Pokemon Service
+              </button>
+              <button className="button-auth" onClick={() => utils.sayHello()}>
+                Say Hello
+              </button>
+              <button
+                className="button-auth"
+                onClick={() => utils.sayGoodbye()}
+              >
+                Say Goodbye
+              </button>
+              <button
+                className="button-auth"
+                onClick={() => console.log("Simple say function")}
+              >
+                Say Simple
+              </button>
+              <button
+                className="button-auth"
+                onClick={() =>
+                  fetchPokemon(Math.floor(Math.random() * 100) + 1)
+                }
+              >
+                Test Pokemon Service External
+              </button>
+            </>
+          )}
+        </div>
+      </details>
+    </section>
   );
 }
