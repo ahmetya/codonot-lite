@@ -1048,7 +1048,7 @@
   color: var(--home-fg-dim);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1024px) {
   .site-header,
   .site-header__nav,
   .auth {
