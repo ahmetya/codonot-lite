@@ -1140,6 +1140,21 @@
   .stream-submit-button {
     order: 2;
   }
+
+  .page-container button {
+    border: 1px solid var(--home-border);
+    border-radius: var(--home-radius);
+    width: 160px;
+    height: 34px;
+    color: var(--home-fg-muted);
+    background: var(--home-surface);
+    cursor: pointer;
+    font-size: 12px;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

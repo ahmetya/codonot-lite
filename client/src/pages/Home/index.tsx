@@ -112,6 +112,8 @@ export default function Home() {
             {guestVisuals.map(({ label, image }) => (
               <figure className="guest-visual__panel" key={label}>
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={image}
                   alt={`Pixel art ${label.toLowerCase()}`}
                   className="guest-visual__image"
