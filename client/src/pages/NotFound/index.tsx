@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import favicon from "../../assets/favicon.svg";
 import notFoundImage from "../../assets/not-found.png";
@@ -5,6 +6,20 @@ import "./index.css";
 
 export default function NotFound() {
   const location = useLocation();
+
+  useEffect(() => {
+    const previousTitle = document.title;
+    const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    const previousRobots = robots?.content;
+
+    document.title = "Page Not Found | Codonot Lite";
+    if (robots) robots.content = "noindex, follow";
+
+    return () => {
+      document.title = previousTitle;
+      if (robots && previousRobots) robots.content = previousRobots;
+    };
+  }, []);
 
   return (
     <main className="not-found-page">
