@@ -1,7 +1,13 @@
-import hljs from "highlight.js";
+import { lazy, Suspense } from "react";
+import hljs from "highlight.js/lib/common";
 import "highlight.js/styles/github-dark.css";
-import { MermaidDiagram } from "./MermaidDiagram";
 import type { StreamEntry, StreamSegment } from "./stream-types";
+
+const MermaidDiagram = lazy(() =>
+  import("./MermaidDiagram").then((module) => ({
+    default: module.MermaidDiagram,
+  }))
+);
 
 interface StreamOutputProps {
   entries: StreamEntry[];
@@ -95,7 +101,14 @@ function renderCodeSegment(segment: Extract<StreamSegment, { type: "code" }>) {
 
   if (segment.lang === "mermaid" && segment.complete) {
     return (
-      <MermaidDiagram key={segment.key} code={code} fallback={codeBlock} />
+      <Suspense
+        key={segment.key}
+        fallback={
+          <div className="mermaid-block__loading">Loading diagram tools...</div>
+        }
+      >
+        <MermaidDiagram code={code} fallback={codeBlock} />
+      </Suspense>
     );
   }
 

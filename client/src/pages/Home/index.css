@@ -986,6 +986,7 @@
 
 .guest-visual__panel {
   position: relative;
+  aspect-ratio: 1;
   min-width: 0;
   margin: 0;
   overflow: hidden;
@@ -995,10 +996,16 @@
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
 }
 
+.guest-visual__panel picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .guest-visual__image {
   display: block;
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   object-fit: cover;
   image-rendering: pixelated;
 }

@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import favicon from "../../assets/favicon.svg";
-import notFoundImage from "../../assets/not-found.png";
+import notFoundImageAvif from "../../assets/not-found.avif";
+import notFoundImageWebp from "../../assets/not-found.webp";
 import "./index.css";
 
 export default function NotFound() {
@@ -53,10 +54,16 @@ export default function NotFound() {
         </div>
 
         <figure className="not-found-visual">
-          <img
-            src={notFoundImage}
-            alt="Pixel art AI assistant investigating a disconnected data cable"
-          />
+          <picture>
+            <source srcSet={notFoundImageAvif} type="image/avif" />
+            <img
+              decoding="async"
+              width="768"
+              height="702"
+              src={notFoundImageWebp}
+              alt="Pixel art AI assistant investigating a disconnected data cable"
+            />
+          </picture>
           <figcaption>
             <span className="not-found-visual__dot" />
             Signal unavailable

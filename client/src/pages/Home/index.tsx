@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import analyticsImage from "../../assets/ai-feature-analytics.png";
-import assistantImage from "../../assets/ai-feature-assistant.png";
-import codeImage from "../../assets/ai-feature-code.png";
-import streamImage from "../../assets/ai-feature-stream.png";
+import analyticsImageAvif from "../../assets/ai-feature-analytics.avif";
+import analyticsImageWebp from "../../assets/ai-feature-analytics.webp";
+import assistantImageAvif from "../../assets/ai-feature-assistant.avif";
+import assistantImageWebp from "../../assets/ai-feature-assistant.webp";
+import codeImageAvif from "../../assets/ai-feature-code.avif";
+import codeImageWebp from "../../assets/ai-feature-code.webp";
+import streamImageAvif from "../../assets/ai-feature-stream.avif";
+import streamImageWebp from "../../assets/ai-feature-stream.webp";
 import { useAuth } from "../../context/AuthContext";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
@@ -17,10 +21,26 @@ interface HelloResponse {
 }
 
 const guestVisuals = [
-  { label: "Code workspace", image: codeImage },
-  { label: "AI data stream", image: streamImage },
-  { label: "AI assistant", image: assistantImage },
-  { label: "Analytics workspace", image: analyticsImage },
+  {
+    label: "Code workspace",
+    avif: codeImageAvif,
+    webp: codeImageWebp,
+  },
+  {
+    label: "AI data stream",
+    avif: streamImageAvif,
+    webp: streamImageWebp,
+  },
+  {
+    label: "AI assistant",
+    avif: assistantImageAvif,
+    webp: assistantImageWebp,
+  },
+  {
+    label: "Analytics workspace",
+    avif: analyticsImageAvif,
+    webp: analyticsImageWebp,
+  },
 ];
 
 export default function Home() {
@@ -108,14 +128,20 @@ export default function Home() {
             <strong>Ideas become working code, one token at a time.</strong>
           </div>
           <div className="guest-visual__grid">
-            {guestVisuals.map(({ label, image }) => (
+            {guestVisuals.map(({ label, avif, webp }) => (
               <figure className="guest-visual__panel" key={label}>
-                <img
-                  loading="lazy"
-                  src={image}
-                  alt={`Pixel art ${label.toLowerCase()}`}
-                  className="guest-visual__image"
-                />
+                <picture>
+                  <source srcSet={avif} type="image/avif" />
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    width="640"
+                    height="640"
+                    src={webp}
+                    alt={`Pixel art ${label.toLowerCase()}`}
+                    className="guest-visual__image"
+                  />
+                </picture>
                 <figcaption>{label}</figcaption>
               </figure>
             ))}
