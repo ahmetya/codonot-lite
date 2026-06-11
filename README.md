@@ -23,14 +23,14 @@ sandbox.
 
 ## Technology
 
-| Area | Technology |
-| --- | --- |
-| Client | React 19, TypeScript, Vite, React Router |
-| Server | Node.js, Express, TypeScript |
-| Database | SQLite, Prisma, better-sqlite3 adapter |
-| Authentication | bcrypt, JSON Web Tokens |
-| AI | Google GenAI SDK and Google Generative Language REST API |
-| Rendering | Highlight.js |
+| Area           | Technology                                               |
+| -------------- | -------------------------------------------------------- |
+| Client         | React 19, TypeScript, Vite, React Router                 |
+| Server         | Node.js, Express, TypeScript                             |
+| Database       | SQLite, Prisma, better-sqlite3 adapter                   |
+| Authentication | bcrypt, JSON Web Tokens                                  |
+| AI             | Google GenAI SDK and Google Generative Language REST API |
+| Rendering      | Highlight.js                                             |
 
 ## Project Structure
 
@@ -80,11 +80,11 @@ npm install --prefix server
 Create `server/.env`:
 
 ```env
-PORT=3001
-DATABASE_URL=file:./prisma/dev.db
-GEMINI_API_KEY=replace_with_your_google_ai_key
-JWT_SECRET=replace_with_a_long_random_secret
-NODE_ENV=development
+DATABASE_URL = file:./prisma/dev.db
+GEMINI_API_KEY = replace_with_your_google_ai_key
+JWT_SECRET = replace_with_a_long_random_secret
+NODE_ENV = development
+PORT = 3001
 ```
 
 `GEMINI_API_KEY` is only required for AI requests. `JWT_SECRET` is required for
@@ -95,7 +95,7 @@ registration and login.
 Create `client/.env`:
 
 ```env
-VITE_API_URL=http://localhost:3001/api
+VITE_API_URL = http://localhost:3001/api
 ```
 
 Most browser requests use Vite's `/api` development proxy. `VITE_API_URL` is
@@ -142,28 +142,28 @@ On Windows systems where PowerShell blocks `npm.ps1`, use `npm.cmd` in place of
 
 ### Repository root
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Run the client and server concurrently |
-| `npm run start:client` | Run the Vite development server |
+| Command                | Description                            |
+| ---------------------- | -------------------------------------- |
+| `npm run dev`          | Run the client and server concurrently |
+| `npm run start:client` | Run the Vite development server        |
 | `npm run start:server` | Run the server development entry point |
 
 ### Client
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start Vite |
-| `npm run build` | Create a production bundle |
-| `npm run lint` | Run ESLint |
+| Command           | Description                   |
+| ----------------- | ----------------------------- |
+| `npm run dev`     | Start Vite                    |
+| `npm run build`   | Create a production bundle    |
+| `npm run lint`    | Run ESLint                    |
 | `npm run preview` | Preview the production bundle |
 
 ### Server
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Run Express with Nodemon and ts-node |
+| Command         | Description                                 |
+| --------------- | ------------------------------------------- |
+| `npm run dev`   | Run Express with Nodemon and ts-node        |
 | `npm run build` | Compile TypeScript and resolve path aliases |
-| `npm run start` | Run the compiled server from `dist/` |
+| `npm run start` | Run the compiled server from `dist/`        |
 
 ## API Reference
 
@@ -171,18 +171,18 @@ All endpoints are mounted below `/api`.
 
 ### General
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/hello` | Basic server health response |
-| `GET` | `/poke` | Fetch Pokemon number 1 from PokeAPI |
+| Method | Endpoint | Description                         |
+| ------ | -------- | ----------------------------------- |
+| `GET`  | `/hello` | Basic server health response        |
+| `GET`  | `/poke`  | Fetch Pokemon number 1 from PokeAPI |
 
 ### Authentication
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `POST` | `/auth/register` | Create a user and return a JWT |
-| `POST` | `/auth/login` | Verify credentials and return a JWT |
-| `GET` | `/auth/me` | Return the decoded authenticated user |
+| Method | Endpoint         | Description                           |
+| ------ | ---------------- | ------------------------------------- |
+| `POST` | `/auth/register` | Create a user and return a JWT        |
+| `POST` | `/auth/login`    | Verify credentials and return a JWT   |
+| `GET`  | `/auth/me`       | Return the decoded authenticated user |
 
 Send protected requests with:
 
@@ -202,10 +202,10 @@ Example registration body:
 
 ### Helper Bot
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `POST` | `/helperbot` | Return one complete AI response |
-| `POST` | `/helperbot/stream` | Proxy the upstream SSE response |
+| Method | Endpoint                | Description                                  |
+| ------ | ----------------------- | -------------------------------------------- |
+| `POST` | `/helperbot`            | Return one complete AI response              |
+| `POST` | `/helperbot/stream`     | Proxy the upstream SSE response              |
 | `POST` | `/helperbot/stream-sdk` | Stream plain text chunks using the GenAI SDK |
 
 Each helper bot endpoint accepts:
@@ -227,18 +227,18 @@ API version in use.
 
 ### Pokemon
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/pokemon` | List locally stored Pokemon |
-| `POST` | `/pokemon` | Store a Pokemon with `pokeId` and `name` |
-| `GET` | `/pokemon/random` | Placeholder random-Pokemon response |
-| `GET` | `/pokemon/:id` | Return a cached Pokemon or fetch it from PokeAPI |
+| Method | Endpoint          | Description                                      |
+| ------ | ----------------- | ------------------------------------------------ |
+| `GET`  | `/pokemon`        | List locally stored Pokemon                      |
+| `POST` | `/pokemon`        | Store a Pokemon with `pokeId` and `name`         |
+| `GET`  | `/pokemon/random` | Placeholder random-Pokemon response              |
+| `GET`  | `/pokemon/:id`    | Return a cached Pokemon or fetch it from PokeAPI |
 
 ### Generic Records
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/generic` | List generic records |
+| Method | Endpoint   | Description                             |
+| ------ | ---------- | --------------------------------------- |
+| `GET`  | `/generic` | List generic records                    |
 | `POST` | `/generic` | Create a record with `title` and `body` |
 
 ## Streaming Flow
