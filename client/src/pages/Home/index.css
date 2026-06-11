@@ -432,7 +432,7 @@
 .demo-tools summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
   padding: 9px 12px;
   color: var(--home-fg-muted);
@@ -469,7 +469,7 @@
 }
 
 .demo-tools__count {
-  margin-left: auto;
+  /* margin-left: auto; */
   color: var(--home-fg-dim);
   font-size: 10px;
   font-weight: 500;
