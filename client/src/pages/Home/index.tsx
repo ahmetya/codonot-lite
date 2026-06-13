@@ -8,6 +8,7 @@ import codeImageWebp from "../../assets/ai-feature-code.webp";
 import streamImageAvif from "../../assets/ai-feature-stream.avif";
 import streamImageWebp from "../../assets/ai-feature-stream.webp";
 import { useAuth } from "../../context/AuthContext";
+import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
 import { LoginModal } from "./LoginModal";
@@ -149,13 +150,7 @@ export default function Home() {
         </section>
       )}
 
-      <footer className="site-footer">
-        <span className="site-footer__brand">
-          codonot<span className="site-footer__accent">lite</span>
-        </span>
-        <span className="site-footer__sep">/</span>
-        <span className="site-footer__note">AI stream playground</span>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

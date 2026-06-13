@@ -1,0 +1,214 @@
+.about-page {
+  --about-bg: #0d1117;
+  --about-text: #e6edf3;
+  --about-muted: #8b949e;
+  --about-line: #2b3138;
+  --about-accent: #56d67e;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  color: var(--about-text);
+  background: var(--about-bg);
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+}
+
+.about-page * {
+  box-sizing: border-box;
+}
+
+.about-main {
+  width: min(760px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.about-hero {
+  padding: 120px 0 100px;
+  border-bottom: 1px solid var(--about-line);
+  text-align: left;
+}
+
+.about-kicker {
+  margin: 0 0 24px;
+  color: var(--about-accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.about-hero h1 {
+  margin: 0;
+  color: var(--about-text);
+  font-size: clamp(48px, 8vw, 76px);
+  font-weight: 650;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.about-hero__intro {
+  max-width: 650px;
+  margin: 30px 0 28px;
+  color: var(--about-muted);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.about-text-link {
+  color: var(--about-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.about-text-link:hover {
+  color: var(--about-accent);
+}
+
+.about-section {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--about-line);
+  text-align: left;
+}
+
+.about-section h2 {
+  margin: 0 0 36px;
+  color: var(--about-text);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.about-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.about-skills span,
+.about-role__skills span {
+  padding: 7px 10px;
+  border: 1px solid var(--about-line);
+  border-radius: 5px;
+  color: var(--about-muted);
+  font-size: 11px;
+}
+
+.about-timeline {
+  display: grid;
+}
+
+.about-job {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 42px;
+  padding: 38px 0;
+  border-top: 1px solid var(--about-line);
+}
+
+.about-job:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.about-job h3,
+.about-job p {
+  margin: 0;
+}
+
+.about-job__company h3 {
+  color: var(--about-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.about-job__company p,
+.about-job__company div > span {
+  display: block;
+  margin-top: 6px;
+  color: var(--about-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.about-job__roles {
+  display: grid;
+  gap: 30px;
+}
+
+.about-role + .about-role {
+  padding-top: 28px;
+  border-top: 1px solid var(--about-line);
+}
+
+.about-role__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.about-role h4 {
+  margin: 0;
+  color: var(--about-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.about-role__top span {
+  flex: 0 0 auto;
+  color: var(--about-muted);
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+}
+
+.about-role__top .is-current {
+  color: var(--about-accent);
+}
+
+.about-role > p {
+  margin-top: 12px;
+  color: var(--about-muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.about-role__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.about-role__skills span {
+  padding: 5px 8px;
+  font-size: 9px;
+}
+
+@media (max-width: 640px) {
+  .about-main {
+    width: min(100% - 32px, 760px);
+  }
+
+  .about-hero {
+    padding: 80px 0 64px;
+  }
+
+  .about-hero__intro {
+    font-size: 16px;
+  }
+
+  .about-section {
+    padding: 54px 0;
+  }
+
+  .about-job {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .about-role__top {
+    flex-direction: column;
+    gap: 7px;
+  }
+}

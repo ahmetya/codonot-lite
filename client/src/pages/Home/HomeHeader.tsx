@@ -1,4 +1,5 @@
-import favicon from "../../assets/favicon.svg";
+import { useNavigate } from "react-router-dom";
+import { SiteHeader } from "../../components/shared-layout/SiteHeader";
 
 interface HomeHeaderProps {
   isAuthenticated: boolean;
@@ -17,40 +18,27 @@ export function HomeHeader({
   onRegister,
   onLogout,
 }: HomeHeaderProps) {
-  return (
-    <div className="site-header-layer">
-      <header className="site-header">
-        <div className="site-header__logo">
-          <span className="site-header__logo-icon">
-            <img className="logo" src={favicon} alt="Codonot Lite Logo" />
-          </span>
-          <span className="site-header__brand">
-            codonot<span className="site-header__accent">lite</span>
-          </span>
-        </div>
+  const navigate = useNavigate();
 
-        <nav className="site-header__nav">
-          <div className="auth">
-            <span className="site-header__nav-item">
-              {isAuthenticated ? `Hello ${userName ?? "there"}!` : message}
-            </span>
-            <div className="header-buttons">
-              <button
-                className="highlight-low"
-                onClick={isAuthenticated ? onLogout : onLogin}
-              >
-                {isAuthenticated ? "Logout" : "Login"}
-              </button>
-              <button
-                className="highlight"
-                onClick={isAuthenticated ? undefined : onRegister}
-              >
-                {isAuthenticated ? "Create Post" : "Register"}
-              </button>
-            </div>
-          </div>
-        </nav>
-      </header>
-    </div>
+  return (
+    <SiteHeader
+      status={isAuthenticated ? `Hello ${userName ?? "there"}!` : message}
+    >
+      <button className="highlight-low" onClick={() => navigate("/about")}>
+        About me
+      </button>
+      <button
+        className="highlight-low"
+        onClick={isAuthenticated ? onLogout : onLogin}
+      >
+        {isAuthenticated ? "Logout" : "Login"}
+      </button>
+      <button
+        className="highlight"
+        onClick={isAuthenticated ? undefined : onRegister}
+      >
+        {isAuthenticated ? "Create Post" : "Register"}
+      </button>
+    </SiteHeader>
   );
 }
