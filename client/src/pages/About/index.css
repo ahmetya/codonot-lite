@@ -128,8 +128,8 @@
   width: 126px;
   height: 38px;
   margin-bottom: 14px;
-  border: 1px solid var(--about-line);
-  border-radius: 5px;
+  /* border: 1px solid var(--about-line);
+  border-radius: 5px; */
   object-fit: contain;
 }
 

@@ -1,14 +1,21 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import favicon from "../../assets/favicon.svg";
+import {
+  VERIFICATION_STATE,
+  VERIFY_EMAIL_COPY,
+  VERIFY_EMAIL_ENDPOINTS,
+  VERIFY_EMAIL_REQUEST_HEADERS,
+  type VerificationState,
+} from "./VerifyEmail.consts";
 import "./index.css";
-
-type VerificationState = "loading" | "success" | "error";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
-  const [state, setState] = useState<VerificationState>("loading");
-  const [message, setMessage] = useState("Verifying your email...");
+  const [state, setState] = useState<VerificationState>(
+    VERIFICATION_STATE.loading
+  );
+  const [message, setMessage] = useState(VERIFY_EMAIL_COPY.initialMessage);
   const [email, setEmail] = useState("");
   const [resendMessage, setResendMessage] = useState("");
   const [isResending, setIsResending] = useState(false);
@@ -17,16 +24,16 @@ export default function VerifyEmail() {
     const token = searchParams.get("token");
 
     if (!token) {
-      setState("error");
-      setMessage("This verification link is missing its token.");
+      setState(VERIFICATION_STATE.error);
+      setMessage(VERIFY_EMAIL_COPY.missingToken);
       return;
     }
 
     const verify = async () => {
       try {
-        const response = await fetch("/api/auth/verify-email", {
+        const response = await fetch(VERIFY_EMAIL_ENDPOINTS.verify, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: VERIFY_EMAIL_REQUEST_HEADERS,
           body: JSON.stringify({ token }),
         });
         const data = (await response.json()) as {
@@ -35,15 +42,17 @@ export default function VerifyEmail() {
         };
 
         if (!response.ok) {
-          throw new Error(data.error || "Unable to verify this email");
+          throw new Error(data.error || VERIFY_EMAIL_COPY.verifyFailed);
         }
 
-        setState("success");
-        setMessage(data.message || "Your email has been verified.");
+        setState(VERIFICATION_STATE.success);
+        setMessage(data.message || VERIFY_EMAIL_COPY.verifiedFallback);
       } catch (error) {
-        setState("error");
+        setState(VERIFICATION_STATE.error);
         setMessage(
-          error instanceof Error ? error.message : "Email verification failed"
+          error instanceof Error
+            ? error.message
+            : VERIFY_EMAIL_COPY.verificationFailed
         );
       }
     };
@@ -57,20 +66,24 @@ export default function VerifyEmail() {
     setResendMessage("");
 
     try {
-      const response = await fetch("/api/auth/resend-verification", {
+      const response = await fetch(VERIFY_EMAIL_ENDPOINTS.resend, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: VERIFY_EMAIL_REQUEST_HEADERS,
         body: JSON.stringify({ email }),
       });
       const data = (await response.json()) as {
         message?: string;
         error?: string;
       };
-      if (!response.ok) throw new Error(data.error || "Unable to resend email");
-      setResendMessage(data.message || "Check your inbox for a new link.");
+      if (!response.ok) {
+        throw new Error(data.error || VERIFY_EMAIL_COPY.resendFailed);
+      }
+      setResendMessage(data.message || VERIFY_EMAIL_COPY.resendFallback);
     } catch (error) {
       setResendMessage(
-        error instanceof Error ? error.message : "Unable to resend email"
+        error instanceof Error
+          ? error.message
+          : VERIFY_EMAIL_COPY.resendFailed
       );
     } finally {
       setIsResending(false);
@@ -88,32 +101,40 @@ export default function VerifyEmail() {
         </Link>
 
         <div className="verify-status" aria-hidden="true">
-          {state === "loading" ? "..." : state === "success" ? "OK" : "!"}
+          {state === VERIFICATION_STATE.loading
+            ? VERIFY_EMAIL_COPY.loadingStatus
+            : state === VERIFICATION_STATE.success
+              ? VERIFY_EMAIL_COPY.successStatus
+              : VERIFY_EMAIL_COPY.errorStatus}
         </div>
-        <p className="verify-eyebrow">Email verification</p>
+        <p className="verify-eyebrow">{VERIFY_EMAIL_COPY.eyebrow}</p>
         <h1>
-          {state === "loading"
-            ? "Checking your link"
-            : state === "success"
-              ? "You are verified"
-              : "Link unavailable"}
+          {state === VERIFICATION_STATE.loading
+            ? VERIFY_EMAIL_COPY.loadingHeading
+            : state === VERIFICATION_STATE.success
+              ? VERIFY_EMAIL_COPY.successHeading
+              : VERIFY_EMAIL_COPY.errorHeading}
         </h1>
         <p className="verify-message">{message}</p>
 
-        {state === "error" && (
+        {state === VERIFICATION_STATE.error && (
           <form className="verify-resend" onSubmit={resendVerification}>
-            <label htmlFor="verification-email">Send a new link</label>
+            <label htmlFor="verification-email">
+              {VERIFY_EMAIL_COPY.resendLabel}
+            </label>
             <div>
               <input
                 id="verification-email"
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.com"
+                placeholder={VERIFY_EMAIL_COPY.emailPlaceholder}
                 required
               />
               <button type="submit" disabled={isResending}>
-                {isResending ? "Sending..." : "Resend"}
+                {isResending
+                  ? VERIFY_EMAIL_COPY.resending
+                  : VERIFY_EMAIL_COPY.resend}
               </button>
             </div>
             {resendMessage && <p role="status">{resendMessage}</p>}
@@ -121,7 +142,9 @@ export default function VerifyEmail() {
         )}
 
         <Link className="verify-home" to="/">
-          {state === "success" ? "Continue to login" : "Return home"}
+          {state === VERIFICATION_STATE.success
+            ? VERIFY_EMAIL_COPY.continueToLogin
+            : VERIFY_EMAIL_COPY.returnHome}
         </Link>
       </section>
     </main>

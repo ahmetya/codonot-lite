@@ -1,5 +1,11 @@
 // src/context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
+import {
+  AUTH_CLIENT_MESSAGES,
+  AUTH_ENDPOINTS,
+  AUTH_REQUEST_HEADERS,
+  AUTH_STORAGE_KEYS,
+} from "./AuthContext.consts";
 
 interface User {
   id: number;
@@ -39,14 +45,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const saveSession = (data: AuthResponse) => {
     setToken(data.token);
     setUser(data.user);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem(AUTH_STORAGE_KEYS.token, data.token);
+    localStorage.setItem(AUTH_STORAGE_KEYS.user, JSON.stringify(data.user));
   };
 
   // restore session on page refresh
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem(AUTH_STORAGE_KEYS.token);
+    const savedUser = localStorage.getItem(AUTH_STORAGE_KEYS.user);
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
@@ -54,9 +60,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const register = async (name: string, email: string, password: string) => {
-    const res = await fetch("/api/auth/register", {
+    const res = await fetch(AUTH_ENDPOINTS.register, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: AUTH_REQUEST_HEADERS,
       body: JSON.stringify({ name, email, password }),
     });
     const data = (await res.json()) as RegistrationResponse & {
@@ -64,29 +70,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     if (!res.ok) {
-      throw new Error(data.error || "Registration failed");
+      throw new Error(
+        data.error || AUTH_CLIENT_MESSAGES.registrationFailed
+      );
     }
 
     return data;
   };
 
   const login = async (email: string, password: string) => {
-    const res = await fetch("/api/auth/login", {
+    const res = await fetch(AUTH_ENDPOINTS.login, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: AUTH_REQUEST_HEADERS,
       body: JSON.stringify({ email, password }),
     });
 
     const data = (await res.json()) as AuthResponse & { error?: string };
-    if (!res.ok) throw new Error(data.error || "Invalid credentials");
+    if (!res.ok) {
+      throw new Error(data.error || AUTH_CLIENT_MESSAGES.invalidCredentials);
+    }
     saveSession(data);
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem(AUTH_STORAGE_KEYS.token);
+    localStorage.removeItem(AUTH_STORAGE_KEYS.user);
   };
 
   return (
@@ -108,6 +118,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 // custom hook to consume context
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used inside AuthProvider");
+  if (!context) throw new Error(AUTH_CLIENT_MESSAGES.missingProvider);
   return context;
 }

@@ -9,8 +9,11 @@ import type {
   RegistrationResponse,
 } from "@app-types/index";
 import { emailService } from "@services/email-service/EmailService";
-
-const VERIFICATION_EXPIRY_MS = 24 * 60 * 60 * 1000;
+import {
+  AUTH_CONFIG,
+  AUTH_MESSAGES,
+  AUTH_STATUS,
+} from "./AuthService.consts";
 
 export class AuthError extends Error {
   constructor(
@@ -23,20 +26,31 @@ export class AuthError extends Error {
 
 class AuthService {
   private jwtSecret = process.env.JWT_SECRET!;
-  private saltRounds = 12;
 
   async register(data: RegisterDto): Promise<RegistrationResponse> {
     const email = data.email.trim().toLowerCase();
     const name = data.name.trim();
 
-    if (!email || !name || data.password.length < 6) {
-      throw new AuthError("Name, email, and a valid password are required", 400);
+    if (
+      !email ||
+      !name ||
+      data.password.length < AUTH_CONFIG.minimumPasswordLength
+    ) {
+      throw new AuthError(
+        AUTH_MESSAGES.invalidRegistration,
+        AUTH_STATUS.badRequest
+      );
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) throw new AuthError("Email already in use", 409);
+    if (existing) {
+      throw new AuthError(AUTH_MESSAGES.emailInUse, AUTH_STATUS.conflict);
+    }
 
-    const passwordHash = await bcrypt.hash(data.password, this.saltRounds);
+    const passwordHash = await bcrypt.hash(
+      data.password,
+      AUTH_CONFIG.saltRounds
+    );
     const rawToken = this.createRawVerificationToken();
     const tokenHash = this.hashVerificationToken(rawToken);
 
@@ -48,7 +62,9 @@ class AuthService {
         emailVerificationTokens: {
           create: {
             tokenHash,
-            expiresAt: new Date(Date.now() + VERIFICATION_EXPIRY_MS),
+            expiresAt: new Date(
+              Date.now() + AUTH_CONFIG.verificationExpiryMs
+            ),
           },
         },
       },
@@ -66,7 +82,7 @@ class AuthService {
     }
 
     return {
-      message: "Check your email to verify your account.",
+      message: AUTH_MESSAGES.registrationComplete,
       email: user.email,
     };
   }
@@ -75,12 +91,25 @@ class AuthService {
     const email = data.email.trim().toLowerCase();
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) throw new AuthError("Invalid credentials", 401);
+    if (!user) {
+      throw new AuthError(
+        AUTH_MESSAGES.invalidCredentials,
+        AUTH_STATUS.unauthorized
+      );
+    }
 
     const valid = await bcrypt.compare(data.password, user.passwordHash);
-    if (!valid) throw new AuthError("Invalid credentials", 401);
+    if (!valid) {
+      throw new AuthError(
+        AUTH_MESSAGES.invalidCredentials,
+        AUTH_STATUS.unauthorized
+      );
+    }
     if (!user.emailVerifiedAt) {
-      throw new AuthError("Verify your email before logging in", 403);
+      throw new AuthError(
+        AUTH_MESSAGES.emailNotVerified,
+        AUTH_STATUS.forbidden
+      );
     }
 
     const token = this.generateToken(user.id, user.email);
@@ -104,7 +133,10 @@ class AuthService {
           where: { id: verificationToken.id },
         });
       }
-      throw new AuthError("Verification link is invalid or expired", 400);
+      throw new AuthError(
+        AUTH_MESSAGES.invalidVerificationLink,
+        AUTH_STATUS.badRequest
+      );
     }
 
     await prisma.$transaction([
@@ -117,15 +149,14 @@ class AuthService {
       }),
     ]);
 
-    return { message: "Email verified. You can now log in." };
+    return { message: AUTH_MESSAGES.emailVerified };
   }
 
   async resendVerification(emailInput: string) {
     const email = emailInput.trim().toLowerCase();
     const user = await prisma.user.findUnique({ where: { email } });
     const genericResponse = {
-      message:
-        "If an unverified account exists for that email, a new link has been sent.",
+      message: AUTH_MESSAGES.verificationResent,
     };
 
     if (!user || user.emailVerifiedAt) return genericResponse;
@@ -133,7 +164,9 @@ class AuthService {
     const recentToken = await prisma.emailVerificationToken.findFirst({
       where: {
         userId: user.id,
-        createdAt: { gt: new Date(Date.now() - 60_000) },
+        createdAt: {
+          gt: new Date(Date.now() - AUTH_CONFIG.resendCooldownMs),
+        },
       },
     });
     if (recentToken) return genericResponse;
@@ -147,7 +180,9 @@ class AuthService {
         data: {
           userId: user.id,
           tokenHash,
-          expiresAt: new Date(Date.now() + VERIFICATION_EXPIRY_MS),
+          expiresAt: new Date(
+            Date.now() + AUTH_CONFIG.verificationExpiryMs
+          ),
         },
       }),
     ]);
@@ -162,15 +197,21 @@ class AuthService {
   }
 
   private createRawVerificationToken() {
-    return randomBytes(32).toString("hex");
+    return randomBytes(AUTH_CONFIG.verificationTokenBytes).toString(
+      AUTH_CONFIG.verificationTokenEncoding
+    );
   }
 
   private hashVerificationToken(token: string) {
-    return createHash("sha256").update(token).digest("hex");
+    return createHash(AUTH_CONFIG.verificationHashAlgorithm)
+      .update(token)
+      .digest(AUTH_CONFIG.verificationTokenEncoding);
   }
 
   private generateToken(userId: number, email: string): string {
-    return jwt.sign({ userId, email }, this.jwtSecret, { expiresIn: "7d" });
+    return jwt.sign({ userId, email }, this.jwtSecret, {
+      expiresIn: AUTH_CONFIG.jwtExpiry,
+    });
   }
 
   verifyToken(token: string) {

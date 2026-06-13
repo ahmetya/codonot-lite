@@ -5,6 +5,10 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import {
+  REGISTER_CONFIG,
+  REGISTER_COPY,
+} from "./RegisterModal.consts";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -52,8 +56,8 @@ export function RegisterModal({
     setError("");
     setSuccess("");
 
-    if (password.length < 6) {
-      setError("Password must contain at least 6 characters.");
+    if (password.length < REGISTER_CONFIG.minimumPasswordLength) {
+      setError(REGISTER_COPY.passwordTooShort);
       return;
     }
 
@@ -63,12 +67,14 @@ export function RegisterModal({
       setName("");
       setEmail("");
       setPassword("");
-      setSuccess(`${result.message} We sent the link to ${result.email}.`);
+      setSuccess(
+        `${result.message} ${REGISTER_COPY.successEmailPrefix} ${result.email}.`
+      );
     } catch (registrationError) {
       setError(
         registrationError instanceof Error
           ? registrationError.message
-          : "Registration failed"
+          : REGISTER_COPY.registrationFailed
       );
     } finally {
       setIsSubmitting(false);
@@ -91,14 +97,14 @@ export function RegisterModal({
       >
         <div className="auth-modal__header">
           <div>
-            <p className="auth-modal__eyebrow">Create account</p>
-            <h2 id="register-title">Join codonot-lite</h2>
+            <p className="auth-modal__eyebrow">{REGISTER_COPY.eyebrow}</p>
+            <h2 id="register-title">{REGISTER_COPY.title}</h2>
           </div>
           <button
             className="auth-modal__close"
             type="button"
             onClick={closeModal}
-            aria-label="Close registration"
+            aria-label={REGISTER_COPY.closeLabel}
             disabled={isSubmitting}
           >
             &times;
@@ -106,67 +112,73 @@ export function RegisterModal({
         </div>
 
         <p className="auth-modal__intro">
-          Save your session and unlock the AI stream playground.
+          {REGISTER_COPY.intro}
         </p>
 
         {success ? (
           <div className="auth-form__success" role="status">
-            <strong>Account created</strong>
+            <strong>{REGISTER_COPY.successTitle}</strong>
             <p>{success}</p>
             <button type="button" onClick={closeModal}>
-              Done
+              {REGISTER_COPY.done}
             </button>
           </div>
         ) : (
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label>
-            Name
-            <input
-              ref={nameInputRef}
-              type="text"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              autoComplete="name"
-              required
-            />
-          </label>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              autoComplete="email"
-              required
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="new-password"
-              minLength={6}
-              required
-            />
-          </label>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label>
+              {REGISTER_COPY.nameLabel}
+              <input
+                ref={nameInputRef}
+                type="text"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                autoComplete="name"
+                required
+              />
+            </label>
+            <label>
+              {REGISTER_COPY.emailLabel}
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="email"
+                required
+              />
+            </label>
+            <label>
+              {REGISTER_COPY.passwordLabel}
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="new-password"
+                minLength={REGISTER_CONFIG.minimumPasswordLength}
+                required
+              />
+            </label>
 
-          {error && (
-            <p className="auth-form__error" role="alert">
-              {error}
-            </p>
-          )}
+            {error && (
+              <p className="auth-form__error" role="alert">
+                {error}
+              </p>
+            )}
 
-          <div className="auth-form__actions">
-            <button type="button" onClick={closeModal} disabled={isSubmitting}>
-              Cancel
-            </button>
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create account"}
-            </button>
-          </div>
-        </form>
+            <div className="auth-form__actions">
+              <button
+                type="button"
+                onClick={closeModal}
+                disabled={isSubmitting}
+              >
+                {REGISTER_COPY.cancel}
+              </button>
+              <button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? REGISTER_COPY.submitting
+                  : REGISTER_COPY.submit}
+              </button>
+            </div>
+          </form>
         )}
       </section>
     </div>

@@ -1,14 +1,17 @@
-// src/routes/auth.ts
-import { Router } from 'express';
-import { authController } from '@controllers/auth/AuthController';
-import { requireAuth } from '@middleware/auth';
+import { Router } from "express";
+import { authController } from "@controllers/auth/AuthController";
+import { requireAuth } from "@middleware/auth";
+import { AUTH_ROUTES } from "./auth.consts";
 
 const router = Router();
 
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/verify-email', authController.verifyEmail);
-router.post('/resend-verification', authController.resendVerification);
-router.get('/me', requireAuth, authController.me); // protected
+router.post(AUTH_ROUTES.register, authController.register);
+router.post(AUTH_ROUTES.login, authController.login);
+router.post(AUTH_ROUTES.verifyEmail, authController.verifyEmail);
+router.post(
+  AUTH_ROUTES.resendVerification,
+  authController.resendVerification
+);
+router.get(AUTH_ROUTES.me, requireAuth, authController.me);
 
 export default router;
