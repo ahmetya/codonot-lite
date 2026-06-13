@@ -123,6 +123,16 @@
   font-weight: 600;
 }
 
+.about-job__company img {
+  display: block;
+  width: 126px;
+  height: 38px;
+  margin-bottom: 14px;
+  border: 1px solid var(--about-line);
+  border-radius: 5px;
+  object-fit: contain;
+}
+
 .about-job__company p,
 .about-job__company div > span {
   display: block;

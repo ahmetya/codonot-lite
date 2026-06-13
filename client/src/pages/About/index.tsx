@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
+import amadeusLogo from "../../assets/company-logos/amadeus.svg";
+import betssonLogo from "../../assets/company-logos/betsson-group.svg";
+import etiyaLogo from "../../assets/company-logos/etiya.svg";
+import garantiLogo from "../../assets/company-logos/garanti-teknoloji.svg";
 import "./index.css";
 
 const experience = [
   {
     company: "Betsson Group",
+    logo: betssonLogo,
     location: "Ta' Xbiex, Malta",
     total: "4 yrs",
     roles: [
@@ -13,8 +18,14 @@ const experience = [
         title: "Frontend Software Development Engineer",
         period: "Dec 2023 - Present",
         detail:
-          "Building modern frontend experiences with Angular, TypeScript, and JavaScript in a hybrid product environment.",
-        skills: ["Angular", "TypeScript", "JavaScript", "Frontend"],
+          "Building modern frontend experiences with Angular, Stencil.js, TypeScript, and JavaScript in a hybrid product environment.",
+        skills: [
+          "Angular",
+          "Stencil.js",
+          "TypeScript",
+          "JavaScript",
+          "Frontend",
+        ],
         current: true,
       },
       {
@@ -28,6 +39,7 @@ const experience = [
   },
   {
     company: "Amadeus",
+    logo: amadeusLogo,
     location: "Istanbul, Türkiye",
     total: "4 yrs 6 mos",
     roles: [
@@ -42,6 +54,7 @@ const experience = [
   },
   {
     company: "Garanti Teknoloji",
+    logo: garantiLogo,
     location: "Istanbul, Türkiye",
     total: "2 yrs 10 mos",
     roles: [
@@ -56,6 +69,7 @@ const experience = [
   },
   {
     company: "Etiya",
+    logo: etiyaLogo,
     location: "Istanbul, Türkiye",
     total: "2 yrs 6 mos",
     roles: [
@@ -101,9 +115,9 @@ export default function About() {
           <p className="about-kicker">Frontend Software Developer · Malta</p>
           <h1>Ahmet Yalcinkaya</h1>
           <p className="about-hero__intro">
-            I build reliable web products with Angular and TypeScript. My
-            background in quality engineering shapes how I approach frontend
-            architecture, automation, and delivery.
+            I build reliable web products with Angular, Stencil.js, and
+            TypeScript. My background in quality engineering shapes how I
+            approach frontend architecture, automation, and delivery.
           </p>
           <a className="about-text-link" href="#experience">
             View experience ↓
@@ -125,6 +139,7 @@ export default function About() {
             {experience.map((job) => (
               <article className="about-job" key={job.company}>
                 <div className="about-job__company">
+                  <img src={job.logo} alt={`${job.company} logo`} />
                   <div>
                     <h3>{job.company}</h3>
                     <p>{job.location}</p>

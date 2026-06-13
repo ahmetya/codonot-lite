@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" role="img" aria-labelledby="title">
+  <title id="title">Etiya</title>
+  <rect width="160" height="48" rx="6" fill="#20262d"/>
+  <g fill="#d88b5b">
+    <rect x="14" y="14" width="6" height="6"/>
+    <rect x="22" y="14" width="6" height="6" opacity=".7"/>
+    <rect x="14" y="22" width="6" height="6" opacity=".7"/>
+    <rect x="22" y="22" width="6" height="6"/>
+    <rect x="30" y="22" width="6" height="6" opacity=".55"/>
+    <rect x="22" y="30" width="6" height="6" opacity=".55"/>
+  </g>
+  <text x="45" y="31" fill="#b9bad1" font-family="Arial, sans-serif" font-size="23" font-weight="700" letter-spacing="3">ETIYA</text>
+</svg>
