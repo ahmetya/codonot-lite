@@ -1,0 +1,165 @@
+.verify-page {
+  --verify-bg: #0d1117;
+  --verify-surface: #161b22;
+  --verify-border: #30363d;
+  --verify-fg: #e6edf3;
+  --verify-muted: #8b949e;
+  --verify-accent: #56d67e;
+
+  display: grid;
+  flex: 1;
+  min-height: 100svh;
+  padding: 24px;
+  place-items: center;
+  color: var(--verify-fg);
+  background:
+    radial-gradient(circle, rgba(86, 214, 126, 0.09), transparent 34%),
+    var(--verify-bg);
+  box-sizing: border-box;
+}
+
+.verify-card {
+  width: min(100%, 460px);
+  padding: 28px;
+  border: 1px solid var(--verify-border);
+  border-radius: 14px;
+  background: rgba(22, 27, 34, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+}
+
+.verify-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--verify-fg);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.verify-brand img {
+  width: 25px;
+  height: 25px;
+}
+
+.verify-brand strong,
+.verify-eyebrow {
+  color: var(--verify-accent);
+}
+
+.verify-status {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  margin: 34px auto 18px;
+  border: 1px solid var(--verify-accent);
+  border-radius: 12px;
+  color: var(--verify-accent);
+  font: 700 15px/1 "Consolas", monospace;
+  background: rgba(86, 214, 126, 0.1);
+  place-items: center;
+}
+
+.verify-card--error .verify-status {
+  border-color: #f85149;
+  color: #f85149;
+  background: rgba(248, 81, 73, 0.1);
+}
+
+.verify-eyebrow {
+  margin: 0 0 8px;
+  font: 600 10px/1.4 "Consolas", monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.verify-card h1 {
+  margin: 0 0 12px;
+  color: var(--verify-fg);
+  font-size: 30px;
+  font-weight: 650;
+}
+
+.verify-message {
+  min-height: 48px;
+  color: var(--verify-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.verify-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 130px;
+  height: 38px;
+  margin-top: 22px;
+  padding: 0 16px;
+  border: 1px solid var(--verify-accent);
+  border-radius: 7px;
+  color: var(--verify-fg);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(86, 214, 126, 0.1);
+  box-sizing: border-box;
+}
+
+.verify-resend {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  text-align: left;
+}
+
+.verify-resend label {
+  color: var(--verify-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.verify-resend div {
+  display: flex;
+  gap: 8px;
+}
+
+.verify-resend input {
+  min-width: 0;
+  height: 38px;
+  flex: 1;
+  padding: 0 10px;
+  border: 1px solid var(--verify-border);
+  border-radius: 7px;
+  color: var(--verify-fg);
+  background: var(--verify-bg);
+  box-sizing: border-box;
+}
+
+.verify-resend button {
+  width: auto;
+  min-width: 88px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--verify-accent);
+  border-radius: 7px;
+  color: var(--verify-fg);
+  background: rgba(86, 214, 126, 0.1);
+  cursor: pointer;
+}
+
+.verify-resend p {
+  color: var(--verify-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .verify-page {
+    padding: 12px;
+  }
+
+  .verify-card {
+    padding: 22px;
+  }
+}

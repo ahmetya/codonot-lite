@@ -12,10 +12,19 @@ interface AuthResponse {
   user: User;
 }
 
+interface RegistrationResponse {
+  message: string;
+  email: string;
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<RegistrationResponse>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -50,13 +59,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
     });
-    const data = (await res.json()) as AuthResponse & { error?: string };
+    const data = (await res.json()) as RegistrationResponse & {
+      error?: string;
+    };
 
     if (!res.ok) {
       throw new Error(data.error || "Registration failed");
     }
 
-    saveSession(data);
+    return data;
   };
 
   const login = async (email: string, password: string) => {
@@ -66,9 +77,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
 
-    if (!res.ok) throw new Error("Invalid credentials");
-
-    const data = (await res.json()) as AuthResponse;
+    const data = (await res.json()) as AuthResponse & { error?: string };
+    if (!res.ok) throw new Error(data.error || "Invalid credentials");
     saveSession(data);
   };
 

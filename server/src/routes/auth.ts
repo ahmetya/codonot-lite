@@ -7,6 +7,8 @@ const router = Router();
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/verify-email', authController.verifyEmail);
+router.post('/resend-verification', authController.resendVerification);
 router.get('/me', requireAuth, authController.me); // protected
 
 export default router;

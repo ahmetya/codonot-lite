@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -7,7 +13,7 @@ interface RegisterModalProps {
     name: string,
     email: string,
     password: string
-  ) => Promise<void>;
+  ) => Promise<{ message: string; email: string }>;
 }
 
 export function RegisterModal({
@@ -19,25 +25,32 @@ export function RegisterModal({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const closeModal = useCallback(() => {
+    setError("");
+    setSuccess("");
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) return;
 
     nameInputRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !isSubmitting) onClose();
+      if (event.key === "Escape" && !isSubmitting) closeModal();
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isSubmitting, onClose]);
+  }, [isOpen, isSubmitting, closeModal]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    setSuccess("");
 
     if (password.length < 6) {
       setError("Password must contain at least 6 characters.");
@@ -46,11 +59,11 @@ export function RegisterModal({
 
     setIsSubmitting(true);
     try {
-      await onRegister(name.trim(), email.trim(), password);
+      const result = await onRegister(name.trim(), email.trim(), password);
       setName("");
       setEmail("");
       setPassword("");
-      onClose();
+      setSuccess(`${result.message} We sent the link to ${result.email}.`);
     } catch (registrationError) {
       setError(
         registrationError instanceof Error
@@ -67,7 +80,7 @@ export function RegisterModal({
       className="modal-backdrop"
       role="presentation"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !isSubmitting) onClose();
+        if (event.target === event.currentTarget && !isSubmitting) closeModal();
       }}
     >
       <section
@@ -84,7 +97,7 @@ export function RegisterModal({
           <button
             className="auth-modal__close"
             type="button"
-            onClick={onClose}
+            onClick={closeModal}
             aria-label="Close registration"
             disabled={isSubmitting}
           >
@@ -96,6 +109,15 @@ export function RegisterModal({
           Save your session and unlock the AI stream playground.
         </p>
 
+        {success ? (
+          <div className="auth-form__success" role="status">
+            <strong>Account created</strong>
+            <p>{success}</p>
+            <button type="button" onClick={closeModal}>
+              Done
+            </button>
+          </div>
+        ) : (
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
             Name
@@ -137,7 +159,7 @@ export function RegisterModal({
           )}
 
           <div className="auth-form__actions">
-            <button type="button" onClick={onClose} disabled={isSubmitting}>
+            <button type="button" onClick={closeModal} disabled={isSubmitting}>
               Cancel
             </button>
             <button type="submit" disabled={isSubmitting}>
@@ -145,6 +167,7 @@ export function RegisterModal({
             </button>
           </div>
         </form>
+        )}
       </section>
     </div>
   );

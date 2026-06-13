@@ -21,6 +21,11 @@ export interface AuthResponse {
   };
 }
 
+export interface RegistrationResponse {
+  message: string;
+  email: string;
+}
+
 // extend Express Request to carry user
 export interface AuthRequest extends Request {
   user?: {

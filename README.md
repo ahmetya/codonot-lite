@@ -83,12 +83,17 @@ Create `server/.env`:
 DATABASE_URL = file:./prisma/dev.db
 GEMINI_API_KEY = replace_with_your_google_ai_key
 JWT_SECRET = replace_with_a_long_random_secret
+RESEND_API_KEY = replace_with_your_resend_api_key
+EMAIL_FROM = Codonot Lite <noreply@lite.codonot.com>
+APP_URL = https://lite.codonot.com
 NODE_ENV = development
 PORT = 3001
 ```
 
 `GEMINI_API_KEY` is only required for AI requests. `JWT_SECRET` is required for
-registration and login.
+registration and login. `RESEND_API_KEY`, `EMAIL_FROM`, and `APP_URL` are
+required for email verification. Verify the sender domain in Resend before
+using it in `EMAIL_FROM`.
 
 ### 3. Configure the client
 
