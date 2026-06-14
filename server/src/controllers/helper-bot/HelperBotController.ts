@@ -73,6 +73,20 @@ export class HelperBotController {
       }
     }
   }
+
+
+  async nimClient(req: Request, res: Response) {
+    const { prompt } = req.body;
+
+    try {
+      const response = await helperBotService.askNim(prompt);
+      res.json(response);
+    } catch (err) {
+      console.error("Nim Client Error:", err); // add this for debugging
+      res.status(500).json({ error: "Failed to fetch response from Nim" });
+    }
+
+  }
 }
 
 export const helperBotController = new HelperBotController();

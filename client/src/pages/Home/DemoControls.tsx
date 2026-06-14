@@ -127,6 +127,16 @@ export function DemoControls({
     onBotAnswerChange(answer);
   };
 
+  const testNIM = async () => {
+    const response = await fetch("/api/helperbot/nim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: "make me a joke about robots" }),
+    });
+    const answer = (await response.json()) as string;
+    onBotAnswerChange(answer);
+  };
+
   const testLibrary = () => {
     const library = new Library("Kutupanne");
     library.catalog.add(new Book("Hayat Bilgisi", "Ahmet", "978-0135957059"));
@@ -164,6 +174,7 @@ export function DemoControls({
         </summary>
 
         <div className="demo-tools__actions">
+          <button onClick={testNIM}>Test NIM Client</button>
           <button onClick={runHelperBot}>Helper Bot</button>
           <button onClick={onRawStream}>Stream Answer</button>
           <button onClick={register}>API Register Test</button>

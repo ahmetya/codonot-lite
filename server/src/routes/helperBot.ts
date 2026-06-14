@@ -7,5 +7,6 @@ const router = Router();
 router.post('/', helperBotController.talkBot);
 router.post('/stream', helperBotController.streamBot);
 router.post('/stream-sdk', helperBotController.streamBotSDK);
+router.post('/nim', helperBotController.nimClient);
 
 export default router;
