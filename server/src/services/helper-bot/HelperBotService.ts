@@ -16,8 +16,8 @@ import OpenAI from "openai";
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  baseURL: "https://api.openai.com/v1",
+  apiKey: process.env.NVIDIA_API_KEY,
+  baseURL: "https://integrate.api.nvidia.com/v1",
 });
 
 const MODEL = "gemma-4-26b-a4b-it";
