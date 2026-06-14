@@ -80,17 +80,21 @@ npm install --prefix server
 Create `server/.env`:
 
 ```env
+APP_URL = https://lite.codonot.com
 DATABASE_URL = file:./prisma/dev.db
+EMAIL_FROM = Codonot Lite <noreply@lite.codonot.com>
 GEMINI_API_KEY = replace_with_your_google_ai_key
 JWT_SECRET = replace_with_a_long_random_secret
-RESEND_API_KEY = replace_with_your_resend_api_key
-EMAIL_FROM = Codonot Lite <noreply@lite.codonot.com>
-APP_URL = https://lite.codonot.com
 NODE_ENV = development
+NVIDIA_API_KEY = replace_with_your_nvidia_api_key
+NVIDIA_NIM_MODEL = meta/llama-3.1-8b-instruct
 PORT = 3001
+RESEND_API_KEY = replace_with_your_resend_api_key
 ```
 
-`GEMINI_API_KEY` is only required for AI requests. `JWT_SECRET` is required for
+`GEMINI_API_KEY` is required for Google AI requests. `NVIDIA_API_KEY` is
+required for the NVIDIA NIM endpoint. `NVIDIA_NIM_MODEL` is optional and
+defaults to `meta/llama-3.1-8b-instruct`. `JWT_SECRET` is required for
 registration and login. `RESEND_API_KEY`, `EMAIL_FROM`, and `APP_URL` are
 required for email verification. Verify the sender domain in Resend before
 using it in `EMAIL_FROM`.
@@ -212,6 +216,7 @@ Example registration body:
 | `POST` | `/helperbot`            | Return one complete AI response              |
 | `POST` | `/helperbot/stream`     | Proxy the upstream SSE response              |
 | `POST` | `/helperbot/stream-sdk` | Stream plain text chunks using the GenAI SDK |
+| `POST` | `/helperbot/nim`        | Return one NVIDIA NIM response               |
 
 Each helper bot endpoint accepts:
 

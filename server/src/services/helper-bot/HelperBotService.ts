@@ -15,12 +15,10 @@ import OpenAI from "openai";
 
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
-const openai = new OpenAI({
-  apiKey: process.env.NVIDIA_API_KEY,
-  baseURL: "https://integrate.api.nvidia.com/v1",
-});
 
 const MODEL = "gemma-4-26b-a4b-it";
+const NVIDIA_NIM_BASE_URL = "https://integrate.api.nvidia.com/v1";
+const NVIDIA_NIM_MODEL = "meta/llama-3.1-8b-instruct";
 
 const GEMMA_SYSTEM_INSTRUCTION = `You are a senior software engineer helping with practical programming tasks.
 
@@ -203,29 +201,36 @@ class HelperBotService {
   }
 
   async askNim(prompt: string) {
-    console.log("THIS IS CALLED !!");
+    const apiKey = process.env.NVIDIA_API_KEY?.trim();
+    if (!apiKey) {
+      throw new Error("Missing NVIDIA_API_KEY environment variable.");
+    }
+
+    const baseURL =
+      process.env.NVIDIA_NIM_BASE_URL?.trim() || NVIDIA_NIM_BASE_URL;
+    const model = process.env.NVIDIA_NIM_MODEL?.trim() || NVIDIA_NIM_MODEL;
+    const nimClient = new OpenAI({ apiKey, baseURL });
 
     const completionParams: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming =
       {
-        model: "meta/llama-3.1-8b-instruct",
+        model,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.2,
         top_p: 0.7,
         max_tokens: 1024,
       };
 
-    const completion = await openai.chat.completions.create(completionParams);
+    const completion =
+      await nimClient.chat.completions.create(completionParams);
 
     if (!completion) {
       const errorText = "Unknown error from NIM API.";
       throw new Error(`API Error: ${errorText}`);
     }
 
-    // Navigate Google's deeply nested JSON response safely
     const outputText = completion.choices?.[0]?.message?.content;
     return outputText || "No text returned from model.";
   }
 }
 
 export const helperBotService = new HelperBotService();
-  
