@@ -13,7 +13,7 @@ npm install
 npx prisma generate
 npx prisma migrate deploy
 npm run build
-pm2 restart codonot-lite-api
+pm2 restart codonot-lite
 
 echo "🎨 Building client..."
 cd ../client
