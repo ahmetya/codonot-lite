@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { apiService } from "../../services/ApiService";
 import { Book } from "../../services/book";
 import { Library } from "../../services/library";
@@ -20,6 +21,7 @@ export function DemoControls({
   onPokeDataChange,
   onRawStream,
 }: DemoControlsProps) {
+  const navigate = useNavigate();
   const register = async () => {
     try {
       const response = await apiService.register(
@@ -174,6 +176,7 @@ export function DemoControls({
         </summary>
 
         <div className="demo-tools__actions">
+          <button onClick={() => navigate("/rxjs")}>Learn RxJS ⚛️</button>
           <button onClick={testNIM}>Test NIM Client</button>
           <button onClick={runHelperBot}>Helper Bot</button>
           <button onClick={onRawStream}>Stream Answer</button>
