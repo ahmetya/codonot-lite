@@ -5,6 +5,7 @@ import NotFound from "../pages/NotFound";
 import VerifyEmail from "../pages/VerifyEmail";
 import About from "../pages/About";
 import Fadelands from "../pages/Fadelands";
+import RxjsPlayground from "../pages/RxjsPlayground";
 
 export default function AppRoutes() {
   return (
@@ -14,7 +15,9 @@ export default function AppRoutes() {
       <Route path="/about" element={<About />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/fadelands" element={<Fadelands />} />
+      <Route path="/rxjs" element={<RxjsPlayground />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
+

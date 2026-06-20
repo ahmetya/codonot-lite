@@ -27,6 +27,9 @@ export function HomeHeader({
       <button className="highlight-low" onClick={() => navigate("/about")}>
         About me
       </button>
+      <button className="highlight-low" onClick={() => navigate("/rxjs")}>
+        Learn RxJS ⚛️
+      </button>
       <button
         className="highlight-low"
         onClick={isAuthenticated ? onLogout : onLogin}
