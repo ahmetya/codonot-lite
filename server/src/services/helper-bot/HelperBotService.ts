@@ -25,7 +25,8 @@ import {
 const ai = new GoogleGenAI({});
 
 const MODEL = "gemma-4-26b-a4b-it";
-const CHARACTER_DRAFT_MODEL = "gemini-2.5-flash";
+// const CHARACTER_DRAFT_MODEL = "gemini-2.5-flash";
+const CHARACTER_DRAFT_MODEL = "gemma-4-26b-a4b-it";
 const NVIDIA_NIM_BASE_URL = "https://integrate.api.nvidia.com/v1";
 const NVIDIA_NIM_MODEL = "meta/llama-3.1-8b-instruct";
 
@@ -170,6 +171,8 @@ class HelperBotService {
       throw new Error("No character draft was returned from the model.");
     }
 
+
+    console.log("Raw AI Response:", outputText); // Debugging lines
     return this.parseCharacterDraft(outputText);
   }
 
