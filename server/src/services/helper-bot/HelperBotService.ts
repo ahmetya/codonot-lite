@@ -12,29 +12,111 @@ import prisma from "@config/db";
 import { GoogleGenAI } from "@google/genai";
 import { Response } from "express";
 import OpenAI from "openai";
+import {
+  RpgCharacterDraft,
+  RPG_ALIGNMENTS,
+  RpgAlignment,
+  RPG_CHARACTER_JSON_SCHEMA,
+  GEMMA_SYSTEM_INSTRUCTION,
+  CHARACTER_CONTENTS_PREFIX,
+} from "./HelperBotService.model";
 
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
 
 const MODEL = "gemma-4-26b-a4b-it";
+const CHARACTER_DRAFT_MODEL = "gemini-2.5-flash";
 const NVIDIA_NIM_BASE_URL = "https://integrate.api.nvidia.com/v1";
 const NVIDIA_NIM_MODEL = "meta/llama-3.1-8b-instruct";
 
-const GEMMA_SYSTEM_INSTRUCTION = `You are a senior software engineer helping with practical programming tasks.
-
-Response rules:
-1. Answer directly and keep the response code-first when code is requested.
-2. Do not reveal hidden reasoning, internal notes, self-checks, or step-by-step thinking.
-3. Prefer one complete, production-ready solution over many small examples.
-4. Use Markdown fenced code blocks for code and always include the correct language identifier.
-5. Close every opened code fence before the response ends.
-6. Put a short filename or context label immediately before a code block when it helps clarity.
-7. Preserve existing project conventions when the user provides code or repository context.
-8. Mention important assumptions, tradeoffs, risks, or verification steps briefly after the implementation.
-9. Do not use emojis, filler, meta-commentary, or phrases that describe what you are about to do.
-10. Stop when the answer is complete. Do not repeat or summarize the same content at the end.`;
-
 class HelperBotService {
+  private parseCharacterDraft(text: string): RpgCharacterDraft {
+    let draft: unknown;
+
+    try {
+      draft = JSON.parse(text);
+    } catch {
+      throw new Error("The character model returned invalid JSON.");
+    }
+
+    if (!draft || typeof draft !== "object" || Array.isArray(draft)) {
+      throw new Error("The character model returned an invalid draft object.");
+    }
+
+    const value = draft as Record<string, unknown>;
+    const requiredStrings = [
+      "name",
+      "race",
+      "characterClass",
+      "background",
+      "appearance",
+      "draftSummary",
+    ];
+    const requiredStringArrays = [
+      "personality",
+      "motivations",
+      "flaws",
+      "equipment",
+    ];
+
+    if (requiredStrings.some((key) => typeof value[key] !== "string")) {
+      throw new Error("The character draft is missing required text fields.");
+    }
+
+    if (
+      requiredStringArrays.some(
+        (key) =>
+          !Array.isArray(value[key]) ||
+          !(value[key] as unknown[]).every((item) => typeof item === "string")
+      )
+    ) {
+      throw new Error("The character draft contains invalid list fields.");
+    }
+
+    if (
+      !Number.isInteger(value.level) ||
+      (value.level as number) < 1 ||
+      (value.level as number) > 20 ||
+      !RPG_ALIGNMENTS.includes(value.alignment as RpgAlignment)
+    ) {
+      throw new Error(
+        "The character draft contains an invalid level or alignment."
+      );
+    }
+
+    const abilities = value.abilities;
+    const abilityNames = [
+      "strength",
+      "dexterity",
+      "constitution",
+      "intelligence",
+      "wisdom",
+      "charisma",
+    ];
+
+    if (
+      !abilities ||
+      typeof abilities !== "object" ||
+      Array.isArray(abilities)
+    ) {
+      throw new Error("The character draft is missing ability scores.");
+    }
+
+    const abilityValues = abilities as Record<string, unknown>;
+    if (
+      abilityNames.some(
+        (name) =>
+          !Number.isInteger(abilityValues[name]) ||
+          (abilityValues[name] as number) < 1 ||
+          (abilityValues[name] as number) > 20
+      )
+    ) {
+      throw new Error("The character draft contains invalid ability scores.");
+    }
+
+    return draft as RpgCharacterDraft;
+  }
+
   private extractErrorMessage(error: any): string {
     let message = error?.message || "An error occurred while streaming.";
 
@@ -59,14 +141,41 @@ class HelperBotService {
     return typeof message === "string" ? message : JSON.stringify(message);
   }
 
-  async askGemma(prompt: string): Promise<string> {
+  async askGemma(prompt: string): Promise<RpgCharacterDraft> {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey)
       throw new Error("Missing GEMINI_API_KEY environment variable.");
 
-    // Using the Gemma 4 26B Mixture of Experts endpoint
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
+    if (!prompt?.trim()) {
+      throw new Error("A character description is required.");
+    }
+
+    const aiResponse = await ai.models.generateContent({
+      model: CHARACTER_DRAFT_MODEL,
+      contents: `${CHARACTER_CONTENTS_PREFIX}
+        <user-description>
+        ${prompt.trim()}
+        </user-description>`,
+      config: {
+        temperature: 0.4,
+        maxOutputTokens: 1200,
+        responseMimeType: "application/json",
+        responseJsonSchema: RPG_CHARACTER_JSON_SCHEMA,
+      },
+    });
+
+    const outputText = aiResponse.text;
+    if (!outputText) {
+      throw new Error("No character draft was returned from the model.");
+    }
+
+    return this.parseCharacterDraft(outputText);
+  }
+
+  async simpleAskGemma(prompt: string): Promise<string> {
+    //Using the Gemma 4 26B Mixture of Experts endpoint
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
     const response = await fetch(url, {
       method: "POST",

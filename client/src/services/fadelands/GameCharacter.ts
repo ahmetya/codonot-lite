@@ -17,7 +17,7 @@ export class GameCharacter {
   private _intelligence: number = 5;
   private _dexterity: number = 5;
 
-  private _aiDraft$: Observable<string> | null = null;
+  private _aiDraft$: Observable<Record<string, any>> | null = null;
 
 
 
@@ -102,7 +102,7 @@ export class GameCharacter {
   private initialize() {
     console.log("initialize called");
 
-    this._aiDraft$ = new Observable<string>((subscriber) => {
+    this._aiDraft$ = new Observable<Record<string, any>>((subscriber) => {
       // Simulate async initialization (e.g., loading assets, fetching data)
       fetch("/api/helperbot", {
         method: "POST",

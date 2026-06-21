@@ -20,7 +20,7 @@ export default function Fadelands() {
     character.aiDraft$?.pipe().subscribe({
       next: (char) => {
         console.log("SUB Character created:", char);
-        setCharacterName(char);
+        setCharacterName(char.name);
       },
       error: (err) => console.error("Error creating character:", err),
       complete: () => console.log("Character creation complete"),
