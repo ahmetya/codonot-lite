@@ -12,14 +12,14 @@ export class GameCharacter {
   private _mana: number = 100;
   private _stamina: number = 100;
 
-  private _strength: number = 5;
-  private _agility: number = 5;
-  private _intelligence: number = 5;
-  private _dexterity: number = 5;
+  private _strength: number = 0;
+  private _dexterity: number = 0;
+  private _intelligence: number = 0;
+  private _constitution: number = 0;
+  private _wisdom: number = 0;
+  private _charisma: number = 0;
 
-  private _aiDraft$: Observable<Record<string, any>> | null = null;
-
-
+  private _aiDraft$: Observable<GameCharacter> | null = null;
 
   constructor(name: string, race: string, charClass: string) {
     this._name = name;
@@ -64,16 +64,20 @@ export class GameCharacter {
     return this._strength;
   }
 
-  get agility() {
-    return this._agility;
+  get dexterity() {
+    return this._dexterity;
   }
 
   get intelligence() {
     return this._intelligence;
   }
 
-  get dexterity() {
-    return this._dexterity;
+  get wisdom() {
+    return this._wisdom;
+  }
+
+  get charisma() {
+    return this._charisma;
   }
 
   get aiDraft$() {
@@ -82,14 +86,18 @@ export class GameCharacter {
 
   assignStats(
     strength: number,
-    agility: number,
+    dexterity: number,
     intelligence: number,
-    dexterity: number
+    constitution: number,
+    wisdom: number,
+    charisma: number
   ) {
     this._strength = strength;
-    this._agility = agility;
-    this._intelligence = intelligence;
     this._dexterity = dexterity;
+    this._intelligence = intelligence;
+    this._constitution = constitution;
+    this._wisdom = wisdom;
+    this._charisma = charisma;
   }
 
   gainExperience(amount: number) {
@@ -102,7 +110,7 @@ export class GameCharacter {
   private initialize() {
     console.log("initialize called");
 
-    this._aiDraft$ = new Observable<Record<string, any>>((subscriber) => {
+    this._aiDraft$ = new Observable<GameCharacter>((subscriber) => {
       // Simulate async initialization (e.g., loading assets, fetching data)
       fetch("/api/helperbot", {
         method: "POST",
@@ -111,9 +119,19 @@ export class GameCharacter {
       })
         .then((response) => response.json())
         .then((data) => {
+          this._name = data.name || this._name;
+
+          this.assignStats(
+            data.abilities.strength,
+            data.abilities.dexterity,
+            data.abilities.intelligence,
+            data.abilities.constitution,
+            data.abilities.wisdom,
+            data.abilities.charisma
+          );
           // Process initialization data if needed
           console.log("Character initialized with data:", data);
-          subscriber.next(data); // Emit the initialized character's name
+          subscriber.next(this); // Emit the initialized character's name
           subscriber.complete();
         })
         .catch((error) => {
@@ -134,9 +152,12 @@ export class GameCharacter {
     this._health += 20;
     this._mana += 10;
     this._stamina += 15;
+
     this._strength += 2;
-    this._agility += 2;
-    this._intelligence += 2;
     this._dexterity += 2;
+    this._intelligence += 2;
+    this._constitution += 2;
+    this._wisdom += 2;
+    this._charisma += 2;
   }
 }
