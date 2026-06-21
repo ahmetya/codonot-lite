@@ -230,6 +230,54 @@
   box-sizing: border-box;
 }
 
+.vim-editor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 300px;
+  background: #080a14;
+}
+
+.vim-editor .editor-textarea {
+  flex: 1;
+  resize: vertical;
+}
+
+.vim-editor--normal .editor-textarea {
+  caret-color: #fbbf24;
+}
+
+.vim-editor--insert .editor-textarea {
+  caret-color: #38bdf8;
+}
+
+.vim-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: #6b7280;
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  font-size: 0.7rem;
+}
+
+.vim-mode {
+  color: #fbbf24;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.vim-editor--insert .vim-mode {
+  color: #38bdf8;
+}
+
+@media (max-width: 700px) {
+  .vim-help {
+    display: none;
+  }
+}
+
 .editor-actions {
   display: flex;
   gap: 0.75rem;

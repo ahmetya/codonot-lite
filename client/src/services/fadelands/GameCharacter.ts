@@ -1,3 +1,5 @@
+import { Observable } from "rxjs";
+
 export class GameCharacter {
   private _name: string;
   private _race: string;
@@ -15,10 +17,15 @@ export class GameCharacter {
   private _intelligence: number = 5;
   private _dexterity: number = 5;
 
+  private _aiDraft$: Observable<string> | null = null;
+
+
+
   constructor(name: string, race: string, charClass: string) {
     this._name = name;
     this._race = race;
     this._class = charClass;
+    this.initialize();
   }
 
   get name() {
@@ -69,6 +76,10 @@ export class GameCharacter {
     return this._dexterity;
   }
 
+  get aiDraft$() {
+    return this._aiDraft$;
+  }
+
   assignStats(
     strength: number,
     agility: number,
@@ -88,6 +99,30 @@ export class GameCharacter {
     }
   }
 
+  private initialize() {
+    console.log("initialize called");
+
+    this._aiDraft$ = new Observable<string>((subscriber) => {
+      // Simulate async initialization (e.g., loading assets, fetching data)
+      fetch("/api/helperbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "Create a RPG character Dwarf" }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Process initialization data if needed
+          console.log("Character initialized with data:", data);
+          subscriber.next(data); // Emit the initialized character's name
+          subscriber.complete();
+        })
+        .catch((error) => {
+          console.error("Error initializing character:", error);
+          subscriber.error(error);
+        });
+    });
+  }
+
   private experienceToLevelUp() {
     return this._level * 100; // Simple formula for leveling up
   }
@@ -105,5 +140,3 @@ export class GameCharacter {
     this._dexterity += 2;
   }
 }
-
-

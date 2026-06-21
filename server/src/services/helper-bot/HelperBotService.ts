@@ -87,8 +87,8 @@ class HelperBotService {
           },
         ],
         generationConfig: {
-          temperature: 1,
-          maxOutputTokens: 3000,
+          temperature: 0.2,
+          maxOutputTokens: 100,
         },
       }),
     });

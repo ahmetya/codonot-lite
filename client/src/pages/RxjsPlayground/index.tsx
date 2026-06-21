@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import * as Rx from "rxjs";
 import * as RxOps from "rxjs/operators";
-import { rxjsModules, RxjsModule } from "./modulesData";
+import { rxjsModules } from "./modulesData";
+import VimTextarea from "./VimTextarea";
 import "./index.css";
 
 interface MarbleNode {
@@ -35,7 +36,7 @@ export default function RxjsPlayground() {
   const [searchLoading, setSearchLoading] = useState(false);
 
   const activeSubscriptions = useRef<Rx.Subscription[]>([]);
-  const activeIntervals = useRef<NodeJS.Timeout[]>([]);
+  const activeIntervals = useRef<ReturnType<typeof setInterval>[]>([]);
 
   // Update code when module changes
   useEffect(() => {
@@ -94,9 +95,13 @@ export default function RxjsPlayground() {
     // Custom logger injected to the script
     const localLog = (val: any) => {
       const elapsed = Date.now() - startTime;
-      const logString = typeof val === "object" ? JSON.stringify(val) : String(val);
+      const logString =
+        typeof val === "object" ? JSON.stringify(val) : String(val);
 
-      setLogs((prev) => [...prev, `[${(elapsed / 1000).toFixed(2)}s] ${logString}`]);
+      setLogs((prev) => [
+        ...prev,
+        `[${(elapsed / 1000).toFixed(2)}s] ${logString}`,
+      ]);
 
       let type: "next" | "complete" | "error" = "next";
       let label = "";
@@ -109,7 +114,9 @@ export default function RxjsPlayground() {
         label = "X";
       } else {
         // Parse the emitted value
-        const match = logString.match(/(?:emit|emission|tick|of|array|merge|concat|combinelatest|result|sub\s\d):\s*([^\s]+)/i);
+        const match = logString.match(
+          /(?:emit|emission|tick|of|array|merge|concat|combinelatest|result|sub\s\d):\s*([^\s]+)/i
+        );
         if (match && match[1]) {
           label = match[1].substring(0, 4);
         } else {
@@ -180,7 +187,9 @@ export default function RxjsPlayground() {
             return Rx.of([]);
           }
           return Rx.from(
-            fetch(`https://pokeapi.co/api/v2/pokemon/${query.toLowerCase().trim()}`)
+            fetch(
+              `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase().trim()}`
+            )
               .then((res) => {
                 if (!res.ok) throw new Error();
                 return res.json();
@@ -189,7 +198,9 @@ export default function RxjsPlayground() {
                 {
                   name: data.name,
                   id: data.id,
-                  sprite: data.sprites.front_default || "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+                  sprite:
+                    data.sprites.front_default ||
+                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
                   height: data.height,
                   weight: data.weight,
                 },
@@ -266,14 +277,18 @@ export default function RxjsPlayground() {
               <div className="panel-header">
                 <span className="panel-title">Interactive Sandbox Code</span>
               </div>
-              <textarea
+              <VimTextarea
+                key={activeModule.id}
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
+                onChange={setCode}
                 className="editor-textarea"
-                spellCheck="false"
               />
               <div className="editor-actions">
-                <button onClick={runCode} className="btn btn-primary" disabled={running}>
+                <button
+                  onClick={runCode}
+                  className="btn btn-primary"
+                  disabled={running}
+                >
                   {running ? "Running..." : "▶ Run Code"}
                 </button>
                 {running && (
@@ -298,7 +313,9 @@ export default function RxjsPlayground() {
               </div>
               <div className="console-output">
                 {logs.length === 0 ? (
-                  <div className="log-placeholder">Click Run to see stream outputs...</div>
+                  <div className="log-placeholder">
+                    Click Run to see stream outputs...
+                  </div>
                 ) : (
                   logs.map((logStr, idx) => (
                     <div
@@ -314,10 +331,19 @@ export default function RxjsPlayground() {
           </section>
 
           {/* Marble Diagram Visualizer */}
-          <section className="marble-timeline-container" aria-label="Marble timeline visualization">
+          <section
+            className="marble-timeline-container"
+            aria-label="Marble timeline visualization"
+          >
             <div className="timeline-title-row">
-              <h3 style={{ margin: 0, fontSize: "1.1rem" }}>🔮 Interactive Marble Timeline (5s window)</h3>
-              {running && <span style={{ fontSize: "0.8rem", color: "#e10098" }}>Stream Active...</span>}
+              <h3 style={{ margin: 0, fontSize: "1.1rem" }}>
+                🔮 Interactive Marble Timeline (5s window)
+              </h3>
+              {running && (
+                <span style={{ fontSize: "0.8rem", color: "#e10098" }}>
+                  Stream Active...
+                </span>
+              )}
             </div>
 
             <div className="timeline-axis">
@@ -348,12 +374,15 @@ export default function RxjsPlayground() {
                   style={{ left: `${node.position}%` }}
                 >
                   {node.type !== "complete" && node.label}
-                  <div className="node-tooltip">{node.tooltip.substring(0, 18)}</div>
+                  <div className="node-tooltip">
+                    {node.tooltip.substring(0, 18)}
+                  </div>
                 </div>
               ))}
             </div>
             <p style={{ margin: 0, fontSize: "0.8rem", color: "#6b7280" }}>
-              * Colored spheres indicate next emissions. Vertical lines indicate completion (|). Crosses indicate errors (X).
+              * Colored spheres indicate next emissions. Vertical lines indicate
+              completion (|). Crosses indicate errors (X).
             </p>
           </section>
 
@@ -362,18 +391,30 @@ export default function RxjsPlayground() {
             <div className="exercise-title">
               <span>✍️</span> Learning Exercise Challenge
             </div>
-            <p style={{ margin: 0, color: "#d1d5db" }}>{activeModule.exercise.question}</p>
+            <p style={{ margin: 0, color: "#d1d5db" }}>
+              {activeModule.exercise.question}
+            </p>
 
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
-              <button onClick={() => setShowHint(!showHint)} className="btn btn-secondary">
+            <div
+              style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}
+            >
+              <button
+                onClick={() => setShowHint(!showHint)}
+                className="btn btn-secondary"
+              >
                 {showHint ? "Hide Hint" : "Get Hint"}
               </button>
-              <button onClick={() => setShowSolution(!showSolution)} className="btn btn-secondary">
+              <button
+                onClick={() => setShowSolution(!showSolution)}
+                className="btn btn-secondary"
+              >
                 {showSolution ? "Hide Target Code" : "Show Target Code"}
               </button>
             </div>
 
-            {showHint && <div className="hint-box">💡 {activeModule.exercise.hint}</div>}
+            {showHint && (
+              <div className="hint-box">💡 {activeModule.exercise.hint}</div>
+            )}
 
             {showSolution && (
               <pre
@@ -396,12 +437,17 @@ export default function RxjsPlayground() {
           {/* Special Autocomplete UI Demo for Module 7 */}
           {activeModule.id === 7 && (
             <section className="autocomplete-demo">
-              <h3 style={{ marginTop: 0, color: "#ff59c3", fontSize: "1.1rem" }}>
-                🔍 Live Autocomplete Search component (Driven by RxJS Subject & switchMap)
+              <h3
+                style={{ marginTop: 0, color: "#ff59c3", fontSize: "1.1rem" }}
+              >
+                🔍 Live Autocomplete Search component (Driven by RxJS Subject &
+                switchMap)
               </h3>
               <p style={{ color: "#9ca3af", fontSize: "0.85rem" }}>
-                Type a Pokemon name (e.g. <code>pikachu</code>, <code>charizard</code>, <code>ditto</code>, <code>bulbasaur</code>)
-                below. Watch how it cancels previous requests using <code>switchMap</code>!
+                Type a Pokemon name (e.g. <code>pikachu</code>,{" "}
+                <code>charizard</code>, <code>ditto</code>,{" "}
+                <code>bulbasaur</code>) below. Watch how it cancels previous
+                requests using <code>switchMap</code>!
               </p>
               <input
                 type="text"
@@ -411,7 +457,11 @@ export default function RxjsPlayground() {
                 className="demo-input"
               />
 
-              {searchLoading && <p style={{ color: "#e10098", fontSize: "0.85rem" }}>API Requesting...</p>}
+              {searchLoading && (
+                <p style={{ color: "#e10098", fontSize: "0.85rem" }}>
+                  API Requesting...
+                </p>
+              )}
 
               <div className="pokemon-results-grid">
                 {pokemonResults.map((p) => (
@@ -423,11 +473,19 @@ export default function RxjsPlayground() {
                     </span>
                   </div>
                 ))}
-                {!searchLoading && pokemonResults.length === 0 && pokemonQuery.trim() && (
-                  <div style={{ gridColumn: "1/-1", color: "#ef4444", fontSize: "0.85rem" }}>
-                    No Pokémon found.
-                  </div>
-                )}
+                {!searchLoading &&
+                  pokemonResults.length === 0 &&
+                  pokemonQuery.trim() && (
+                    <div
+                      style={{
+                        gridColumn: "1/-1",
+                        color: "#ef4444",
+                        fontSize: "0.85rem",
+                      }}
+                    >
+                      No Pokémon found.
+                    </div>
+                  )}
               </div>
             </section>
           )}
