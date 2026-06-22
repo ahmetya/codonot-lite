@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
-import dwarfImage from "../../assets/realistic-dwarf-portrait.png";
+import fallbackPortrait from "../../assets/fadelands-fallback.webp";
 import {
   CharacterApiProvider,
   GameCharacter,
@@ -11,6 +11,38 @@ import {
 import "./index.css";
 
 const USE_POLLINATIONS_IMAGE_GENERATION = true;
+const PORTRAIT_LOAD_TIMEOUT_MS = 20_000;
+
+const characterPrompts = [
+  "Create a battle-worn dwarf guardian who protects a forgotten mountain archive.",
+  "Create an elven cartographer mapping a forest that rearranges itself every night.",
+  "Create a human tidecaller who hunts relics beneath a drowned coastal kingdom.",
+  "Create an orc herbalist seeking a cure for the curse consuming their clan.",
+  "Create a halfling smuggler who secretly ferries refugees across a haunted border.",
+  "Create a tiefling archivist who can hear the memories trapped inside ancient books.",
+  "Create a dragonborn knight exiled after refusing an order from a corrupt monarch.",
+  "Create a goblin engineer building clockwork companions from battlefield scraps.",
+  "Create an aasimar healer whose fading celestial light attracts dangerous spirits.",
+  "Create an undead knight searching the desert for the name they lost in life.",
+  "Create a gnome illusionist who runs a traveling theater used as a spy network.",
+  "Create a half-elf diplomat trying to prevent war between rival island nations.",
+  "Create a lizardfolk ranger guarding the last clean river in a poisoned marsh.",
+  "Create a firbolg druid who carries seeds from a forest destroyed by wildfire.",
+  "Create a tabaxi treasure hunter pursued by the living statue they accidentally awakened.",
+  "Create a kenku spy who communicates through the stolen voices of powerful nobles.",
+  "Create a water genasi sailor navigating a sea haunted by their vanished crew.",
+  "Create a kobold priest restoring a ruined temple beneath an active volcano.",
+  "Create a minotaur gladiator who escaped the arena to find their scattered family.",
+  "Create a changeling detective investigating crimes committed using their own face.",
+] as const;
+
+function getRandomCharacterPrompt(currentPrompt?: string) {
+  let index = Math.floor(Math.random() * characterPrompts.length);
+  if (characterPrompts[index] === currentPrompt) {
+    index = (index + 1) % characterPrompts.length;
+  }
+  return characterPrompts[index];
+}
 
 const abilityLabels = {
   strength: "STR",
@@ -26,16 +58,23 @@ function formatAlignment(alignment: string) {
 }
 
 export default function Fadelands() {
-  const [prompt, setPrompt] = useState(
-    "Create a battle-worn dwarf guardian who protects a forgotten mountain archive.",
-  );
+  const [prompt, setPrompt] = useState<string>(() => getRandomCharacterPrompt());
   const [character, setCharacter] = useState<GameCharacter | null>(null);
-  const [provider, setProvider] = useState<CharacterApiProvider>("google");
+  const [provider, setProvider] = useState<CharacterApiProvider>("cerebras");
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [portraitPrompt, setPortraitPrompt] = useState("");
   const [isPortraitLoading, setIsPortraitLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [lastSubmittedRequest, setLastSubmittedRequest] = useState<{
+    prompt: string;
+    provider: CharacterApiProvider;
+  } | null>(null);
+
+  const normalizedPrompt = prompt.trim();
+  const isRequestUnchanged =
+    lastSubmittedRequest?.prompt === normalizedPrompt &&
+    lastSubmittedRequest.provider === provider;
 
   useEffect(() => {
     if (!character) return;
@@ -76,17 +115,30 @@ export default function Fadelands() {
     };
   }, [character, portraitPrompt]);
 
+  useEffect(() => {
+    if (!isPortraitLoading) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setPortraitUrl(null);
+      setIsPortraitLoading(false);
+    }, PORTRAIT_LOAD_TIMEOUT_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isPortraitLoading, portraitUrl]);
+
   const createCharacter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const characterPrompt = prompt.trim();
+    const characterPrompt = normalizedPrompt;
     if (!characterPrompt) {
       setError("Describe the character you want to forge.");
       return;
     }
+    if (isRequestUnchanged) return;
 
     setIsLoading(true);
     setError("");
     setPortraitPrompt(characterPrompt);
+    setLastSubmittedRequest({ prompt: characterPrompt, provider });
 
     const draft = new GameCharacter(
       "Unnamed adventurer",
@@ -126,7 +178,7 @@ export default function Fadelands() {
           <form className="forge-form" onSubmit={createCharacter}>
             <div className="forge-form__header">
               <label htmlFor="character-prompt">Character brief</label>
-              <span>Prompt / 01</span>
+              <span>{characterPrompts.length} prompts</span>
             </div>
             <textarea
               id="character-prompt"
@@ -161,13 +213,27 @@ export default function Fadelands() {
             </fieldset>
             <div className="forge-form__footer">
               <span>Race, class, history, temperament — add as much or as little as you want.</span>
-              <button
-                className="forge-button"
-                type="submit"
-                disabled={isLoading || !prompt.trim()}
-              >
-                {isLoading ? "Forging…" : character ? "Forge again →" : "Forge character →"}
-              </button>
+              <div className="forge-form__buttons">
+                <button
+                  className="random-prompt-button"
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() =>
+                    setPrompt((currentPrompt) =>
+                      getRandomCharacterPrompt(currentPrompt),
+                    )
+                  }
+                >
+                  Random prompt
+                </button>
+                <button
+                  className="forge-button"
+                  type="submit"
+                  disabled={isLoading || !normalizedPrompt || isRequestUnchanged}
+                >
+                  {isLoading ? "Forging…" : (character && isRequestUnchanged) ? "Change prompt to forge again..." : "Forge Character"}
+                </button>
+              </div>
             </div>
           </form>
         </section>
@@ -195,7 +261,7 @@ export default function Fadelands() {
                 <figure className="character-portrait-wrap">
                   <img
                     className={`character-image${isPortraitLoading ? " is-generating" : ""}`}
-                    src={portraitUrl || dwarfImage}
+                    src={portraitUrl || fallbackPortrait}
                     alt={`Portrait of ${character.name}`}
                     onLoad={() => {
                       if (portraitUrl) setIsPortraitLoading(false);
@@ -206,7 +272,9 @@ export default function Fadelands() {
                     }}
                   />
                   {isPortraitLoading ? (
-                    <span className="portrait-status">Generating portrait…</span>
+                    <span className="portrait-status" role="status">
+                      Generating portrait…
+                    </span>
                   ) : null}
                   <figcaption className="level-badge">
                     Level {character.level}

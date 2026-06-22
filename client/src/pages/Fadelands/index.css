@@ -157,6 +157,42 @@
   text-transform: uppercase;
 }
 
+.random-prompt-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 142px;
+  height: 34px;
+  padding: 0 11px;
+  border: 1px solid var(--fade-border);
+  border-radius: 7px;
+  color: var(--fade-muted);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: none;
+  background: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.random-prompt-button:hover:not(:disabled) {
+  border-color: var(--fade-muted);
+  color: var(--fade-text);
+  background: var(--fade-surface-high);
+}
+
+.random-prompt-button:focus-visible {
+  outline: 2px solid var(--fade-muted);
+  outline-offset: 2px;
+}
+
+.random-prompt-button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
 .forge-form__footer {
   padding: 10px 12px 10px 14px;
   border-top: 1px solid var(--fade-border-dim);
@@ -166,6 +202,12 @@
   color: var(--fade-muted);
   font-size: 10px;
   line-height: 1.45;
+}
+
+.forge-form__buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .forge-form textarea {
@@ -585,9 +627,14 @@
     align-items: flex-start;
     flex-direction: column;
   }
-  .forge-button {
-    justify-self: stretch;
+  .forge-form__buttons {
     width: 100%;
+  }
+  .random-prompt-button,
+  .forge-button {
+    flex: 1;
+    justify-self: stretch;
+    width: auto;
   }
   .character-hero {
     grid-template-columns: 1fr;
