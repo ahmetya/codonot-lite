@@ -11,7 +11,7 @@ import {
 import "./index.css";
 
 const USE_POLLINATIONS_IMAGE_GENERATION = true;
-const PORTRAIT_LOAD_TIMEOUT_MS = 20_000;
+const PORTRAIT_LOAD_TIMEOUT_MS = 60_000;
 
 const characterPrompts = [
   "Create a battle-worn dwarf guardian who protects a forgotten mountain archive.",
@@ -79,52 +79,75 @@ export default function Fadelands() {
   useEffect(() => {
     if (!character) return;
 
+    const controller = new AbortController();
+    let isActive = true;
+    let generatedUrl: string | null = null;
+    let preloader: HTMLImageElement | null = null;
+
     setPortraitUrl(null);
     setIsPortraitLoading(true);
 
-    if (USE_POLLINATIONS_IMAGE_GENERATION) {
-      const encodedPrompt = encodeURIComponent(portraitPrompt);
-      setPortraitUrl(
-        `https://image.pollinations.ai/p/${encodedPrompt}?width=196&height=196&nologo=true&quality=low`,
-      );
-      return;
-    }
-
-    const controller = new AbortController();
-    let generatedUrl: string | null = null;
-
-    generateCharacterPortrait(character, controller.signal)
-      .then((url) => {
-        generatedUrl = url;
-        if (controller.signal.aborted) {
-          URL.revokeObjectURL(url);
-        } else {
-          setPortraitUrl(url);
-        }
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setPortraitUrl(null);
-          setIsPortraitLoading(false);
-        }
-      });
-
-    return () => {
-      controller.abort();
-      if (generatedUrl) URL.revokeObjectURL(generatedUrl);
-    };
-  }, [character, portraitPrompt]);
-
-  useEffect(() => {
-    if (!isPortraitLoading) return;
-
     const timeoutId = window.setTimeout(() => {
+      if (!isActive) return;
+      preloader?.removeAttribute("src");
       setPortraitUrl(null);
       setIsPortraitLoading(false);
     }, PORTRAIT_LOAD_TIMEOUT_MS);
 
-    return () => window.clearTimeout(timeoutId);
-  }, [isPortraitLoading, portraitUrl]);
+    const preloadPortrait = (url: string) => {
+      if (!isActive) return;
+
+      preloader = new Image();
+      preloader.onload = () => {
+        if (!isActive) return;
+        window.clearTimeout(timeoutId);
+        setPortraitUrl(url);
+        setIsPortraitLoading(false);
+      };
+      preloader.onerror = () => {
+        if (!isActive) return;
+        window.clearTimeout(timeoutId);
+        setPortraitUrl(null);
+        setIsPortraitLoading(false);
+      };
+      preloader.src = url;
+    };
+
+    if (USE_POLLINATIONS_IMAGE_GENERATION) {
+      const encodedPrompt = encodeURIComponent(portraitPrompt);
+      preloadPortrait(
+        `https://image.pollinations.ai/p/${encodedPrompt}?width=196&height=196&nologo=true&quality=low`,
+      );
+    } else {
+      generateCharacterPortrait(character, controller.signal)
+        .then((url) => {
+          generatedUrl = url;
+          if (!isActive) {
+            URL.revokeObjectURL(url);
+            return;
+          }
+          preloadPortrait(url);
+        })
+        .catch(() => {
+          if (!isActive) return;
+          window.clearTimeout(timeoutId);
+          setPortraitUrl(null);
+          setIsPortraitLoading(false);
+        });
+    }
+
+    return () => {
+      isActive = false;
+      controller.abort();
+      window.clearTimeout(timeoutId);
+      if (preloader) {
+        preloader.onload = null;
+        preloader.onerror = null;
+        preloader.removeAttribute("src");
+      }
+      if (generatedUrl) URL.revokeObjectURL(generatedUrl);
+    };
+  }, [character, portraitPrompt]);
 
   const createCharacter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -263,9 +286,6 @@ export default function Fadelands() {
                     className={`character-image${isPortraitLoading ? " is-generating" : ""}`}
                     src={portraitUrl || fallbackPortrait}
                     alt={`Portrait of ${character.name}`}
-                    onLoad={() => {
-                      if (portraitUrl) setIsPortraitLoading(false);
-                    }}
                     onError={() => {
                       if (portraitUrl) setPortraitUrl(null);
                       setIsPortraitLoading(false);
