@@ -24,6 +24,12 @@ export function HomeHeader({
     <SiteHeader
       status={isAuthenticated ? `Hello ${userName ?? "there"}!` : message}
     >
+      <button
+        className="highlight-low fadelands-nav-button"
+        onClick={() => navigate("/fadelands")}
+      >
+        Fadelands
+      </button>
       <button className="highlight-low" onClick={() => navigate("/about")}>
         About me
       </button>
