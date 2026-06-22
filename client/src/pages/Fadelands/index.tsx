@@ -254,14 +254,14 @@ export default function Fadelands() {
                   type="submit"
                   disabled={isLoading || !normalizedPrompt || isRequestUnchanged}
                 >
-                  {isLoading ? "Forging…" : (character && isRequestUnchanged) ? "Change prompt to forge again..." : "Forge Character"}
+                  {isLoading ? "Forging…" : (character && isRequestUnchanged) ? "Change prompt to forge..." : "Forge Character"}
                 </button>
               </div>
             </div>
           </form>
         </section>
 
-        {error ? <p className="fadelands-error" role="alert">{error}</p> : null}
+        {error ? <p className="fadelands-error" role="alert">{error}</p > : null}
 
         {!character && !isLoading ? (
           <section className="forge-empty">
