@@ -14,12 +14,13 @@ import { Response } from "express";
 import OpenAI from "openai";
 import {
   RpgCharacterDraft,
-  RPG_ALIGNMENTS,
-  RpgAlignment,
   RPG_CHARACTER_JSON_SCHEMA,
   GEMMA_SYSTEM_INSTRUCTION,
   CHARACTER_CONTENTS_PREFIX,
+  CharacterApiProvider,
+  parseRpgCharacterDraft,
 } from "./HelperBotService.model";
+import { cerebrasService } from "./cerebras/CerebrasService";
 
 // Initialize the client. It automatically pulls the key from process.env.GEMINI_API_KEY
 const ai = new GoogleGenAI({});
@@ -31,93 +32,6 @@ const NVIDIA_NIM_BASE_URL = "https://integrate.api.nvidia.com/v1";
 const NVIDIA_NIM_MODEL = "meta/llama-3.1-8b-instruct";
 
 class HelperBotService {
-  private parseCharacterDraft(text: string): RpgCharacterDraft {
-    let draft: unknown;
-
-    try {
-      draft = JSON.parse(text);
-    } catch {
-      throw new Error("The character model returned invalid JSON.");
-    }
-
-    if (!draft || typeof draft !== "object" || Array.isArray(draft)) {
-      throw new Error("The character model returned an invalid draft object.");
-    }
-
-    const value = draft as Record<string, unknown>;
-    const requiredStrings = [
-      "name",
-      "race",
-      "characterClass",
-      "background",
-      "appearance",
-      "draftSummary",
-    ];
-    const requiredStringArrays = [
-      "personality",
-      "motivations",
-      "flaws",
-      "equipment",
-    ];
-
-    if (requiredStrings.some((key) => typeof value[key] !== "string")) {
-      throw new Error("The character draft is missing required text fields.");
-    }
-
-    if (
-      requiredStringArrays.some(
-        (key) =>
-          !Array.isArray(value[key]) ||
-          !(value[key] as unknown[]).every((item) => typeof item === "string")
-      )
-    ) {
-      throw new Error("The character draft contains invalid list fields.");
-    }
-
-    if (
-      !Number.isInteger(value.level) ||
-      (value.level as number) < 1 ||
-      (value.level as number) > 20 ||
-      !RPG_ALIGNMENTS.includes(value.alignment as RpgAlignment)
-    ) {
-      throw new Error(
-        "The character draft contains an invalid level or alignment."
-      );
-    }
-
-    const abilities = value.abilities;
-    const abilityNames = [
-      "strength",
-      "dexterity",
-      "constitution",
-      "intelligence",
-      "wisdom",
-      "charisma",
-    ];
-
-    if (
-      !abilities ||
-      typeof abilities !== "object" ||
-      Array.isArray(abilities)
-    ) {
-      throw new Error("The character draft is missing ability scores.");
-    }
-
-    const abilityValues = abilities as Record<string, unknown>;
-    if (
-      abilityNames.some(
-        (name) =>
-          !Number.isInteger(abilityValues[name]) ||
-          (abilityValues[name] as number) < 1 ||
-          (abilityValues[name] as number) > 20
-      )
-    ) {
-      throw new Error("The character draft contains invalid ability scores.");
-    }
-
-    return draft as RpgCharacterDraft;
-  }
-
   private extractErrorMessage(error: any): string {
     let message = error?.message || "An error occurred while streaming.";
 
@@ -171,9 +85,19 @@ class HelperBotService {
       throw new Error("No character draft was returned from the model.");
     }
 
-
     console.log("Raw AI Response:", outputText); // Debugging lines
-    return this.parseCharacterDraft(outputText);
+    return parseRpgCharacterDraft(outputText);
+  }
+
+  async askCharacter(
+    prompt: string,
+    provider: CharacterApiProvider
+  ): Promise<RpgCharacterDraft> {
+    if (provider === "cerebras") {
+      return cerebrasService.createCharacterDraft(prompt);
+    }
+
+    return this.askGemma(prompt);
   }
 
   async simpleAskGemma(prompt: string): Promise<string> {

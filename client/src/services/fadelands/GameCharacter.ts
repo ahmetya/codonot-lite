@@ -36,6 +36,8 @@ export interface CharacterDraft {
   draftSummary: string;
 }
 
+export type CharacterApiProvider = "google" | "cerebras";
+
 export class GameCharacter implements CharacterDraft {
   name: string;
   race: string;
@@ -65,6 +67,7 @@ export class GameCharacter implements CharacterDraft {
     race: string,
     characterClass: string,
     private readonly prompt: string,
+    private readonly provider: CharacterApiProvider,
   ) {
     this.name = name;
     this.race = race;
@@ -78,7 +81,10 @@ export class GameCharacter implements CharacterDraft {
       fetch("/api/helperbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: this.prompt.trim() }),
+        body: JSON.stringify({
+          prompt: this.prompt.trim(),
+          provider: this.provider,
+        }),
         signal: controller.signal,
       })
         .then(async (response) => {

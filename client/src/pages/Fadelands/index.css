@@ -132,6 +132,42 @@
 .forge-form textarea::placeholder { color: #626b76; }
 .forge-form textarea:disabled { cursor: wait; opacity: 0.65; }
 
+.provider-selector {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 11px 14px;
+  border: 0;
+  border-top: 1px solid var(--fade-border-dim);
+}
+
+.provider-selector legend {
+  float: left;
+  margin-right: 8px;
+  color: var(--fade-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.provider-selector label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--fade-text);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.provider-selector input {
+  margin: 0;
+  accent-color: var(--fade-accent);
+}
+
+.provider-selector:disabled { opacity: 0.65; }
+
 .forge-button {
   justify-self: end;
   min-width: 142px;

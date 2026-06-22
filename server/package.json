@@ -7,6 +7,7 @@
     "build": "tsc && tsc-alias"
   },
   "dependencies": {
+    "@cerebras/cerebras_cloud_sdk": "^1.64.1",
     "@google/genai": "^2.7.0",
     "@libsql/client": "^0.17.3",
     "@prisma/adapter-better-sqlite3": "^7.8.0",

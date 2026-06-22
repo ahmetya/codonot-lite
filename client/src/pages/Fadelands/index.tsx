@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
 import dwarfImage from "../../assets/realistic-dwarf-portrait.png";
-import { GameCharacter } from "../../services/fadelands/GameCharacter";
+import {
+  CharacterApiProvider,
+  GameCharacter,
+} from "../../services/fadelands/GameCharacter";
 import "./index.css";
 
 const abilityLabels = {
@@ -24,6 +27,7 @@ export default function Fadelands() {
     "Create a battle-worn dwarf guardian who protects a forgotten mountain archive.",
   );
   const [character, setCharacter] = useState<GameCharacter | null>(null);
+  const [provider, setProvider] = useState<CharacterApiProvider>("google");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -43,6 +47,7 @@ export default function Fadelands() {
       "Unknown",
       "Adventurer",
       characterPrompt,
+      provider,
     );
     draft.aiDraft$.subscribe({
       next: setCharacter,
@@ -85,6 +90,29 @@ export default function Fadelands() {
               rows={4}
               disabled={isLoading}
             />
+            <fieldset className="provider-selector" disabled={isLoading}>
+              <legend>AI provider</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="character-provider"
+                  value="google"
+                  checked={provider === "google"}
+                  onChange={() => setProvider("google")}
+                />
+                <span>Google API</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="character-provider"
+                  value="cerebras"
+                  checked={provider === "cerebras"}
+                  onChange={() => setProvider("cerebras")}
+                />
+                <span>Cerebras</span>
+              </label>
+            </fieldset>
             <div className="forge-form__footer">
               <span>Race, class, history, temperament — add as much or as little as you want.</span>
               <button

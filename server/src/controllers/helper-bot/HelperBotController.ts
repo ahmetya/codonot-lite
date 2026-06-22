@@ -3,14 +3,21 @@ import { helperBotService } from "@services/helper-bot/HelperBotService";
 
 export class HelperBotController {
   async talkBot(req: Request, res: Response) {
-    const { prompt } = req.body;
+    const { prompt, provider = "google" } = req.body;
+
+    if (provider !== "google" && provider !== "cerebras") {
+      res.status(400).json({ error: "Provider must be google or cerebras." });
+      return;
+    }
 
     try {
-      const posts = await helperBotService.askGemma(prompt);
+      const posts = await helperBotService.askCharacter(prompt, provider);
       res.json(posts);
-    } catch (err) {
-      console.error("getAll error:", err); // add this for debugging
-      res.status(500).json({ error: "Failed to fetch posts" });
+    } catch (err: any) {
+      console.error("Character generation error:", err);
+      res.status(502).json({
+        error: err?.message || "Character generation failed.",
+      });
     }
   }
 
