@@ -167,11 +167,11 @@ export function parseRpgCharacterDraft(text: string): RpgCharacterDraft {
     "draftSummary",
   ];
   const requiredStringArrays = [
-    "personality",
-    "motivations",
-    "flaws",
-    "equipment",
-  ];
+    ["personality", 2, 5],
+    ["motivations", 1, 3],
+    ["flaws", 1, 3],
+    ["equipment", 0, 10],
+  ] as const;
 
   if (requiredStrings.some((key) => typeof value[key] !== "string")) {
     throw new Error("The character draft is missing required text fields.");
@@ -179,8 +179,10 @@ export function parseRpgCharacterDraft(text: string): RpgCharacterDraft {
 
   if (
     requiredStringArrays.some(
-      (key) =>
+      ([key, minimum, maximum]) =>
         !Array.isArray(value[key]) ||
+        (value[key] as unknown[]).length < minimum ||
+        (value[key] as unknown[]).length > maximum ||
         !(value[key] as unknown[]).every((item) => typeof item === "string")
     )
   ) {
