@@ -10,6 +10,8 @@ import {
 } from "../../services/fadelands/GameCharacter";
 import "./index.css";
 
+const USE_POLLINATIONS_IMAGE_GENERATION = true;
+
 const abilityLabels = {
   strength: "STR",
   dexterity: "DEX",
@@ -30,6 +32,7 @@ export default function Fadelands() {
   const [character, setCharacter] = useState<GameCharacter | null>(null);
   const [provider, setProvider] = useState<CharacterApiProvider>("google");
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
+  const [portraitPrompt, setPortraitPrompt] = useState("");
   const [isPortraitLoading, setIsPortraitLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,10 +40,19 @@ export default function Fadelands() {
   useEffect(() => {
     if (!character) return;
 
-    const controller = new AbortController();
-    let generatedUrl: string | null = null;
     setPortraitUrl(null);
     setIsPortraitLoading(true);
+
+    if (USE_POLLINATIONS_IMAGE_GENERATION) {
+      const encodedPrompt = encodeURIComponent(portraitPrompt);
+      setPortraitUrl(
+        `https://image.pollinations.ai/p/${encodedPrompt}?width=196&height=196&nologo=true&quality=low`,
+      );
+      return;
+    }
+
+    const controller = new AbortController();
+    let generatedUrl: string | null = null;
 
     generateCharacterPortrait(character, controller.signal)
       .then((url) => {
@@ -52,17 +64,17 @@ export default function Fadelands() {
         }
       })
       .catch(() => {
-        // Keep the bundled portrait as a non-blocking fallback.
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setIsPortraitLoading(false);
+        if (!controller.signal.aborted) {
+          setPortraitUrl(null);
+          setIsPortraitLoading(false);
+        }
       });
 
     return () => {
       controller.abort();
       if (generatedUrl) URL.revokeObjectURL(generatedUrl);
     };
-  }, [character]);
+  }, [character, portraitPrompt]);
 
   const createCharacter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -74,6 +86,7 @@ export default function Fadelands() {
 
     setIsLoading(true);
     setError("");
+    setPortraitPrompt(characterPrompt);
 
     const draft = new GameCharacter(
       "Unnamed adventurer",
@@ -184,6 +197,13 @@ export default function Fadelands() {
                     className={`character-image${isPortraitLoading ? " is-generating" : ""}`}
                     src={portraitUrl || dwarfImage}
                     alt={`Portrait of ${character.name}`}
+                    onLoad={() => {
+                      if (portraitUrl) setIsPortraitLoading(false);
+                    }}
+                    onError={() => {
+                      if (portraitUrl) setPortraitUrl(null);
+                      setIsPortraitLoading(false);
+                    }}
                   />
                   {isPortraitLoading ? (
                     <span className="portrait-status">Generating portrait…</span>
