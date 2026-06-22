@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
@@ -6,6 +6,7 @@ import dwarfImage from "../../assets/realistic-dwarf-portrait.png";
 import {
   CharacterApiProvider,
   GameCharacter,
+  generateCharacterPortrait,
 } from "../../services/fadelands/GameCharacter";
 import "./index.css";
 
@@ -28,8 +29,40 @@ export default function Fadelands() {
   );
   const [character, setCharacter] = useState<GameCharacter | null>(null);
   const [provider, setProvider] = useState<CharacterApiProvider>("google");
+  const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
+  const [isPortraitLoading, setIsPortraitLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!character) return;
+
+    const controller = new AbortController();
+    let generatedUrl: string | null = null;
+    setPortraitUrl(null);
+    setIsPortraitLoading(true);
+
+    generateCharacterPortrait(character, controller.signal)
+      .then((url) => {
+        generatedUrl = url;
+        if (controller.signal.aborted) {
+          URL.revokeObjectURL(url);
+        } else {
+          setPortraitUrl(url);
+        }
+      })
+      .catch(() => {
+        // Keep the bundled portrait as a non-blocking fallback.
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsPortraitLoading(false);
+      });
+
+    return () => {
+      controller.abort();
+      if (generatedUrl) URL.revokeObjectURL(generatedUrl);
+    };
+  }, [character]);
 
   const createCharacter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -145,23 +178,30 @@ export default function Fadelands() {
         {character ? (
           <article className="character-sheet" aria-label={`${character.name} character sheet`}>
             <header className="character-hero">
-              <section className="ability-grid" aria-label="Ability scores">
-                {Object.entries(abilityLabels).map(([ability, label]) => (
-                  <div className="ability-score" key={ability}>
-                    <span>{label}</span>
-                    <strong>
-                      {character.abilities[ability as keyof typeof character.abilities]}
-                    </strong>
-                  </div>
-                ))}
-              </section>
-              <div className="character-portrait-wrap">
-                <img
-                  className="character-image"
-                  src={dwarfImage}
-                  alt={`Portrait of ${character.name}`}
-                />
-                <span>Level {character.level}</span>
+              <div className="character-profile">
+                <figure className="character-portrait-wrap">
+                  <img
+                    className={`character-image${isPortraitLoading ? " is-generating" : ""}`}
+                    src={portraitUrl || dwarfImage}
+                    alt={`Portrait of ${character.name}`}
+                  />
+                  {isPortraitLoading ? (
+                    <span className="portrait-status">Generating portrait…</span>
+                  ) : null}
+                  <figcaption className="level-badge">
+                    Level {character.level}
+                  </figcaption>
+                </figure>
+                <section className="ability-grid" aria-label="Ability scores">
+                  {Object.entries(abilityLabels).map(([ability, label]) => (
+                    <div className="ability-score" key={ability}>
+                      <span>{label}</span>
+                      <strong>
+                        {character.abilities[ability as keyof typeof character.abilities]}
+                      </strong>
+                    </div>
+                  ))}
+                </section>
               </div>
               <div className="character-identity">
                 <p className="character-overline">

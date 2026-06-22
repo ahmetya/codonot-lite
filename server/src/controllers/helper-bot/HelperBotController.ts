@@ -1,7 +1,37 @@
 import { Request, Response } from "express";
 import { helperBotService } from "@services/helper-bot/HelperBotService";
+import { cerebrasPortraitService } from "@services/helper-bot/cerebras/CerebrasPortraitService";
+import { googleAiPortraitService } from "@services/helper-bot/google/GoogleAiPortraitService";
 
 export class HelperBotController {
+  async characterPortrait(req: Request, res: Response) {
+    try {
+      const portrait = await cerebrasPortraitService.generate(req.body);
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.setHeader("Cache-Control", "private, max-age=86400");
+      res.send(portrait);
+    } catch (err: any) {
+      console.error("Character portrait generation error:", err);
+      res.status(502).json({
+        error: err?.message || "Character portrait generation failed.",
+      });
+    }
+  }
+
+  async googleCharacterPortrait(req: Request, res: Response) {
+    try {
+      const portrait = await googleAiPortraitService.generate(req.body);
+      res.setHeader("Content-Type", portrait.mimeType);
+      res.setHeader("Cache-Control", "private, max-age=86400");
+      res.send(portrait.data);
+    } catch (err: any) {
+      console.error("Google character portrait generation error:", err);
+      res.status(502).json({
+        error: err?.message || "Character portrait generation failed.",
+      });
+    }
+  }
+
   async talkBot(req: Request, res: Response) {
     const { prompt, provider = "google" } = req.body;
 

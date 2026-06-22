@@ -31,6 +31,54 @@ const CEREBRAS_CHARACTER_JSON_SCHEMA = createCerebrasSchema(
   RPG_CHARACTER_JSON_SCHEMA
 );
 
+function normalizeCharacterLists(text: string): string {
+  let draft: unknown;
+
+  try {
+    draft = JSON.parse(text);
+  } catch {
+    return text;
+  }
+
+  if (!draft || typeof draft !== "object" || Array.isArray(draft)) {
+    return text;
+  }
+
+  const value = draft as Record<string, unknown>;
+  const normalize = (
+    input: unknown,
+    minimum: number,
+    maximum: number,
+    fallbacks: string[]
+  ) => {
+    const items = Array.isArray(input)
+      ? input.filter(
+          (item): item is string =>
+            typeof item === "string" && item.trim().length > 0
+        )
+      : [];
+
+    for (const fallback of fallbacks) {
+      if (items.length >= minimum) break;
+      if (!items.includes(fallback)) items.push(fallback);
+    }
+
+    return items.slice(0, maximum);
+  };
+
+  value.personality = normalize(value.personality, 2, 5, [
+    "Resolute",
+    "Observant",
+  ]);
+  value.motivations = normalize(value.motivations, 1, 3, [
+    "Pursue their defining purpose",
+  ]);
+  value.flaws = normalize(value.flaws, 1, 3, ["Slow to trust others"]);
+  value.equipment = normalize(value.equipment, 0, 10, []);
+
+  return JSON.stringify(value);
+}
+
 class CerebrasService {
   async createCharacterDraft(prompt: string): Promise<RpgCharacterDraft> {
     const apiKey = process.env.CEREBRAS_API_KEY?.trim();
@@ -49,8 +97,9 @@ class CerebrasService {
       messages: [
         {
           role: "system",
-          content:
-            "Generate one RPG character draft matching the supplied JSON schema.",
+          content: `Generate one RPG character draft matching the supplied JSON schema.
+Return exactly 3 personality items, 2 motivations, 2 flaws, and between 3 and
+6 equipment items. Every item in those arrays must be a non-empty string.`,
         },
         {
           role: "user",
@@ -83,7 +132,7 @@ ${prompt.trim()}
       throw new Error("No character draft was returned from Cerebras.");
     }
 
-    return parseRpgCharacterDraft(outputText);
+    return parseRpgCharacterDraft(normalizeCharacterLists(outputText));
   }
 }
 

@@ -38,6 +38,30 @@ export interface CharacterDraft {
 
 export type CharacterApiProvider = "google" | "cerebras";
 
+export async function generateCharacterPortrait(
+  character: CharacterDraft,
+  signal?: AbortSignal,
+): Promise<string> {
+  const response = await fetch("/api/helperbot/portrait/google", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: character.name,
+      race: character.race,
+      characterClass: character.characterClass,
+      appearance: character.appearance,
+      equipment: character.equipment,
+    }),
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error("Portrait generation failed.");
+  }
+
+  return URL.createObjectURL(await response.blob());
+}
+
 export class GameCharacter implements CharacterDraft {
   name: string;
   race: string;
