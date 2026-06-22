@@ -109,13 +109,13 @@ export default function Fadelands() {
 
   return (
     <div className="fadelands-page">
-      <SiteHeader status="Fadelands / Character forge">
+      <SiteHeader status="Fadelands / Character Forge">
         <Link to="/">Home</Link>
       </SiteHeader>
 
       <main className="fadelands-main">
         <section className="fadelands-intro">
-          <div>
+          <div className="fadelands-intro__header">
             <p className="fadelands-eyebrow">AI character forge</p>
             <h1>Fadelands</h1>
             <p className="fadelands-lede">
@@ -229,7 +229,10 @@ export default function Fadelands() {
                 </p>
                 <h2>{character.name}</h2>
                 <p className="character-summary">{character.draftSummary}</p>
-                <span className="alignment-badge">
+                <span
+                  className="alignment-badge"
+                  data-alignment={character.alignment}
+                >
                   {formatAlignment(character.alignment)}
                 </span>
               </div>
