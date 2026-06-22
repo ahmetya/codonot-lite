@@ -145,6 +145,16 @@ export default function Fadelands() {
         {character ? (
           <article className="character-sheet" aria-label={`${character.name} character sheet`}>
             <header className="character-hero">
+              <section className="ability-grid" aria-label="Ability scores">
+                {Object.entries(abilityLabels).map(([ability, label]) => (
+                  <div className="ability-score" key={ability}>
+                    <span>{label}</span>
+                    <strong>
+                      {character.abilities[ability as keyof typeof character.abilities]}
+                    </strong>
+                  </div>
+                ))}
+              </section>
               <div className="character-portrait-wrap">
                 <img
                   className="character-image"
@@ -164,17 +174,6 @@ export default function Fadelands() {
                 </span>
               </div>
             </header>
-
-            <section className="ability-grid" aria-label="Ability scores">
-              {Object.entries(abilityLabels).map(([ability, label]) => (
-                <div className="ability-score" key={ability}>
-                  <span>{label}</span>
-                  <strong>
-                    {character.abilities[ability as keyof typeof character.abilities]}
-                  </strong>
-                </div>
-              ))}
-            </section>
 
             <div className="character-content">
               <div className="character-narrative">
