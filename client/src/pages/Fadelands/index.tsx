@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
 import fallbackPortrait from "../../assets/fadelands-fallback.webp";
+import type { CharacterAlignment } from "../../services/fadelands/GameCharacter";
 import {
   CharacterApiProvider,
   GameCharacter,
@@ -13,35 +14,88 @@ import "./index.css";
 const USE_POLLINATIONS_IMAGE_GENERATION = true;
 const PORTRAIT_LOAD_TIMEOUT_MS = 60_000;
 
-const characterPrompts = [
-  "Create a battle-worn dwarf guardian who protects a forgotten mountain archive.",
-  "Create an elven cartographer mapping a forest that rearranges itself every night.",
-  "Create a human tidecaller who hunts relics beneath a drowned coastal kingdom.",
-  "Create an orc herbalist seeking a cure for the curse consuming their clan.",
-  "Create a halfling smuggler who secretly ferries refugees across a haunted border.",
-  "Create a tiefling archivist who can hear the memories trapped inside ancient books.",
-  "Create a dragonborn knight exiled after refusing an order from a corrupt monarch.",
-  "Create a goblin engineer building clockwork companions from battlefield scraps.",
-  "Create an aasimar healer whose fading celestial light attracts dangerous spirits.",
-  "Create an undead knight searching the desert for the name they lost in life.",
-  "Create a gnome illusionist who runs a traveling theater used as a spy network.",
-  "Create a half-elf diplomat trying to prevent war between rival island nations.",
-  "Create a lizardfolk ranger guarding the last clean river in a poisoned marsh.",
-  "Create a firbolg druid who carries seeds from a forest destroyed by wildfire.",
-  "Create a tabaxi treasure hunter pursued by the living statue they accidentally awakened.",
-  "Create a kenku spy who communicates through the stolen voices of powerful nobles.",
-  "Create a water genasi sailor navigating a sea haunted by their vanished crew.",
-  "Create a kobold priest restoring a ruined temple beneath an active volcano.",
-  "Create a minotaur gladiator who escaped the arena to find their scattered family.",
-  "Create a changeling detective investigating crimes committed using their own face.",
+const characterRaces = [
+  "Aasimar",
+  "Dragonborn",
+  "Dwarf",
+  "Elf",
+  "Gnome",
+  "Goliath",
+  "Halfling",
+  "Human",
+  "Orc",
+  "Tiefling",
 ] as const;
 
+const characterClasses = [
+  "Barbarian",
+  "Bard",
+  "Cleric",
+  "Druid",
+  "Fighter",
+  "Monk",
+  "Paladin",
+  "Ranger",
+  "Rogue",
+  "Sorcerer",
+  "Warlock",
+  "Wizard",
+] as const;
+
+const characterAlignments: CharacterAlignment[] = [
+  "lawful-good",
+  "neutral-good",
+  "chaotic-good",
+  "lawful-neutral",
+  "true-neutral",
+  "chaotic-neutral",
+  "lawful-evil",
+  "neutral-evil",
+  "chaotic-evil",
+];
+
+const characterConcepts = [
+  "protects a forgotten mountain archive",
+  "maps a forest that rearranges itself every night",
+  "hunts relics beneath a drowned coastal kingdom",
+  "seeks a cure for the curse consuming their clan",
+  "secretly ferries refugees across a haunted border",
+  "can hear the memories trapped inside ancient books",
+  "was exiled after refusing an order from a corrupt monarch",
+  "builds clockwork companions from battlefield scraps",
+  "draws dangerous spirits with a fading celestial omen",
+  "searches the desert for a name erased from history",
+  "runs a traveling theater used as a spy network",
+  "tries to prevent war between rival island nations",
+  "guards the last clean river in a poisoned marsh",
+  "carries seeds from a forest destroyed by wildfire",
+  "is pursued by the living statue they accidentally awakened",
+  "communicates through the stolen voices of powerful nobles",
+  "navigates a sea haunted by their vanished crew",
+  "restores a ruined temple beneath an active volcano",
+  "escaped an arena to find their scattered family",
+  "investigates crimes committed using their own face",
+] as const;
+
+function getRandomItem<T>(items: readonly T[]) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 function getRandomCharacterPrompt(currentPrompt?: string) {
-  let index = Math.floor(Math.random() * characterPrompts.length);
-  if (characterPrompts[index] === currentPrompt) {
-    index = (index + 1) % characterPrompts.length;
+  const createPrompt = () => {
+    const race = getRandomItem(characterRaces);
+    const characterClass = getRandomItem(characterClasses);
+    const alignment = formatAlignment(getRandomItem(characterAlignments));
+    const concept = getRandomItem(characterConcepts);
+
+    return `Create a ${alignment} ${race} ${characterClass} who ${concept}.`;
+  };
+
+  let prompt = createPrompt();
+  for (let attempts = 0; attempts < 5 && prompt === currentPrompt; attempts += 1) {
+    prompt = createPrompt();
   }
-  return characterPrompts[index];
+  return prompt;
 }
 
 const abilityLabels = {
@@ -201,7 +255,7 @@ export default function Fadelands() {
           <form className="forge-form" onSubmit={createCharacter}>
             <div className="forge-form__header">
               <label htmlFor="character-prompt">Character brief</label>
-              <span>{characterPrompts.length} prompts</span>
+              <span>{characterConcepts.length} prompt seeds</span>
             </div>
             <textarea
               id="character-prompt"
