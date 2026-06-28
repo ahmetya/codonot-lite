@@ -41,7 +41,26 @@ export class HelperBotController {
     }
 
     try {
-      const posts = await helperBotService.askCharacter(prompt, provider);
+      const posts = await helperBotService.generateFantasyCharacter(prompt, provider);
+      res.json(posts);
+    } catch (err: any) {
+      console.error("Character generation error:", err);
+      res.status(502).json({
+        error: err?.message || "Character generation failed.",
+      });
+    }
+  }
+
+    async generateFantasyCharacter(req: Request, res: Response) {
+    const { prompt, provider = "google" } = req.body;
+
+    if (provider !== "google" && provider !== "cerebras") {
+      res.status(400).json({ error: "Provider must be google or cerebras." });
+      return;
+    }
+
+    try {
+      const posts = await helperBotService.generateFantasyCharacter(prompt, provider);
       res.json(posts);
     } catch (err: any) {
       console.error("Character generation error:", err);

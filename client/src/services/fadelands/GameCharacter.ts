@@ -102,7 +102,7 @@ export class GameCharacter implements CharacterDraft {
   private createDraft() {
     return new Observable<GameCharacter>((subscriber) => {
       const controller = new AbortController();
-      fetch("/api/helperbot", {
+      fetch("/api/helperbot/generateFantasyCharacter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

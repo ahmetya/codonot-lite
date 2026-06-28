@@ -66,6 +66,11 @@ class HelperBotService {
       throw new Error("A character description is required.");
     }
 
+
+    console.log("Prompt sent to Gemma:", prompt); // Debugging line
+    console.log("RPG Character JSON Schema:", JSON.stringify(RPG_CHARACTER_JSON_SCHEMA, null, 2)); // Debugging line
+
+
     const aiResponse = await ai.models.generateContent({
       model: CHARACTER_DRAFT_MODEL,
       contents: `${CHARACTER_CONTENTS_PREFIX}
@@ -89,7 +94,7 @@ class HelperBotService {
     return parseRpgCharacterDraft(outputText);
   }
 
-  async askCharacter(
+  async generateFantasyCharacter(
     prompt: string,
     provider: CharacterApiProvider
   ): Promise<RpgCharacterDraft> {
