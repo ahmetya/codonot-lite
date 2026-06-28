@@ -5,6 +5,7 @@ import {
   RPG_CHARACTER_JSON_SCHEMA,
   RpgCharacterDraft,
 } from "../HelperBotService.model";
+import { CHARACTER_CONTENT_PROMPT } from "./CerebrasService.conts";
 
 const CEREBRAS_CHARACTER_MODEL = "gpt-oss-120b";
 
@@ -97,9 +98,7 @@ class CerebrasService {
       messages: [
         {
           role: "system",
-          content: `Generate one RPG character draft matching the supplied JSON schema.
-Return exactly 3 personality items, 2 motivations, 2 flaws, and between 3 and
-6 equipment items. Every item in those arrays must be a non-empty string.`,
+          content: CHARACTER_CONTENT_PROMPT,
         },
         {
           role: "user",
