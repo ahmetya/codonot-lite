@@ -381,6 +381,13 @@ export default function Fadelands() {
             </header>
 
             <div className="character-content">
+              <aside className="character-details">
+                <DetailList title="Personality" items={character.personality} />
+                <DetailList title="Motivations" items={character.motivations} />
+                <DetailList title="Flaws" items={character.flaws} />
+                <DetailList title="Equipment" items={character.equipment} tags />
+              </aside>
+
               <div className="character-narrative">
                 <section>
                   <p className="section-label">Background</p>
@@ -393,13 +400,6 @@ export default function Fadelands() {
                   <p>{character.appearance}</p>
                 </section>
               </div>
-
-              <aside className="character-details">
-                <DetailList title="Personality" items={character.personality} />
-                <DetailList title="Motivations" items={character.motivations} />
-                <DetailList title="Flaws" items={character.flaws} />
-                <DetailList title="Equipment" items={character.equipment} tags />
-              </aside>
             </div>
           </article>
         ) : null}
