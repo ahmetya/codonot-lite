@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { SEO } from "../../components/SEO";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
 import amadeusLogo from "../../assets/company-logos/amadeus.svg";
@@ -102,6 +103,12 @@ const specialties = [
 export default function About() {
   return (
     <div className="about-page">
+      <SEO
+        title="Ahmet Yalcinkaya | Frontend Software Developer"
+        description="Frontend software developer in Malta focused on Angular, Stencil.js, TypeScript, frontend architecture, automation, and reliable delivery."
+        path="/about"
+        type="profile"
+      />
       <SiteHeader status="Ahmet Yalcinkaya / Frontend Software Developer">
         <a href="#expertise">Expertise</a>
         <a href="#experience">Experience</a>

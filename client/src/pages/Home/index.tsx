@@ -8,6 +8,7 @@ import codeImageWebp from "../../assets/ai-feature-code.webp";
 import streamImageAvif from "../../assets/ai-feature-stream.avif";
 import streamImageWebp from "../../assets/ai-feature-stream.webp";
 import { useAuth } from "../../context/AuthContext";
+import { SEO } from "../../components/SEO";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { DemoControls } from "./DemoControls";
 import { HomeHeader } from "./HomeHeader";
@@ -68,6 +69,11 @@ export default function Home() {
 
   return (
     <div className="page-container">
+      <SEO
+        title="Codonot Lite | AI Streaming Playground"
+        description="Experiment with live AI responses, code generation, Mermaid diagrams, and token-by-token streaming in Codonot Lite."
+        path="/"
+      />
       <HomeHeader
         isAuthenticated={isAuthenticated}
         message={message}

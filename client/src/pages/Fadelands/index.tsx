@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { SEO } from "../../components/SEO";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
 import fallbackPortrait from "../../assets/fadelands-fallback.webp";
@@ -92,7 +93,11 @@ function getRandomCharacterPrompt(currentPrompt?: string) {
   };
 
   let prompt = createPrompt();
-  for (let attempts = 0; attempts < 5 && prompt === currentPrompt; attempts += 1) {
+  for (
+    let attempts = 0;
+    attempts < 5 && prompt === currentPrompt;
+    attempts += 1
+  ) {
     prompt = createPrompt();
   }
   return prompt;
@@ -112,7 +117,9 @@ function formatAlignment(alignment: string) {
 }
 
 export default function Fadelands() {
-  const [prompt, setPrompt] = useState<string>(() => getRandomCharacterPrompt());
+  const [prompt, setPrompt] = useState<string>(() =>
+    getRandomCharacterPrompt()
+  );
   const [character, setCharacter] = useState<GameCharacter | null>(null);
   const [provider, setProvider] = useState<CharacterApiProvider>("cerebras");
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
@@ -170,7 +177,7 @@ export default function Fadelands() {
     if (USE_POLLINATIONS_IMAGE_GENERATION) {
       const encodedPrompt = encodeURIComponent(portraitPrompt);
       preloadPortrait(
-        `https://image.pollinations.ai/p/${encodedPrompt}?width=196&height=196&nologo=true&quality=low`,
+        `https://image.pollinations.ai/p/${encodedPrompt}?width=196&height=196&nologo=true&quality=low`
       );
     } else {
       generateCharacterPortrait(character, controller.signal)
@@ -222,13 +229,15 @@ export default function Fadelands() {
       "Unknown",
       "Adventurer",
       characterPrompt,
-      provider,
+      provider
     );
     draft.aiDraft$.subscribe({
-      next: setCharacter,
+      next: (character) => setCharacter(character),
       error: (reason: unknown) => {
         setError(
-          reason instanceof Error ? reason.message : "Character generation failed.",
+          reason instanceof Error
+            ? reason.message
+            : "Character generation failed."
         );
         setIsLoading(false);
       },
@@ -238,6 +247,11 @@ export default function Fadelands() {
 
   return (
     <div className="fadelands-page">
+      <SEO
+        title="Fadelands | AI Fantasy Character Generator"
+        description="Create fantasy RPG character concepts with generated abilities, backstory details, and portrait prompts in the Fadelands character generator."
+        path="/fadelands"
+      />
       <SiteHeader status="Fadelands / Character Forge">
         <Link to="/">Home</Link>
       </SiteHeader>
@@ -289,7 +303,10 @@ export default function Fadelands() {
               </label>
             </fieldset>
             <div className="forge-form__footer">
-              <span>Race, class, history, temperament — add as much or as little as you want.</span>
+              <span>
+                Race, class, history, temperament — add as much or as little as
+                you want.
+              </span>
               <div className="forge-form__buttons">
                 <button
                   className="random-prompt-button"
@@ -297,7 +314,7 @@ export default function Fadelands() {
                   disabled={isLoading}
                   onClick={() =>
                     setPrompt((currentPrompt) =>
-                      getRandomCharacterPrompt(currentPrompt),
+                      getRandomCharacterPrompt(currentPrompt)
                     )
                   }
                 >
@@ -306,16 +323,26 @@ export default function Fadelands() {
                 <button
                   className="forge-button"
                   type="submit"
-                  disabled={isLoading || !normalizedPrompt || isRequestUnchanged}
+                  disabled={
+                    isLoading || !normalizedPrompt || isRequestUnchanged
+                  }
                 >
-                  {isLoading ? "Forging…" : (character && isRequestUnchanged) ? "Change prompt to forge..." : "Forge Character"}
+                  {isLoading
+                    ? "Forging…"
+                    : character && isRequestUnchanged
+                      ? "Change prompt to forge..."
+                      : "Forge Character"}
                 </button>
               </div>
             </div>
           </form>
         </section>
 
-        {error ? <p className="fadelands-error" role="alert">{error}</p > : null}
+        {error ? (
+          <p className="fadelands-error" role="alert">
+            {error}
+          </p>
+        ) : null}
 
         {!character && !isLoading ? (
           <section className="forge-empty">
@@ -332,7 +359,10 @@ export default function Fadelands() {
         ) : null}
 
         {character ? (
-          <article className="character-sheet" aria-label={`${character.name} character sheet`}>
+          <article
+            className="character-sheet"
+            aria-label={`${character.name} character sheet`}
+          >
             <header className="character-hero">
               <div className="character-profile">
                 <figure className="character-portrait-wrap">
@@ -359,7 +389,11 @@ export default function Fadelands() {
                     <div className="ability-score" key={ability}>
                       <span>{label}</span>
                       <strong>
-                        {character.abilities[ability as keyof typeof character.abilities]}
+                        {
+                          character.abilities[
+                            ability as keyof typeof character.abilities
+                          ]
+                        }
                       </strong>
                     </div>
                   ))}
@@ -371,21 +405,31 @@ export default function Fadelands() {
                 </p>
                 <h2>{character.name}</h2>
                 <p className="character-summary">{character.draftSummary}</p>
-                <span
-                  className="alignment-badge"
-                  data-alignment={character.alignment}
-                >
-                  {formatAlignment(character.alignment)}
-                </span>
               </div>
               <div className="character-narrative">
+                <div className="character-narrative__header">
+                  <section>
+                    <div>
+
+                 <p className="section-label">Background</p>
+                    <h3>Origin</h3>
+                    </div>
+   
+                    <p>{character.background}</p>
+                  </section>
+
+                  <section>
+                    <span
+                      className="alignment-badge"
+                      data-alignment={character.alignment}
+                    >
+                      {formatAlignment(character.alignment)}
+                    </span>
+                  </section>
+                </div>
+
                 <section>
-                  <p className="section-label">Background</p>
-                  <h3>Origin</h3>
-                  <p>{character.background}</p>
-                </section>
-                <section>
-                  <p className="section-label">Appearance</p>
+                  <p className="section-label incard">Appearance</p>
                   <h3>Presence</h3>
                   <p>{character.appearance}</p>
                 </section>
@@ -397,7 +441,11 @@ export default function Fadelands() {
                 <DetailList title="Personality" items={character.personality} />
                 <DetailList title="Motivations" items={character.motivations} />
                 <DetailList title="Flaws" items={character.flaws} />
-                <DetailList title="Equipment" items={character.equipment} tags />
+                <DetailList
+                  title="Equipment"
+                  items={character.equipment}
+                  tags
+                />
               </aside>
             </div>
           </article>
@@ -422,7 +470,9 @@ function DetailList({
     <section className={tags ? "detail-list detail-list--tags" : "detail-list"}>
       <h3>{title}</h3>
       <ul>
-        {items.map((item) => <li key={item}>{item}</li>)}
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
     </section>
   );

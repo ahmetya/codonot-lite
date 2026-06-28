@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { SEO } from "../../components/SEO";
 import favicon from "../../assets/favicon.svg";
 import {
   VERIFICATION_STATE,
@@ -15,10 +16,10 @@ export default function VerifyEmail() {
   const [state, setState] = useState<VerificationState>(
     VERIFICATION_STATE.loading
   );
-  const [message, setMessage] = useState(VERIFY_EMAIL_COPY.initialMessage);
-  const [email, setEmail] = useState("");
-  const [resendMessage, setResendMessage] = useState("");
-  const [isResending, setIsResending] = useState(false);
+  const [message, setMessage] = useState<string>(VERIFY_EMAIL_COPY.initialMessage);
+  const [email, setEmail] = useState<string>("");
+  const [resendMessage, setResendMessage] = useState<string>("");
+  const [isResending, setIsResending] = useState<boolean>(false);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -92,6 +93,12 @@ export default function VerifyEmail() {
 
   return (
     <main className="verify-page">
+      <SEO
+        title="Verify Email | Codonot Lite"
+        description="Verify your Codonot Lite account email address."
+        path="/verify-email"
+        robots="noindex, follow"
+      />
       <section className={`verify-card verify-card--${state}`}>
         <Link className="verify-brand" to="/">
           <img src={favicon} alt="" />

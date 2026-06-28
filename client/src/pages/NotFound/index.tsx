@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { SEO } from "../../components/SEO";
 import favicon from "../../assets/favicon.svg";
 import notFoundImageAvif from "../../assets/not-found.avif";
 import notFoundImageWebp from "../../assets/not-found.webp";
@@ -8,22 +8,14 @@ import "./index.css";
 export default function NotFound() {
   const location = useLocation();
 
-  useEffect(() => {
-    const previousTitle = document.title;
-    const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
-    const previousRobots = robots?.content;
-
-    document.title = "Page Not Found | Codonot Lite";
-    if (robots) robots.content = "noindex, follow";
-
-    return () => {
-      document.title = previousTitle;
-      if (robots && previousRobots) robots.content = previousRobots;
-    };
-  }, []);
-
   return (
     <main className="not-found-page">
+      <SEO
+        title="Page Not Found | Codonot Lite"
+        description="The requested Codonot Lite route could not be found."
+        path={location.pathname}
+        robots="noindex, follow"
+      />
       <header className="not-found-header">
         <Link className="not-found-brand" to="/" aria-label="Codonot Lite home">
           <img src={favicon} alt="" />

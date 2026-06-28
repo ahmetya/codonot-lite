@@ -305,7 +305,7 @@
   display: grid;
   place-items: center;
   min-height: 280px;
-  margin-top: 32px;
+  margin-top: 24px;
   border: 1px dashed var(--fade-border);
   border-radius: 10px;
   color: var(--fade-muted);
@@ -338,7 +338,7 @@
 }
 
 .character-sheet {
-  margin-top: 40px;
+  margin-top: 24px;
 }
 
 .character-hero {
@@ -531,8 +531,8 @@
   border-left: 1px solid var(--fade-border-dim);
 }
 .character-narrative section + section {
-  margin-top: 22px;
-  padding-top: 20px;
+  /* margin-top: 22px;
+  padding-top: 20px; */
   border-top: 1px solid var(--fade-border-dim);
 }
 .character-narrative h3,
@@ -606,6 +606,18 @@
 .detail-list--tags li:nth-child(3n) { --equipment-color: #d0a765; }
 .detail-list--tags li::before {
   display: none;
+}
+
+.character-narrative__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 12px;
+}
+
+
+.incard {
+  padding-top: 16px;
 }
 
 @keyframes forge-pulse {

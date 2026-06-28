@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import * as Rx from "rxjs";
 import * as RxOps from "rxjs/operators";
+import { SEO } from "../../components/SEO";
 import { rxjsModules } from "./modulesData";
 import VimTextarea from "./VimTextarea";
 import "./index.css";
@@ -228,6 +229,11 @@ export default function RxjsPlayground() {
 
   return (
     <div className="rxjs-page">
+      <SEO
+        title="RxJS Playground | Codonot Lite"
+        description="Learn RxJS with interactive examples, editable code, stream logs, marble-style timelines, hints, and operator exercises."
+        path="/rxjs"
+      />
       <header className="rxjs-header">
         <h1>
           <span>⚛️</span> RxJS Visual Learning Lab
