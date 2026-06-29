@@ -24,7 +24,7 @@ app.use("/api/helperbot", helperBotRoutes);
 app.use("/api/auth", authRoutes); // add this line for auth routes
 
 app.get("/api/hello", (req: Request, res: Response) => {
-  res.json({ message: "Hello from Express!" });
+  res.json({ message: "Hello from Codonot Lite!" });
 });
 
 app.get("/api/poke", async (req: Request, res: Response) => {

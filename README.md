@@ -1,17 +1,23 @@
 # codonot-lite
 
-`codonot-lite` is a full-stack AI streaming playground built with React and
-Express. It sends prompts to models available through the Google GenAI API and
-renders responses in the browser as they arrive, including syntax-highlighted
-code blocks.
+`codonot-lite` is a full-stack AI playground built with React and Express. Its
+main experiences are the Fadelands fantasy character forge and a streaming AI
+interface that renders model responses in the browser as they arrive, including
+syntax-highlighted code blocks.
 
-The project also contains small authentication, Prisma, Pokemon API, callback,
-Promise, and object-oriented programming examples. These controls make the app
-useful as both an AI interface prototype and a JavaScript/TypeScript learning
-sandbox.
+The project also contains authentication, Prisma persistence, Pokemon API,
+callback, Promise, RxJS, and object-oriented programming examples. These
+controls make the app useful as both an AI product prototype and a
+JavaScript/TypeScript learning sandbox.
 
 ## Features
 
+- Fadelands AI fantasy character generator at `/fadelands`
+- Structured RPG character drafts with race, class, alignment, backstory,
+  traits, equipment, and ability scores
+- Character generation through Google AI or Cerebras
+- Portrait generation support through Pollinations, Google AI, or a Cerebras
+  SVG portrait endpoint
 - Live token-by-token AI responses
 - Selectable AI model in the streaming interface
 - Code-fence detection and syntax highlighting with Highlight.js
@@ -19,18 +25,19 @@ sandbox.
 - SQLite persistence through Prisma
 - Pokemon API fetching with a local database cache
 - Generic database read/create examples
-- Responsive single-page React interface
+- Responsive single-page React interface with routes for Home, Fadelands,
+  Dashboard, About, Verify Email, RxJS Playground, and Not Found
 
 ## Technology
 
-| Area           | Technology                                               |
-| -------------- | -------------------------------------------------------- |
-| Client         | React 19, TypeScript, Vite, React Router                 |
-| Server         | Node.js, Express, TypeScript                             |
-| Database       | SQLite, Prisma, better-sqlite3 adapter                   |
-| Authentication | bcrypt, JSON Web Tokens                                  |
-| AI             | Google GenAI SDK and Google Generative Language REST API |
-| Rendering      | Highlight.js                                             |
+| Area           | Technology                                                         |
+| -------------- | ------------------------------------------------------------------ |
+| Client         | React 19, TypeScript, Vite, React Router                           |
+| Server         | Node.js, Express, TypeScript                                       |
+| Database       | SQLite, Prisma, better-sqlite3 adapter                             |
+| Authentication | bcrypt, JSON Web Tokens                                            |
+| AI             | Google GenAI SDK, Google Generative Language REST API, Cerebras SDK |
+| Rendering      | Highlight.js, Mermaid                                              |
 
 ## Project Structure
 
@@ -41,9 +48,9 @@ codonot-lite/
 |   `-- src/
 |       |-- components/         Shared UI components
 |       |-- context/            Authentication state
-|       |-- pages/              Home, dashboard, and not-found pages
+|       |-- pages/              Home, Fadelands, dashboard, and utility pages
 |       |-- routes/             React Router configuration
-|       `-- services/           API and learning-example utilities
+|       `-- services/           API, Fadelands, and learning utilities
 |-- server/
 |   |-- prisma/
 |   |   |-- migrations/         Database migration history
@@ -52,7 +59,7 @@ codonot-lite/
 |       |-- controllers/        HTTP request handlers
 |       |-- middleware/         Authentication middleware
 |       |-- routes/             Express route definitions
-|       `-- services/           AI, auth, database, and Pokemon logic
+|       `-- services/           AI, auth, database, Fadelands, and Pokemon logic
 |-- deploy.sh                   Example production deployment script
 `-- package.json                Root development scripts
 ```
@@ -61,7 +68,8 @@ codonot-lite/
 
 - Node.js with built-in `fetch` support (Node.js 20 or newer recommended)
 - npm
-- A Google AI API key for the helper bot endpoints
+- A Google AI API key for Google-backed helper bot and Fadelands endpoints
+- A Cerebras API key for Cerebras-backed Fadelands character generation
 
 ## Local Setup
 
@@ -84,6 +92,7 @@ APP_URL = https://lite.codonot.com
 DATABASE_URL = file:./prisma/dev.db
 EMAIL_FROM = Codonot Lite <noreply@lite.codonot.com>
 GEMINI_API_KEY = replace_with_your_google_ai_key
+CEREBRAS_API_KEY = replace_with_your_cerebras_api_key
 JWT_SECRET = replace_with_a_long_random_secret
 NODE_ENV = development
 NVIDIA_API_KEY = replace_with_your_nvidia_api_key
@@ -92,12 +101,14 @@ PORT = 3001
 RESEND_API_KEY = replace_with_your_resend_api_key
 ```
 
-`GEMINI_API_KEY` is required for Google AI requests. `NVIDIA_API_KEY` is
-required for the NVIDIA NIM endpoint. `NVIDIA_NIM_MODEL` is optional and
-defaults to `meta/llama-3.1-8b-instruct`. `JWT_SECRET` is required for
-registration and login. `RESEND_API_KEY`, `EMAIL_FROM`, and `APP_URL` are
-required for email verification. Verify the sender domain in Resend before
-using it in `EMAIL_FROM`.
+`GEMINI_API_KEY` is required for Google AI requests and Google portrait
+generation. `CEREBRAS_API_KEY` is required when Fadelands uses the Cerebras
+provider or the Cerebras portrait endpoint. `NVIDIA_API_KEY` is required for the
+NVIDIA NIM endpoint. `NVIDIA_NIM_MODEL` is optional and defaults to
+`meta/llama-3.1-8b-instruct`. `JWT_SECRET` is required for registration and
+login. `RESEND_API_KEY`, `EMAIL_FROM`, and `APP_URL` are required for email
+verification. Verify the sender domain in Resend before using it in
+`EMAIL_FROM`.
 
 ### 3. Configure the client
 
@@ -146,6 +157,54 @@ npm run start:server
 
 On Windows systems where PowerShell blocks `npm.ps1`, use `npm.cmd` in place of
 `npm`.
+
+## App Routes
+
+| Route           | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `/`             | Home page with AI streaming controls             |
+| `/fadelands`    | AI fantasy character forge                       |
+| `/dashboard`    | Authenticated dashboard shell                    |
+| `/about`        | About and experience page                        |
+| `/verify-email` | Email verification flow                          |
+| `/rxjs`         | RxJS playground and examples                     |
+| `*`             | Not Found page                                   |
+
+## Fadelands
+
+Fadelands is an AI fantasy character generator available at `/fadelands`.
+Users enter a character brief or use a random prompt seed, choose an AI provider,
+and receive a structured character sheet with identity, background, appearance,
+personality, motivations, flaws, equipment, ability scores, alignment, and a
+portrait area.
+
+Character drafts are generated by the server through:
+
+```text
+POST /api/helperbot/generateFantasyCharacter
+```
+
+The request body accepts a prompt and provider:
+
+```json
+{
+  "prompt": "Create a lawful good dwarf cleric who protects a forgotten archive.",
+  "provider": "cerebras"
+}
+```
+
+`provider` may be `google` or `cerebras`. If omitted, the server defaults to
+Google. The current Fadelands UI defaults to Cerebras.
+
+Portrait behavior is split between client and server options:
+
+- The Fadelands page currently uses Pollinations image URLs by default.
+- `/api/helperbot/portrait/google` generates a bitmap portrait through Google AI.
+- `/api/helperbot/portrait` generates an SVG portrait through the Cerebras
+  portrait service.
+
+The backend validates model output into a consistent RPG character draft shape
+before returning it to the client.
 
 ## Available Scripts
 
@@ -211,18 +270,30 @@ Example registration body:
 
 ### Helper Bot
 
-| Method | Endpoint                | Description                                  |
-| ------ | ----------------------- | -------------------------------------------- |
-| `POST` | `/helperbot`            | Return one complete AI response              |
-| `POST` | `/helperbot/stream`     | Proxy the upstream SSE response              |
-| `POST` | `/helperbot/stream-sdk` | Stream plain text chunks using the GenAI SDK |
-| `POST` | `/helperbot/nim`        | Return one NVIDIA NIM response               |
+| Method | Endpoint                              | Description                                  |
+| ------ | ------------------------------------- | -------------------------------------------- |
+| `POST` | `/helperbot`                          | Return one complete character draft response |
+| `POST` | `/helperbot/generateFantasyCharacter` | Generate a Fadelands RPG character draft     |
+| `POST` | `/helperbot/portrait`                 | Generate a Cerebras SVG character portrait   |
+| `POST` | `/helperbot/portrait/google`          | Generate a Google AI bitmap portrait         |
+| `POST` | `/helperbot/stream`                   | Proxy the upstream SSE response              |
+| `POST` | `/helperbot/stream-sdk`               | Stream plain text chunks using the GenAI SDK |
+| `POST` | `/helperbot/nim`                      | Return one NVIDIA NIM response               |
 
 Each helper bot endpoint accepts:
 
 ```json
 {
   "prompt": "Show a TypeScript fetch example"
+}
+```
+
+Fadelands character-generation endpoints also accept:
+
+```json
+{
+  "prompt": "Create a neutral good elf ranger who maps a changing forest.",
+  "provider": "google"
 }
 ```
 
@@ -285,7 +356,9 @@ another server.
 ## Current Status
 
 This repository is an active prototype rather than a finished production
-service. The client includes visible test controls and learning examples, the
-random Pokemon route is a placeholder, and automated tests have not yet been
-added. The production client build also includes the full syntax-highlighting
-bundle, so code splitting is a useful future optimization.
+service. Fadelands is the most product-shaped feature, while the client still
+includes visible test controls and learning examples. The random Pokemon route
+is a placeholder, generated Fadelands characters are not persisted yet, and
+automated tests have not yet been added. The production client build also
+includes the full syntax-highlighting bundle, so code splitting is a useful
+future optimization.
