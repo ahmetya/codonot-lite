@@ -251,6 +251,7 @@ export default function Fadelands() {
         title="Fadelands | AI Fantasy Character Generator"
         description="Create fantasy RPG character concepts with generated abilities, backstory details, and portrait prompts in the Fadelands character generator."
         path="/fadelands"
+        googlebot="index, follow"
       />
       <SiteHeader status="Fadelands / Character Forge">
         <Link to="/">Home</Link>

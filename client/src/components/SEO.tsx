@@ -11,6 +11,7 @@ interface SEOProps {
   description: string;
   path?: string;
   robots?: RobotsDirective;
+  googlebot?: RobotsDirective;
   type?: "website" | "profile";
 }
 
@@ -46,6 +47,7 @@ export function SEO({
   description,
   path = "/",
   robots = "index, follow",
+  googlebot = robots,
   type = "website",
 }: SEOProps) {
   useEffect(() => {
@@ -56,6 +58,7 @@ export function SEO({
     setCanonical(url);
     setMetaContent('meta[name="description"]', description);
     setMetaContent('meta[name="robots"]', robots);
+    setMetaContent('meta[name="googlebot"]', googlebot);
     setMetaContent('meta[property="og:type"]', type);
     setMetaContent('meta[property="og:site_name"]', SITE_NAME);
     setMetaContent('meta[property="og:title"]', title);
@@ -70,7 +73,7 @@ export function SEO({
     setMetaContent('meta[name="twitter:title"]', title);
     setMetaContent('meta[name="twitter:description"]', description);
     setMetaContent('meta[name="twitter:image"]', DEFAULT_IMAGE);
-  }, [description, path, robots, title, type]);
+  }, [description, googlebot, path, robots, title, type]);
 
   return null;
 }
