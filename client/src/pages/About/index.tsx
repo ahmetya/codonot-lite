@@ -147,7 +147,7 @@ export default function About() {
               <article className="about-job" key={job.company}>
                 <div className="about-job__company">
                   <img src={job.logo} alt={`${job.company} logo`} />
-                  <div>
+                  <div className="about-job__company-info">
                     <h3>{job.company}</h3>
                     <p>{job.location}</p>
                     <span>{job.total}</span>
