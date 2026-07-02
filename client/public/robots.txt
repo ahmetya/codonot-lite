@@ -4,4 +4,10 @@ Disallow: /api/
 Disallow: /dashboard
 Disallow: /verify-email
 
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /verify-email
+
 Sitemap: https://lite.codonot.com/sitemap.xml
