@@ -22,6 +22,7 @@ app.use("/api/pokemon", pokemonRoutes); // add this line for pokemon posts
 app.use("/api/pokemon/:id", pokemonRoutes);
 app.use("/api/helperbot", helperBotRoutes);
 app.use("/api/auth", authRoutes); // add this line for auth routes
+app.use("/api/generateImage", generateImageRoutes); // add this line for image generation
 
 app.get("/api/hello", (req: Request, res: Response) => {
   res.json({ message: "Hello from Codonot Lite!" });
