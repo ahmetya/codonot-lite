@@ -10,6 +10,7 @@ import cors from "cors";
 import genericRoutes from "@routes/generic";
 import pokemonRoutes from "@routes/pokemon"; // add this line for pokemon posts
 import helperBotRoutes from "@routes/helperBot";
+import generateImageRoutes from "@routes/generateImage"; // add this line for image generation
 import authRoutes from "@routes/auth"; // add this line for auth routes
 
 const app = express();

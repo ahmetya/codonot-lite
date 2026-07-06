@@ -1,5 +1,5 @@
 import {Router } from "express";
-import { generateImageController } from "@controllers/generateImage/GenerateImageController";
+import { generateImageController } from "@controllers/generate-image/GenerateImageController";
 
 const router = Router();
 

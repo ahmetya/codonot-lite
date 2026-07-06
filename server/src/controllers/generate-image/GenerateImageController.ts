@@ -30,4 +30,4 @@ export class GenerateImageController {
     }
 
 
-}
+}export const generateImageController = new GenerateImageController();
