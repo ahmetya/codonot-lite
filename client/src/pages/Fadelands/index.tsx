@@ -12,8 +12,8 @@ import {
 } from "../../services/fadelands/GameCharacter";
 import "./index.css";
 
-const USE_POLLINATIONS_IMAGE_GENERATION = false;
-const USE_LOCAL_IMAGE_GENERATION = true;
+const USE_POLLINATIONS_IMAGE_GENERATION = true;
+const USE_LOCAL_IMAGE_GENERATION = false;
 const PORTRAIT_LOAD_TIMEOUT_MS = 60_000;
 
 const characterRaces = [
