@@ -1,8 +1,8 @@
 export const RPG_CHARACTER_PORTRAIT_WORKFLOW = {
   "3": {
     inputs: {
-      seed: 108102164829100,
-      steps: 25,
+      seed: 108102164829103,
+      steps: 1,
       cfg: 7,
       sampler_name: "dpmpp_2m_sde",
       scheduler: "karras",

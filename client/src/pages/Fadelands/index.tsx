@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SEO } from "../../components/SEO";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
@@ -12,7 +12,8 @@ import {
 } from "../../services/fadelands/GameCharacter";
 import "./index.css";
 
-const USE_POLLINATIONS_IMAGE_GENERATION = true;
+const USE_POLLINATIONS_IMAGE_GENERATION = false;
+const USE_LOCAL_IMAGE_GENERATION = true;
 const PORTRAIT_LOAD_TIMEOUT_MS = 60_000;
 
 const characterRaces = [
@@ -132,13 +133,16 @@ export default function Fadelands() {
     provider: CharacterApiProvider;
   } | null>(null);
 
+  const characterRef = useRef<GameCharacter | null>(null);
+  characterRef.current = character;
+
   const normalizedPrompt = prompt.trim();
   const isRequestUnchanged =
     lastSubmittedRequest?.prompt === normalizedPrompt &&
     lastSubmittedRequest.provider === provider;
 
   useEffect(() => {
-    if (!character) return;
+    if (!portraitPrompt) return;
 
     const controller = new AbortController();
     let isActive = true;
@@ -174,13 +178,35 @@ export default function Fadelands() {
       preloader.src = url;
     };
 
-    if (USE_POLLINATIONS_IMAGE_GENERATION) {
+    if (USE_LOCAL_IMAGE_GENERATION) {
+      (async () => {
+        try {
+   
+            setIsPortraitLoading(true);
+            const response = await fetch("/api/generateImage/rpgPortrait", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: portraitPrompt }),
+            });
+            const data = await response.json();
+            preloadPortrait(
+              `api/generateImage/viewImage?filename=${data.filename}&subfolder=&type=output`
+            );
+          
+        } catch {
+          if (!isActive) return;
+          window.clearTimeout(timeoutId);
+          setPortraitUrl(null);
+          setIsPortraitLoading(false);
+        }
+      })();
+    } else if (USE_POLLINATIONS_IMAGE_GENERATION) {
       const encodedPrompt = encodeURIComponent(portraitPrompt);
       preloadPortrait(
         `https://image.pollinations.ai/p/${encodedPrompt}?width=196&height=196&nologo=true&quality=low`
       );
     } else {
-      generateCharacterPortrait(character, controller.signal)
+      generateCharacterPortrait(characterRef.current!, controller.signal)
         .then((url) => {
           generatedUrl = url;
           if (!isActive) {
@@ -208,7 +234,7 @@ export default function Fadelands() {
       }
       if (generatedUrl) URL.revokeObjectURL(generatedUrl);
     };
-  }, [character, portraitPrompt]);
+  }, [portraitPrompt]);
 
   const createCharacter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -411,11 +437,10 @@ export default function Fadelands() {
                 <div className="character-narrative__header">
                   <section>
                     <div>
-
-                 <p className="section-label">Background</p>
-                    <h3>Origin</h3>
+                      <p className="section-label">Background</p>
+                      <h3>Origin</h3>
                     </div>
-   
+
                     <p>{character.background}</p>
                   </section>
 

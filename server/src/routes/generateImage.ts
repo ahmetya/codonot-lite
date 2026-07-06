@@ -4,5 +4,6 @@ import { generateImageController } from "@controllers/generate-image/GenerateIma
 const router = Router();
 
 router.post("/rpgPortrait", generateImageController.generateRPGPortrait);
+router.get("/viewImage", generateImageController.viewImage);
 
 export default router;

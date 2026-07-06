@@ -129,6 +129,19 @@ export function DemoControls({
     onBotAnswerChange(answer);
   };
 
+  const testComfyUI = async () => {
+    const response = await fetch("/api/generateImage/rpgPortrait", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: "A brave knight in shining armor" }),
+    });
+    const data = await response.json();
+    console.log("ComfyUI RPG Portrait Response:", data);
+
+    const imageUrl = `http://localhost:5173/api/generateImage/viewImage?filename=${data.filename}.png&subfolder=&type=output`;
+    return imageUrl;
+  };
+
   const testNIM = async () => {
     const response = await fetch("/api/helperbot/nim", {
       method: "POST",
@@ -177,6 +190,7 @@ export function DemoControls({
 
         <div className="demo-tools__actions">
           <button onClick={() => navigate("/rxjs")}>Learn RxJS ⚛️</button>
+          <button onClick={testComfyUI}> Test ComfyUI</button>
           <button onClick={testNIM}>Test NIM Client</button>
           <button onClick={runHelperBot}>Helper Bot</button>
           <button onClick={onRawStream}>Stream Answer</button>
