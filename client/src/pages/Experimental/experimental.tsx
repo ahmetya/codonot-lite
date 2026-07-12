@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useEffect } from "react";
 export default function Experimental() {
   const [message, setMessage] = useState("");
+  const [pokeResp, setPokeResp] = useState("");
+
   useEffect(() => {
     if (message) {
       console.log("Message is changed:", message);
@@ -29,6 +31,20 @@ export default function Experimental() {
     });
   };
 
+  const handlePromiseTest = async () => {
+    fetch("https://pokeapi.co/api/v2/pokemon/ditto")
+      .then((resp) => {
+        console.log("resp", resp);
+        console.log("typeof resp.json()", typeof resp);
+        return resp.json();
+      })
+      .then((respJson) => {
+        console.log("respJson", respJson);
+        console.log("typeof respJson", typeof respJson);
+        setPokeResp(JSON.stringify(respJson));
+      });
+  };
+
   return (
     <>
       <h1>Experimental</h1>
@@ -37,7 +53,6 @@ export default function Experimental() {
       >
         Random
       </button>
-
       <button
         onClick={() => {
           promiseTest()
@@ -48,7 +63,9 @@ export default function Experimental() {
         Promise
       </button>
 
+      <button onClick={handlePromiseTest}>Poke</button>
       <p>{message}</p>
+      <p>{pokeResp}</p>
     </>
   );
 }
