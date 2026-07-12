@@ -15,17 +15,19 @@ export default function Experimental() {
     callback(someNumber);
   }
 
-  const promiseTest = new Promise((resolve, reject) => {
-    const randomNumber = Math.floor(Math.random() * 100);
+  const promiseTest = () => {
+    return new Promise((resolve, reject) => {
+      const randomNumber = Math.floor(Math.random() * 100);
 
-    console.log("Random number generated:", randomNumber);
+      console.log("Random number generated:", randomNumber);
 
-    if (randomNumber > 50) {
-      resolve(randomNumber);
-    } else {
-      reject("nope");
-    }
-  });
+      if (randomNumber > 50) {
+        resolve(randomNumber);
+      } else {
+        reject("nope");
+      }
+    });
+  };
 
   return (
     <>
@@ -38,7 +40,7 @@ export default function Experimental() {
 
       <button
         onClick={() => {
-          promiseTest
+          promiseTest()
             .then((result) => console.log(result))
             .catch((error) => console.error(error));
         }}
