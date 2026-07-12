@@ -1,4 +1,4 @@
-import { RPG_CHARACTER_PORTRAIT_WORKFLOW } from "./GenerateImageService.consts";
+import { RPG_CHARACTER_PORTRAIT_WORKFLOW, RPG_PORTRAIT_STYLE_SUFFIX } from "./GenerateImageService.consts";
 
 class GenerateImageService {
   async generateRPGPortrait(prompt: string) {
@@ -7,6 +7,10 @@ class GenerateImageService {
     RPG_CHARACTER_PORTRAIT_WORKFLOW["3"].inputs.seed = Math.floor(
       Math.random() * 1_000_000_000_000
     );
+    RPG_CHARACTER_PORTRAIT_WORKFLOW["6"].inputs.text = `fantasy rpg character portrait of ${prompt}${RPG_PORTRAIT_STYLE_SUFFIX}`;
+
+
+    console.log("Workflow sent to ComfyUI:", JSON.stringify(RPG_CHARACTER_PORTRAIT_WORKFLOW, null, 2)); // Debugging line
 
     const response = await fetch("http://127.0.0.1:8188/prompt", {
       method: "POST",

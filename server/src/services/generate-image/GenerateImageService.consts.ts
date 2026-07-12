@@ -1,8 +1,11 @@
+export const RPG_PORTRAIT_STYLE_SUFFIX =
+  ", with a suitable background, suitable nature, tavern or city scenery for background, natural, matching skin color with race, with suitable weapon or equipment related with class, modest clothing and armor matching with class, hand drawn, pastel colors, matte colors, centered";
+
 export const RPG_CHARACTER_PORTRAIT_WORKFLOW = {
   "3": {
     inputs: {
       seed: 108102164829103,
-      steps: 1,
+      steps: 25,
       cfg: 7,
       sampler_name: "dpmpp_2m_sde",
       scheduler: "karras",
@@ -28,8 +31,8 @@ export const RPG_CHARACTER_PORTRAIT_WORKFLOW = {
   },
   "5": {
     inputs: {
-      width: 312,
-      height: 392,
+      width: 512,
+      height: 512,
       batch_size: 1,
     },
     class_type: "EmptyLatentImage",
@@ -39,7 +42,7 @@ export const RPG_CHARACTER_PORTRAIT_WORKFLOW = {
   },
   "6": {
     inputs: {
-      text: "fantasy rpg character portrait of a chaotic good half elf sorcerer, female, comicbook illustration with a suitable background, suitable nature, tavern or city scenery for background, natural, matching skin color with race, with suitable weapon or equipment related with class, modest clothing and armor matching with class, hand drawn, pastel colors, matte colors",
+      text: `fantasy rpg character portrait of a chaotic good half elf sorcerer${RPG_PORTRAIT_STYLE_SUFFIX}`,
       clip: ["20", 1],
     },
     class_type: "CLIPTextEncode",
@@ -49,7 +52,7 @@ export const RPG_CHARACTER_PORTRAIT_WORKFLOW = {
   },
   "7": {
     inputs: {
-      text: "blurry, low quality, worst quality, distorted face, bad eyes, asymmetrical eyes, crossed eyes, bad anatomy, bad hands, extra fingers, missing fingers, extra\n  limbs, full body, tiny character, distant character, landscape, wide shot, anime, doll face, neon colors, oversaturated, text, watermark, signature, 3d, reflections, shine, 3d render, shiny, text, no weapon, big breasts, frame, white background, empty background, bright colors, picture frame, blank background",
+      text: "blurry, low quality, worst quality, distorted face, bad eyes, asymmetrical eyes, crossed eyes, bad anatomy, bad hands, extra fingers, missing fingers, extra limbs, full body, tiny character, distant character, landscape, wide shot, anime, doll face, neon colors, oversaturated, text, watermark, signature, 3d, reflections, shine, 3d render, shiny, text, no weapon, big breasts, frame, white background, empty background, bright colors, picture frame, blank background",
       clip: ["20", 1],
     },
     class_type: "CLIPTextEncode",
@@ -80,8 +83,8 @@ export const RPG_CHARACTER_PORTRAIT_WORKFLOW = {
   "20": {
     inputs: {
       lora_name: "more_details.safetensors",
-      strength_model: 1,
-      strength_clip: 1.03,
+      strength_model: 0.7,
+      strength_clip: 0.7,
       model: ["4", 0],
       clip: ["4", 1],
     },
