@@ -1,0 +1,17 @@
+.lazy {
+  color: green;
+}
+
+.practicing {
+  color: red;
+}
+
+.progress-bar {
+  width: 100px;
+  background-color: white;
+}
+
+.progress {
+    width: 0px;
+  background-color: green;
+}
