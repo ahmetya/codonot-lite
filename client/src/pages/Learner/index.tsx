@@ -27,12 +27,12 @@ const courseName = "JavaScript and TypeScript";
 const totalCourseLessons = 12;
 
 function createCourseTitle(learnerName: string): string {
-  return learnerName + " " + courseName;
+  return `${learnerName}'s ${courseName} course`;
 }
 
 function getLessonAvailability(lessonNumber: number): string {
-  let lessonAvailable =
-    lessonNumber < totalCourseLessons && lessonNumber > 1 ? true : false;
+  const lessonAvailable =
+    lessonNumber <= totalCourseLessons && lessonNumber >= 1 ? true : false;
   return lessonAvailable ? "Lesson Available" : "Lesson is not available";
 }
 
@@ -51,7 +51,7 @@ export default function Learner() {
 
   return (
     <>
-      <p>{createCourseTitle("Ahmet")}</p>
+      <p>{createCourseTitle(name)}</p>
       <p>{getLessonAvailability(4)}</p>
       <p>{name}</p>
       <p>{currentTopic}</p>

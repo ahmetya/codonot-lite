@@ -66,7 +66,7 @@ export class SlotMachine {
   }
 
   shiftRow(row: string[]): string[] {
-    let shiftArr = new Array(row.length);
+    const shiftArr = new Array(row.length);
     const shift = Math.floor(Math.random() * 10);
 
     row.forEach((element, index) => {
