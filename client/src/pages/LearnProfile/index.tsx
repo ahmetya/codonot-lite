@@ -23,8 +23,23 @@ function getProgressLabel(progress: number): string {
   return "completed";
 }
 
+const courseName = "JavaScript and TypeScript";
+const totalCourseLessons = 12;
+
+function createCourseTitle(learnerName: string): string {
+  return learnerName + " " + courseName;
+}
+
+function getLessonAvailability(lessonNumber: number): string {
+  let lessonAvailable =
+    lessonNumber < totalCourseLessons && lessonNumber > 1 ? true : false;
+  return lessonAvailable ? "Lesson Available" : "Lesson is not available";
+}
+
+// console.log(lessonAvailable);
+
 export default function LearnProfile() {
-  const name: string = "ahmet";
+  const name: string = "Ahmet";
   const currentTopic: string = "variables";
   const completedLessons: number = 5;
   const totalLessons: number = 12;
@@ -36,6 +51,8 @@ export default function LearnProfile() {
 
   return (
     <>
+      <p>{createCourseTitle("Ahmet")}</p>
+      <p>{getLessonAvailability(4)}</p>
       <p>{name}</p>
       <p>{currentTopic}</p>
       <p>{completedLessons}</p>
