@@ -7,7 +7,7 @@ import VerifyEmail from "../pages/VerifyEmail";
 import About from "../pages/About";
 import Fadelands from "../pages/Fadelands";
 import RxjsPlayground from "../pages/RxjsPlayground";
-import LearnProfile from "../pages/LearnProfile";
+import Learner from "../pages/Learner";
 
 export default function AppRoutes() {
   return (
@@ -20,7 +20,7 @@ export default function AppRoutes() {
       <Route path="/rxjs" element={<RxjsPlayground />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/experimental" element={<Experimental />} />
-      <Route path="/learnProfile" element={<LearnProfile />} />
+      <Route path="/learner" element={<Learner />} />
     </Routes>
   );
 }

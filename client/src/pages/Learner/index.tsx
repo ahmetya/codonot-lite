@@ -38,7 +38,7 @@ function getLessonAvailability(lessonNumber: number): string {
 
 // console.log(lessonAvailable);
 
-export default function LearnProfile() {
+export default function Learner() {
   const name: string = "Ahmet";
   const currentTopic: string = "variables";
   const completedLessons: number = 5;
