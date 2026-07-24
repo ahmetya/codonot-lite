@@ -48,7 +48,7 @@ export class Utils {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        let responseStatus = response.status.toString();
+        const responseStatus = response.status.toString();
 
         if (otherCallback) {
           const otherCallbackResult = otherCallback(
