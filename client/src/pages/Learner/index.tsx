@@ -36,7 +36,6 @@ function getLessonAvailability(lessonNumber: number): string {
   return lessonAvailable ? "Lesson Available" : "Lesson is not available";
 }
 
-// console.log(lessonAvailable);
 
 export default function Learner() {
   const name: string = "Ahmet";
