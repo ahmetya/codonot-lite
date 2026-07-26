@@ -36,6 +36,42 @@ function getLessonAvailability(lessonNumber: number): string {
   return lessonAvailable ? "Lesson Available" : "Lesson is not available";
 }
 
+// type Learner = {
+//   name: string;
+//   topic: string;
+//   completedLessons: number;
+//   isPracticing: boolean;
+// };
+
+// const learner: Learner = {
+//   name: "Ahmet",
+//   topic: "Javascript",
+//   completedLessons: 3,
+//   isPracticing: true,
+// };
+
+// const topics: string[] = ["Variables", "Functions", "Objects"];
+
+type Lesson = {
+  id: number;
+  title: string;
+  completed: boolean;
+  description?: string;
+};
+
+function getLessonByIndex(
+  lessons: Lesson[],
+  index: number
+): Lesson | undefined {
+  const selectedLessons = lessons.filter((lesson) => lesson.id === index);
+  return selectedLessons[0];
+}
+
+const lessons: Lesson[] = [
+  { id: 1, title: "Variables", completed: true },
+  { id: 2, title: "Functions", completed: true },
+  { id: 3, title: "Objects and arrays", completed: false },
+];
 
 export default function Learner() {
   const name: string = "Ahmet";
@@ -48,8 +84,27 @@ export default function Learner() {
   const practicingMessage = getPracticeMessage(isPracticing);
   const progressLabel = getProgressLabel(progress);
 
+  lessons.map((lesson) => {
+    console.log(lesson.completed);
+  });
+
+  const selectedLesson = getLessonByIndex(lessons, 2);
+
   return (
     <>
+      <ul>
+        {lessons.map((lesson) => (
+          <li
+            key={lesson.id}
+            className={lesson.completed ? "completed" : "incomplete"}
+          >
+            <span>{lesson.title}</span>
+            <span>{lesson.completed ? "Completed" : "Not completed"}</span>
+          </li>
+        ))}
+      </ul>
+      <p>Selected lesson: {selectedLesson?.title ?? "Lesson not found"}</p>
+      <p>{selectedLesson?.description ?? "No description available"}</p>
       <p>{createCourseTitle(name)}</p>
       <p>{getLessonAvailability(4)}</p>
       <p>{name}</p>
