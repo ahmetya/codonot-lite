@@ -59,6 +59,51 @@ type Lesson = {
   description?: string;
 };
 
+const lessons: Lesson[] = [
+  {
+    id: 1,
+    title: "Variables",
+    completed: true,
+    description: "Learn how to store variables",
+  },
+  {
+    id: 2,
+    title: "Functions",
+    completed: true,
+    description: "Learn how to use functions",
+  },
+  {
+    id: 3,
+    title: "Objects and arrays",
+    completed: false,
+    description: "Learn how to use objects and arrays",
+  },
+  {
+    id: 4,
+    title: "Classes",
+    completed: false,
+    description: "Learn fake classes",
+  },
+  {
+    id: 5,
+    title: "Promises",
+    completed: false,
+    description: "Learn powerful promises",
+  },
+];
+
+type Learner = {
+  name: string;
+  currentTopic: string;
+  isPracticing: boolean;
+};
+
+const learner: Learner = {
+  name: "Ahmet",
+  currentTopic: "Objects and Arrays",
+  isPracticing: true,
+};
+
 function getLessonByIndex(
   lessons: Lesson[],
   index: number
@@ -66,13 +111,6 @@ function getLessonByIndex(
   const selectedLessons = lessons.filter((lesson) => lesson.id === index);
   return selectedLessons[0];
 }
-
-const lessons: Lesson[] = [
-  { id: 1, title: "Variables", completed: true },
-  { id: 2, title: "Functions", completed: true },
-  { id: 3, title: "Objects and arrays", completed: false },
-];
-
 export default function Learner() {
   const name: string = "Ahmet";
   const currentTopic: string = "variables";
@@ -103,6 +141,10 @@ export default function Learner() {
           </li>
         ))}
       </ul>
+      <p>{learner.name}</p>
+      <p>{learner.currentTopic}</p>
+      <p>Total lessons: {lessons.length}</p>
+      <p>First lesson: {lessons[0]?.title}</p>
       <p>Selected lesson: {selectedLesson?.title ?? "Lesson not found"}</p>
       <p>{selectedLesson?.description ?? "No description available"}</p>
       <p>{createCourseTitle(name)}</p>
