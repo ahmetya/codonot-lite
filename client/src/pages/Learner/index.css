@@ -12,6 +12,14 @@
 }
 
 .progress {
-    width: 0px;
+  width: 0px;
   background-color: green;
+}
+
+.completed {
+  color: green;
+}
+
+.incomplete {
+  color: orange;
 }
