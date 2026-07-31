@@ -6,6 +6,7 @@ import amadeusLogo from "../../assets/company-logos/amadeus.svg";
 import betssonLogo from "../../assets/company-logos/betsson-group.svg";
 import etiyaLogo from "../../assets/company-logos/etiya.svg";
 import garantiLogo from "../../assets/company-logos/garanti-teknoloji.svg";
+import profilePlaceholder from "../../assets/about-profile-placeholder.svg";
 import "./index.css";
 
 const experience = [
@@ -152,17 +153,28 @@ export default function About() {
 
       <main className="about-main">
         <section className="about-hero">
-          <p className="about-kicker">Frontend Software Developer · Malta</p>
-          <h1>Ahmet Yalcinkaya</h1>
-          <p className="about-hero__intro">
-            I'm Ahmet Yalcinkaya, a frontend software developer in Malta. I
-            build reliable web products with Angular, Stencil.js, and
-            TypeScript. My background in quality engineering shapes how I
-            approach frontend architecture, automation, and delivery.
-          </p>
-          <a className="about-text-link" href="#experience">
-            View experience ↓
-          </a>
+          <div className="about-hero__layout">
+            <div>
+              <p className="about-kicker">
+                Frontend Software Developer · Malta
+              </p>
+              <h1>Ahmet Yalcinkaya</h1>
+              <p className="about-hero__intro">
+                I'm Ahmet Yalcinkaya, a frontend software developer in Malta. I
+                build reliable web products with Angular, Stencil.js, and
+                TypeScript. My background in quality engineering shapes how I
+                approach frontend architecture, automation, and delivery.
+              </p>
+              <a className="about-text-link" href="#experience">
+                View experience ↓
+              </a>
+            </div>
+            <img
+              className="about-hero__portrait"
+              src={profilePlaceholder}
+              alt="Profile picture placeholder for Ahmet Yalcinkaya"
+            />
+          </div>
         </section>
 
         <section className="about-section" id="expertise">
