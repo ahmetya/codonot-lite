@@ -16,6 +16,14 @@ interface MarbleNode {
   tooltip: string;
 }
 
+interface PokemonResult {
+  name: string;
+  id: number;
+  sprite: string;
+  height: number;
+  weight: number;
+}
+
 export default function RxjsPlayground() {
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const activeModule = rxjsModules[activeModuleIndex];
@@ -33,28 +41,11 @@ export default function RxjsPlayground() {
 
   // Pokemon Search States (Module 7 Demo)
   const [pokemonQuery, setPokemonQuery] = useState("");
-  const [pokemonResults, setPokemonResults] = useState<any[]>([]);
+  const [pokemonResults, setPokemonResults] = useState<PokemonResult[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
   const activeSubscriptions = useRef<Rx.Subscription[]>([]);
   const activeIntervals = useRef<ReturnType<typeof setInterval>[]>([]);
-
-  // Update code when module changes
-  useEffect(() => {
-    stopExecution();
-    setCode(activeModule.defaultCode);
-    setLogs([]);
-    setMarbles([]);
-    setShowHint(false);
-    setShowSolution(false);
-  }, [activeModuleIndex]);
-
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      stopExecution();
-    };
-  }, []);
 
   const stopExecution = () => {
     // Unsubscribe all active RxJS subscriptions
@@ -68,9 +59,26 @@ export default function RxjsPlayground() {
     // Clear all tickers/timers
     activeIntervals.current.forEach((intervalId) => clearInterval(intervalId));
     activeIntervals.current = [];
-
-    setRunning(false);
   };
+
+  const handleModuleChange = (nextIndex: number) => {
+    const nextModule = rxjsModules[nextIndex];
+    stopExecution();
+    setActiveModuleIndex(nextIndex);
+    setRunning(false);
+    setCode(nextModule.defaultCode);
+    setLogs([]);
+    setMarbles([]);
+    setShowHint(false);
+    setShowSolution(false);
+  };
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      stopExecution();
+    };
+  }, []);
 
   const runCode = () => {
     stopExecution();
@@ -94,10 +102,12 @@ export default function RxjsPlayground() {
     activeIntervals.current.push(cursorInterval);
 
     // Custom logger injected to the script
-    const localLog = (val: any) => {
+    const localLog = (val: unknown) => {
       const elapsed = Date.now() - startTime;
       const logString =
-        typeof val === "object" ? JSON.stringify(val) : String(val);
+        typeof val === "object" && val !== null
+          ? JSON.stringify(val)
+          : String(val);
 
       setLogs((prev) => [
         ...prev,
@@ -143,14 +153,26 @@ export default function RxjsPlayground() {
 
     // Intercept Observable.prototype.subscribe to capture subscriptions
     const originalSubscribe = Rx.Observable.prototype.subscribe;
-    const subsList: Rx.Subscription[] = [];
-
-    Rx.Observable.prototype.subscribe = function (...args: any[]) {
-      const sub = originalSubscribe.apply(this, args as any);
-      subsList.push(sub);
+    const trackedSubscribe: typeof Rx.Observable.prototype.subscribe = function (
+      this: Rx.Observable<unknown>,
+      observerOrNext?:
+        | Partial<Rx.Observer<unknown>>
+        | ((value: unknown) => void)
+        | null,
+      error?: ((error: unknown) => void) | null,
+      complete?: (() => void) | null
+    ) {
+      const sub = originalSubscribe.call(
+        this,
+        observerOrNext as Parameters<typeof originalSubscribe>[0],
+        error as Parameters<typeof originalSubscribe>[1],
+        complete as Parameters<typeof originalSubscribe>[2]
+      );
       activeSubscriptions.current.push(sub);
       return sub;
     };
+
+    Rx.Observable.prototype.subscribe = trackedSubscribe;
 
     try {
       // Injected libraries
@@ -162,8 +184,9 @@ export default function RxjsPlayground() {
       // Create runner function and execute
       const runner = new Function("rxjs", "log", code);
       runner(injectedRxjs, localLog);
-    } catch (err: any) {
-      localLog(`Compilation/Runtime Error: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      localLog(`Compilation/Runtime Error: ${message}`);
       setRunning(false);
     } finally {
       // Restore subscribe method
@@ -177,7 +200,6 @@ export default function RxjsPlayground() {
   useEffect(() => {
     if (activeModule.id !== 7) return;
 
-    setSearchLoading(true);
     const sub = searchSubject$
       .pipe(
         RxOps.debounceTime(400),
@@ -185,7 +207,7 @@ export default function RxjsPlayground() {
         RxOps.tap(() => setSearchLoading(true)),
         RxOps.switchMap((query) => {
           if (!query.trim()) {
-            return Rx.of([]);
+            return Rx.of<PokemonResult[]>([]);
           }
           return Rx.from(
             fetch(
@@ -193,7 +215,13 @@ export default function RxjsPlayground() {
             )
               .then((res) => {
                 if (!res.ok) throw new Error();
-                return res.json();
+                return res.json() as Promise<{
+                  name: string;
+                  id: number;
+                  sprites: { front_default?: string | null };
+                  height: number;
+                  weight: number;
+                }>;
               })
               .then((data) => [
                 {
@@ -206,12 +234,12 @@ export default function RxjsPlayground() {
                   weight: data.weight,
                 },
               ])
-              .catch(() => [])
+              .catch(() => [] as PokemonResult[])
           );
         }),
         RxOps.tap(() => setSearchLoading(false))
       )
-      .subscribe((results) => {
+      .subscribe((results: PokemonResult[]) => {
         setPokemonResults(results);
       });
 
@@ -224,6 +252,7 @@ export default function RxjsPlayground() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setPokemonQuery(query);
+    setSearchLoading(Boolean(query.trim()));
     searchSubject$.next(query);
   };
 
@@ -251,7 +280,7 @@ export default function RxjsPlayground() {
             {rxjsModules.map((mod, idx) => (
               <button
                 key={mod.id}
-                onClick={() => setActiveModuleIndex(idx)}
+                onClick={() => handleModuleChange(idx)}
                 className={`module-nav-item ${activeModuleIndex === idx ? "active" : ""}`}
               >
                 <h3>{mod.title}</h3>
