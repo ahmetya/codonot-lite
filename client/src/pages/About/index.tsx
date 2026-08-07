@@ -6,7 +6,7 @@ import amadeusLogo from "../../assets/company-logos/amadeus.svg";
 import betssonLogo from "../../assets/company-logos/betsson-group.svg";
 import etiyaLogo from "../../assets/company-logos/etiya.svg";
 import garantiLogo from "../../assets/company-logos/garanti-teknoloji.svg";
-import profilePlaceholder from "../../assets/about-profile-placeholder.svg";
+import profilePortrait from "../../assets/about-profile.webp";
 import "./index.css";
 
 const experience = [
@@ -171,8 +171,8 @@ export default function About() {
             </div>
             <img
               className="about-hero__portrait"
-              src={profilePlaceholder}
-              alt="Profile picture placeholder for Ahmet Yalcinkaya"
+              src={profilePortrait}
+              alt="Professional profile portrait of Ahmet Yalcinkaya"
             />
           </div>
         </section>
