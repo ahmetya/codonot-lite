@@ -191,12 +191,7 @@ export default function Learner() {
     console.log(`Final total: ${total}`);
   }
 
-  › Points: 8
-  Lessons: 6
-
-  1. "Points" and 4
-  2. double multiplies the value with 2 and returns it.
-  3. No, it's defined inside the arrow function, can't be reachable outside.
+  
 
   return (
     <>
