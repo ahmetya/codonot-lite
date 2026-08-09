@@ -2,152 +2,32 @@ import { Link } from "react-router-dom";
 import { SEO } from "../../components/SEO";
 import { SiteFooter } from "../../components/shared-layout/SiteFooter";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
-import amadeusLogo from "../../assets/company-logos/amadeus.svg";
-import betssonLogo from "../../assets/company-logos/betsson-group.svg";
-import etiyaLogo from "../../assets/company-logos/etiya.svg";
-import garantiLogo from "../../assets/company-logos/garanti-teknoloji.svg";
-import profilePortrait from "../../assets/about-profile.webp";
+import {
+  aboutDescription,
+  aboutExperience,
+  aboutPageContent,
+  aboutProfilePortrait,
+  aboutProfileStructuredData,
+  aboutSpecialties,
+} from "./About.consts";
 import "./index.css";
-
-const experience = [
-  {
-    company: "Betsson Group",
-    logo: betssonLogo,
-    location: "Ta' Xbiex, Malta",
-    total: "4 yrs",
-    roles: [
-      {
-        title: "Frontend Software Development Engineer",
-        period: "Dec 2023 - Present",
-        detail:
-          "Building modern frontend experiences with Angular, Stencil.js, TypeScript, and JavaScript in a hybrid product environment.",
-        skills: [
-          "Angular",
-          "Stencil.js",
-          "TypeScript",
-          "JavaScript",
-          "Frontend",
-        ],
-        current: true,
-      },
-      {
-        title: "Senior Software Development Engineer in Test",
-        period: "Jul 2022 - Dec 2023",
-        detail:
-          "Designed reliable browser automation and quality tooling for fast-moving web products.",
-        skills: ["Playwright", "Puppeteer", "Test automation"],
-      },
-    ],
-  },
-  {
-    company: "Amadeus",
-    logo: amadeusLogo,
-    location: "Istanbul, Türkiye",
-    total: "4 yrs 6 mos",
-    roles: [
-      {
-        title: "Senior Quality Assurance Engineer",
-        period: "Feb 2018 - Jul 2022",
-        detail:
-          "Led automation frameworks for Angular applications and REST APIs, CI/CD quality tooling, service virtualization, and performance testing.",
-        skills: ["Selenium", "Docker", "Jenkins", "SonarQube", "Gatling"],
-      },
-    ],
-  },
-  {
-    company: "Garanti Teknoloji",
-    logo: garantiLogo,
-    location: "Istanbul, Türkiye",
-    total: "2 yrs 10 mos",
-    roles: [
-      {
-        title: "Senior Software QA Engineer",
-        period: "May 2015 - Feb 2018",
-        detail:
-          "Implemented web and mobile test automation, service virtualization, performance testing, and unit-test tooling.",
-        skills: ["Selenium", "Appium", "Cucumber", "LoadRunner"],
-      },
-    ],
-  },
-  {
-    company: "Etiya",
-    logo: etiyaLogo,
-    location: "Istanbul, Türkiye",
-    total: "2 yrs 6 mos",
-    roles: [
-      {
-        title: "Test Specialist",
-        period: "Feb 2015 - May 2015",
-        detail:
-          "Worked across functional and middleware integration testing, service virtualization, and Selenium automation.",
-        skills: ["Selenium", "SOA", "Integration testing"],
-      },
-      {
-        title: "Test Assistant Specialist",
-        period: "Dec 2012 - Feb 2015",
-        detail:
-          "Created test scenarios and automation infrastructure for enterprise systems.",
-        skills: ["Test design", "Automation", "Service virtualization"],
-      },
-    ],
-  },
-];
-
-const specialties = [
-  "Angular and TypeScript",
-  "Frontend architecture",
-  "Test automation",
-  "CI/CD and developer tooling",
-  "Performance and reliability",
-];
-
-const aboutDescription =
-  "Ahmet Yalcinkaya is a frontend software developer in Malta specializing in Angular, Stencil.js, TypeScript, frontend architecture, test automation, and reliable delivery.";
-
-const profileStructuredData = {
-  "@context": "https://schema.org",
-  "@type": "ProfilePage",
-  "@id": "https://lite.codonot.com/about#profile-page",
-  url: "https://lite.codonot.com/about",
-  name: "About Ahmet Yalcinkaya",
-  description: aboutDescription,
-  mainEntity: {
-    "@type": "Person",
-    "@id": "https://lite.codonot.com/about#ahmet-yalcinkaya",
-    name: "Ahmet Yalcinkaya",
-    givenName: "Ahmet",
-    familyName: "Yalcinkaya",
-    url: "https://lite.codonot.com/about",
-    jobTitle: "Frontend Software Developer",
-    description: aboutDescription,
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "Malta",
-    },
-    knowsAbout: specialties,
-    worksFor: {
-      "@type": "Organization",
-      name: "Betsson Group",
-    },
-  },
-};
 
 export default function About() {
   return (
     <div className="about-page">
       <SEO
-        title="Ahmet Yalcinkaya | Frontend Software Developer in Malta"
+        title={aboutPageContent.seoTitle}
         description={aboutDescription}
         path="/about"
         type="profile"
-        author="Ahmet Yalcinkaya"
-        structuredData={profileStructuredData}
+        author={aboutPageContent.author}
+        structuredData={aboutProfileStructuredData}
       />
-      <SiteHeader status="Ahmet Yalcinkaya / Frontend Software Developer">
-        <a href="#expertise">Expertise</a>
-        <a href="#experience">Experience</a>
+      <SiteHeader status={aboutPageContent.headerStatus}>
+        <a href="#expertise">{aboutPageContent.nav.expertise}</a>
+        <a href="#experience">{aboutPageContent.nav.experience}</a>
         <Link className="highlight" to="/">
-          Home
+          {aboutPageContent.nav.home}
         </Link>
       </SiteHeader>
 
@@ -155,41 +35,50 @@ export default function About() {
         <section className="about-hero">
           <div className="about-hero__layout">
             <div>
-              <p className="about-kicker">
-                Frontend Software Developer · Malta
-              </p>
-              <h1>Ahmet Yalcinkaya</h1>
+              <p className="about-kicker">{aboutPageContent.hero.kicker}</p>
+
+              <div className="hero-section">
+                <img
+                  className="about-hero__portrait"
+                  src={aboutProfilePortrait}
+                  alt={aboutPageContent.hero.portraitAlt}
+                />
+                <h1 className="hero-name">{aboutPageContent.hero.name}</h1>
+              </div>
+
+              <h1 className="hero-name desktop">
+                {aboutPageContent.hero.name}
+              </h1>
+
               <p className="about-hero__intro">
-                I'm Ahmet Yalcinkaya, a frontend software developer in Malta. I
-                build reliable web products with Angular, Stencil.js, and
-                TypeScript. My background in quality engineering shapes how I
-                approach frontend architecture, automation, and delivery.
+                {aboutPageContent.hero.intro}
               </p>
               <a className="about-text-link" href="#experience">
-                View experience ↓
+                {aboutPageContent.hero.experienceLink}
               </a>
             </div>
+
             <img
-              className="about-hero__portrait"
-              src={profilePortrait}
-              alt="Professional profile portrait of Ahmet Yalcinkaya"
+              className="about-hero__portrait desktop"
+              src={aboutProfilePortrait}
+              alt={aboutPageContent.hero.portraitAlt}
             />
           </div>
         </section>
 
         <section className="about-section" id="expertise">
-          <h2>Expertise</h2>
+          <h2>{aboutPageContent.sections.expertise}</h2>
           <div className="about-skills">
-            {specialties.map((specialty) => (
+            {aboutSpecialties.map((specialty) => (
               <span key={specialty}>{specialty}</span>
             ))}
           </div>
         </section>
 
         <section className="about-section" id="experience">
-          <h2>Experience</h2>
+          <h2>{aboutPageContent.sections.experience}</h2>
           <div className="about-timeline">
-            {experience.map((job) => (
+            {aboutExperience.map((job) => (
               <article className="about-job" key={job.company}>
                 <div className="about-job__company">
                   <img src={job.logo} alt={`${job.company} logo`} />
@@ -223,7 +112,7 @@ export default function About() {
         </section>
       </main>
 
-      <SiteFooter note="Ahmet Yalcinkaya / Frontend Software Developer" />
+      <SiteFooter note={aboutPageContent.footerNote} />
     </div>
   );
 }
