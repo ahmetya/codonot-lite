@@ -2,9 +2,11 @@ import amadeusLogo from "../../assets/company-logos/amadeus.svg";
 import betssonLogo from "../../assets/company-logos/betsson-group.svg";
 import etiyaLogo from "../../assets/company-logos/etiya.svg";
 import garantiLogo from "../../assets/company-logos/garanti-teknoloji.svg";
+import ninetiesProfilePortrait from "../../assets/about-profile-90s.webp";
 import profilePortrait from "../../assets/about-profile.webp";
 
 export const aboutProfilePortrait = profilePortrait;
+export const aboutNinetiesProfilePortrait = ninetiesProfilePortrait;
 
 export const aboutPageContent = {
   seoTitle: "Ahmet Yalcinkaya | Frontend Software Developer in Malta",
