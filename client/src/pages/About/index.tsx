@@ -55,25 +55,6 @@ export default function About() {
       ) : null}
 
       <main className="about-main">
-        {isNinetiesMode ? (
-          <aside className="about-90s-welcome" aria-label="Nineties mode decorations">
-            <div className="about-90s-marquee">
-              <span>
-                ★ WELCOME TO MY HOME PAGE ★ BEST VIEWED IN NETSCAPE NAVIGATOR
-                3.0 ★ TURN UP YOUR MODEM ★
-              </span>
-            </div>
-            <div className="about-90s-badges" aria-hidden="true">
-              <span className="retro-badge retro-badge--new">NEW!</span>
-              <span className="retro-badge retro-badge--browser">NETSCAPE NOW!</span>
-              <span className="retro-badge retro-badge--webmaster">WEBMASTER</span>
-              <span className="retro-badge retro-badge--construction">
-                🚧 UNDER CONSTRUCTION 🚧
-              </span>
-            </div>
-          </aside>
-        ) : null}
-
         <section className="about-hero">
           <div className="about-hero__layout">
             <div>
@@ -96,9 +77,7 @@ export default function About() {
                 {aboutPageContent.hero.name}
               </h1>
 
-              <p className="about-hero__intro">
-                {aboutPageContent.hero.intro}
-              </p>
+              <p className="about-hero__intro">{aboutPageContent.hero.intro}</p>
               <a className="about-text-link" href="#experience">
                 {aboutPageContent.hero.experienceLink}
               </a>
@@ -117,10 +96,42 @@ export default function About() {
         </section>
 
         {isNinetiesMode ? (
+          <aside
+            className="about-90s-welcome"
+            aria-label="Nineties mode decorations"
+          >
+            <div className="about-90s-marquee">
+              <span>
+                ★ WELCOME TO MY HOME PAGE ★ BEST VIEWED IN NETSCAPE NAVIGATOR
+                3.0 ★ TURN UP YOUR MODEM ★
+              </span>
+            </div>
+            <div className="about-90s-badges" aria-hidden="true">
+              <span className="retro-badge retro-badge--new">NEW!</span>
+              <span className="retro-badge retro-badge--browser">
+                NETSCAPE NOW!
+              </span>
+              <span className="retro-badge retro-badge--webmaster">
+                WEBMASTER
+              </span>
+              <span className="retro-badge retro-badge--construction">
+                🚧 UNDER CONSTRUCTION 🚧
+              </span>
+            </div>
+          </aside>
+        ) : null}
+
+        {isNinetiesMode ? (
           <div className="about-90s-divider" aria-hidden="true">
-            <span>🔥</span><span>🔥</span><span>🔥</span><span>🔥</span>
+            <span>🔥</span>
+            <span>🔥</span>
+            <span>🔥</span>
+            <span>🔥</span>
             <strong>HOT LINKS</strong>
-            <span>🔥</span><span>🔥</span><span>🔥</span><span>🔥</span>
+            <span>🔥</span>
+            <span>🔥</span>
+            <span>🔥</span>
+            <span>🔥</span>
           </div>
         ) : null}
 
@@ -171,9 +182,7 @@ export default function About() {
 
         {isNinetiesMode ? (
           <aside className="about-90s-signoff">
-            <p className="about-90s-email">
-              📧 E-MAIL THE WEBMASTER 📧
-            </p>
+            <p className="about-90s-email">📧 E-MAIL THE WEBMASTER 📧</p>
             <p>
               You are visitor
               <span className="about-90s-counter" aria-label="number 001337">
