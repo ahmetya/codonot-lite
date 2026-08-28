@@ -170,6 +170,9 @@ export default function Learner() {
     console.log(`Score: ${score}`);
     console.log(`Result: ${message}`);
     console.log(`Next action: ${nextAction}`);
+
+
+
   }
 
   casePractice();
