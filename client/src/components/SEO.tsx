@@ -10,6 +10,8 @@ interface SEOProps {
   title: string;
   description: string;
   path?: string;
+  author?: string;
+  structuredData?: Record<string, unknown>;
   robots?: RobotsDirective;
   googlebot?: RobotsDirective;
   type?: "website" | "profile";
@@ -42,10 +44,25 @@ function setCanonical(url: string) {
   canonical.href = url;
 }
 
+function setStructuredData(data?: Record<string, unknown>) {
+  const id = "page-structured-data";
+  document.getElementById(id)?.remove();
+
+  if (!data) return;
+
+  const script = document.createElement("script");
+  script.id = id;
+  script.type = "application/ld+json";
+  script.textContent = JSON.stringify(data);
+  document.head.append(script);
+}
+
 export function SEO({
   title,
   description,
   path = "/",
+  author,
+  structuredData,
   robots = "index, follow",
   googlebot = robots,
   type = "website",
@@ -57,6 +74,7 @@ export function SEO({
     document.title = title;
     setCanonical(url);
     setMetaContent('meta[name="description"]', description);
+    if (author) setMetaContent('meta[name="author"]', author);
     setMetaContent('meta[name="robots"]', robots);
     setMetaContent('meta[name="googlebot"]', googlebot);
     setMetaContent('meta[property="og:type"]', type);
@@ -73,7 +91,13 @@ export function SEO({
     setMetaContent('meta[name="twitter:title"]', title);
     setMetaContent('meta[name="twitter:description"]', description);
     setMetaContent('meta[name="twitter:image"]', DEFAULT_IMAGE);
-  }, [description, googlebot, path, robots, title, type]);
+    setStructuredData(structuredData);
+
+    return () => {
+      document.getElementById("page-structured-data")?.remove();
+      if (author) document.querySelector('meta[name="author"]')?.remove();
+    };
+  }, [author, description, googlebot, path, robots, structuredData, title, type]);
 
   return null;
 }
