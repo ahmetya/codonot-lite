@@ -100,14 +100,47 @@ const specialties = [
   "Performance and reliability",
 ];
 
+const aboutDescription =
+  "Ahmet Yalcinkaya is a frontend software developer in Malta specializing in Angular, Stencil.js, TypeScript, frontend architecture, test automation, and reliable delivery.";
+
+const profileStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": "https://lite.codonot.com/about#profile-page",
+  url: "https://lite.codonot.com/about",
+  name: "About Ahmet Yalcinkaya",
+  description: aboutDescription,
+  mainEntity: {
+    "@type": "Person",
+    "@id": "https://lite.codonot.com/about#ahmet-yalcinkaya",
+    name: "Ahmet Yalcinkaya",
+    givenName: "Ahmet",
+    familyName: "Yalcinkaya",
+    url: "https://lite.codonot.com/about",
+    jobTitle: "Frontend Software Developer",
+    description: aboutDescription,
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "Malta",
+    },
+    knowsAbout: specialties,
+    worksFor: {
+      "@type": "Organization",
+      name: "Betsson Group",
+    },
+  },
+};
+
 export default function About() {
   return (
     <div className="about-page">
       <SEO
-        title="Ahmet Yalcinkaya | Frontend Software Developer"
-        description="Frontend software developer in Malta focused on Angular, Stencil.js, TypeScript, frontend architecture, automation, and reliable delivery."
+        title="Ahmet Yalcinkaya | Frontend Software Developer in Malta"
+        description={aboutDescription}
         path="/about"
         type="profile"
+        author="Ahmet Yalcinkaya"
+        structuredData={profileStructuredData}
       />
       <SiteHeader status="Ahmet Yalcinkaya / Frontend Software Developer">
         <a href="#expertise">Expertise</a>
@@ -122,7 +155,8 @@ export default function About() {
           <p className="about-kicker">Frontend Software Developer · Malta</p>
           <h1>Ahmet Yalcinkaya</h1>
           <p className="about-hero__intro">
-            I build reliable web products with Angular, Stencil.js, and
+            I'm Ahmet Yalcinkaya, a frontend software developer in Malta. I
+            build reliable web products with Angular, Stencil.js, and
             TypeScript. My background in quality engineering shapes how I
             approach frontend architecture, automation, and delivery.
           </p>

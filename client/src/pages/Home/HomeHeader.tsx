@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SiteHeader } from "../../components/shared-layout/SiteHeader";
 
 interface HomeHeaderProps {
@@ -30,9 +30,9 @@ export function HomeHeader({
       >
         Fadelands
       </button>
-      <button className="highlight-low" onClick={() => navigate("/about")}>
+      <Link className="highlight-low" to="/about">
         About me
-      </button>
+      </Link>
 
       <button
         className="highlight-low"
