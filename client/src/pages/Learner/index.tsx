@@ -124,9 +124,79 @@ export default function Learner() {
 
   lessons.map((lesson) => {
     console.log(lesson.completed);
+    GHp;
   });
 
   const selectedLesson = getLessonByIndex(lessons, 2);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function calculator() {
+    const targetText = "10";
+    const target = Number(targetText);
+    let completed = 6;
+    completed += 2;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const remainingLessons = target - completed;
+    const progress = Math.round((completed / target) * 100);
+    const allCompleted = target === completed;
+    const practiceRequired = !allCompleted;
+
+    console.log(
+      `Completed ${completed} of ${targetText}. Progress: ${progress}%. More practice: ${practiceRequired}`
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function casePractice() {
+    const scoreText = "82";
+    const score = Number(scoreText);
+    let message: string;
+
+    const isInvalid = Number.isNaN(score) || score < 0 || score > 100;
+
+    const passed = !isInvalid && score >= 70;
+    const nextAction = passed ? "Advance" : "Repeat";
+
+    if (isInvalid) {
+      message = "Invalid score";
+    } else if (score >= 90) {
+      message = "Excellent";
+    } else if (score >= 70) {
+      message = "Good progress";
+    } else {
+      message = "Keep practicing";
+    }
+
+    console.log(`Score: ${score}`);
+    console.log(`Result: ${message}`);
+    console.log(`Next action: ${nextAction}`);
+  }
+
+  function selectiveAccumulator() {
+    let total = 0;
+
+    for (let i = 1; i <= 10; i++) {
+      if (i === 8) {
+        break;
+      }
+
+      if (i % 2 !== 0) {
+        continue;
+      }
+      total += i;
+      console.log(`Added ${i}, total is ${total}`);
+    }
+
+    console.log(`Final total: ${total}`);
+  }
+
+  › Points: 8
+  Lessons: 6
+
+  1. "Points" and 4
+  2. double multiplies the value with 2 and returns it.
+  3. No, it's defined inside the arrow function, can't be reachable outside.
 
   return (
     <>
