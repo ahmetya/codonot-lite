@@ -5,6 +5,8 @@ function calculateProgress(completed: number, total: number): number {
   return Math.round((100 / total) * completed);
 }
 
+calculateProgress(5, 10);
+
 function calculateRemaining(completed: number, total: number): number {
   const remaining = total - completed;
 
@@ -15,7 +17,7 @@ function getPracticeMessage(isPracticing: boolean): string {
   return isPracticing ? "Currently practicing" : "Taking a break";
 }
 
-function getProgressLabel(progress: number): string {
+function getProgressLabel(progress: number = 0): string {
   if (progress === 0) return "Not started";
   if (progress < 26) return "Getting startted";
   if (progress < 75) return "Making Progress";
@@ -267,3 +269,34 @@ export default function Learner() {
     </>
   );
 }
+
+function scoreAnalysis() {
+  const scores: number[] = [45, 72, 88, 61, 95];
+  const passingScores = scores.filter((val) => val >= 70);
+  const scoreLabels = passingScores.map((val) => `Score: ${val}`);
+  const totalPassingScore = passingScores.reduce(
+    (total, score) => total + score,
+    0
+  );
+
+  const averagePassingScore =
+    passingScores.length === 0
+      ? 0
+      : Math.round(totalPassingScore / passingScores.length);
+
+  const firstExcellentScore = passingScores.find((score) => score >= 90);
+  const hasPerfectScore = passingScores.some((score) => score === 100);
+  const allScoresValid = scores.every((score) => score <= 100 && score >= 0);
+
+  console.log(passingScores);
+  console.log(scoreLabels);
+  console.log(totalPassingScore);
+  console.log(averagePassingScore);
+  console.log(firstExcellentScore);
+  console.log(hasPerfectScore);
+  console.log(allScoresValid);
+  console.log(scores);
+
+}
+
+scoreAnalysis();
