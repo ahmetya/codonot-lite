@@ -191,7 +191,40 @@ export default function Learner() {
     console.log(`Final total: ${total}`);
   }
 
-  
+  function calculateProgress(
+    completed: number,
+    total: number
+  ): number | undefined {
+    if (total <= 0 || completed < 0 || completed > total) return undefined;
+
+    return Math.round((completed / total) * 100);
+  }
+
+  console.log(calculateProgress(-1, 10)); // undefined
+  console.log(calculateProgress(101, 200)); // 51
+
+  function evaluateScore(scoreText: string, passingScore: number = 70): string {
+    const score = Number(scoreText);
+
+    if (Number.isNaN(score) || score < 0 || score > 100) {
+      return "Invalid score";
+    }
+
+    if (score >= passingScore) {
+      return `Passed with ${score}`;
+    } else {
+      return `Keep practicing: ${score}`;
+    }
+  }
+
+  function displayEvaluation(message: string): void {
+    console.log(message);
+  }
+
+  displayEvaluation(evaluateScore("82"));
+  displayEvaluation(evaluateScore("60"));
+  displayEvaluation(evaluateScore("60", 50));
+  displayEvaluation(evaluateScore("Invalid"));
 
   return (
     <>
