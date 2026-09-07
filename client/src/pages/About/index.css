@@ -132,7 +132,7 @@
 .about-job {
   display: grid;
   grid-template-columns: 220px 1fr;
-  gap: 30px;
+  gap: 20px;
   padding: 32px 0;
   border-top: 1px solid var(--about-line);
 }
@@ -151,7 +151,7 @@
   align-self: start;
   padding: 14px;
   border: 1px solid #344255;
-  border-radius: 7px;
+  border-radius: 8px;
   background: #172130;
 }
 
@@ -165,8 +165,8 @@
   display: block;
   width: 126px;
   height: 38px;
-  margin-bottom: 14px;
-  padding: 2px 4px;
+  margin-bottom: 8px;
+  /* padding: 2px 4px; */
   border: 1px solid #334155;
   border-radius: 4px;
   background: transparent;
@@ -176,8 +176,8 @@
 
 .about-job__company-info {
   display: grid;
-  gap: 6px;
-  padding-left: 4px;
+  /* gap: 6px; */
+  /* padding-left: 4px; */
 }
 
 .about-job__company p,
@@ -190,12 +190,15 @@
 
 .about-job__roles {
   display: grid;
-  gap: 30px;
+  gap: 16px;
+  border: 1px solid #334155;
+  padding: 16px;
+  border-radius: 8px;
 }
 
 .about-role + .about-role {
-  padding-top: 24px;
-  border-top: 1px solid var(--about-line);
+  padding-top: 16px;
+  /* border-top: 1px solid var(--about-line); */
 }
 
 .about-role__top {
@@ -242,6 +245,18 @@
 }
 
 @media (max-width: 640px) {
+  .about-job__company {
+    display: flex;
+    gap: 8px;
+    align-self: start;
+    padding: 14px;
+    border: 1px solid #344255;
+    border-radius: 8px;
+    background: #172130;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
   .about-main {
     gap: 18px;
     width: min(100% - 32px, 760px);
