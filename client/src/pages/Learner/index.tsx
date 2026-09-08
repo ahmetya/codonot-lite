@@ -126,20 +126,17 @@ export default function Learner() {
 
   lessons.map((lesson) => {
     console.log(lesson.completed);
-    GHp;
   });
 
   const selectedLesson = getLessonByIndex(lessons, 2);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function calculator() {
     const targetText = "10";
     const target = Number(targetText);
     let completed = 6;
     completed += 2;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const remainingLessons = target - completed;
+    // const remainingLessons = target - completed;
     const progress = Math.round((completed / target) * 100);
     const allCompleted = target === completed;
     const practiceRequired = !allCompleted;
@@ -148,8 +145,8 @@ export default function Learner() {
       `Completed ${completed} of ${targetText}. Progress: ${progress}%. More practice: ${practiceRequired}`
     );
   }
+  calculator();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function casePractice() {
     const scoreText = "82";
     const score = Number(scoreText);
@@ -175,6 +172,8 @@ export default function Learner() {
     console.log(`Next action: ${nextAction}`);
   }
 
+  casePractice();
+
   function selectiveAccumulator() {
     let total = 0;
 
@@ -192,6 +191,8 @@ export default function Learner() {
 
     console.log(`Final total: ${total}`);
   }
+
+  selectiveAccumulator();
 
   function calculateProgress(
     completed: number,
@@ -296,7 +297,6 @@ function scoreAnalysis() {
   console.log(hasPerfectScore);
   console.log(allScoresValid);
   console.log(scores);
-
 }
 
 scoreAnalysis();
